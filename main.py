@@ -48,7 +48,7 @@ class Jugador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         # Se carga la hoja
-        self.hoja = load_image('Chef.png', -1)
+        self.hoja = load_image('francois_base.png', -1)
         self.hoja = self.hoja.convert_alpha()
 
         # El movimiento que esta realizando
