@@ -6,12 +6,18 @@ from pygame.locals import *
 QUIETO = 0
 IZQUIERDA = 1
 DERECHA = 2
+ARRIBA = 3
+ABAJO = 4
 
 #Posturas
-ANDANDO = 1
+SPRITE_QUIETO = 0
+SPRITE_ANDANDO = 1
+SPRITE_SALTANDO_UP = 2
+SPRITE_SALTANDO_DOWN = 3
 
 VELOCIDAD_JUGADOR = 0.2 # Pixeles por milisegundo
-RETARDO_ANIMACION_JUGADOR = 15  # updates que durará cada imagen del personaje
+VELOCIDAD_SALTO_JUGADOR = 0.25 # Pixeles por milisegundo
+RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
                                 # debería de ser un valor distinto para cada postura
 
 # -------------------------------------------------
@@ -65,9 +71,9 @@ class Jugador(pygame.sprite.Sprite):
         self.numPostura = 1
         self.numImagenPostura = 0
         cont = 0
-        numImagenes = [3,6]
+        numImagenes = [3,6,1,1]       # Quieto, Andar, Saltar
         self.coordenadasHoja = []
-        for linea in range(0, 2):
+        for linea in range(0, 4):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for postura in range(1, numImagenes[linea] + 1):
@@ -81,9 +87,14 @@ class Jugador(pygame.sprite.Sprite):
         # La posicion inicial del Sprite
         self.rect = pygame.Rect(100,100,self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
 
-        # La posicion x que ocupa
+        # La posicion x e y que ocupa
         self.posicionx = 300
+        self.posiciony = 300
         self.rect.left = self.posicionx
+        self.rect.bottom = self.posiciony
+        # Velocidad en el eje y (para los saltos)
+        #  En el eje x se utilizaria si hubiese algun tipo de inercia
+        self.velocidady = 0
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
         self.actualizarPostura()
@@ -108,38 +119,80 @@ class Jugador(pygame.sprite.Sprite):
             elif self.mirando == IZQUIERDA:
                 self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
 
-    def mover(self, direccion):
-        # Almacenamos el movimiento realizado
-        self.movimiento = direccion
+    def mover(self,teclasPulsadas, arriba, abajo, izquierda, derecha):
+
+        # Indicamos la acción a realizar segun la tecla pulsada para el jugador
+        if teclasPulsadas[arriba]:
+            # Si estamos en el aire y han pulsado arriba, ignoramos este movimiento
+            if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
+                self.movimiento = QUIETO
+            else:
+                self.movimiento = ARRIBA
+        elif teclasPulsadas[izquierda]:
+            self.movimiento = IZQUIERDA
+        elif teclasPulsadas[derecha]:
+            self.movimiento = DERECHA
+        else:
+            self.movimiento = QUIETO
 
     def update(self, tiempo):
         # Si vamos a la izquierda
         if self.movimiento == IZQUIERDA:
-            # La postura actual sera estar caminando
-            self.numPostura = ANDANDO
+            # Si no estamos en el aire, la postura actual sera estar caminando
+            if not self.numPostura == SPRITE_SALTANDO_UP and not self.numPostura == SPRITE_SALTANDO_DOWN:
+                self.numPostura = SPRITE_ANDANDO
             # Esta mirando a la izquierda
             self.mirando = IZQUIERDA
             # Actualizamos la posicion
             self.posicionx -= VELOCIDAD_JUGADOR * tiempo
             self.rect.left = self.posicionx
-            # Actualizamos la imagen a mostrar
-            self.actualizarPostura()
         # Si vamos a la derecha
         elif self.movimiento == DERECHA:
-            # La postura actual sera estar caminando
-            self.numPostura = ANDANDO
+            # Si no estamos en el aire, la postura actual sera estar caminando
+            if not self.numPostura == SPRITE_SALTANDO_UP and not self.numPostura == SPRITE_SALTANDO_DOWN:
+                self.numPostura = SPRITE_ANDANDO
             # Esta mirando a la derecha
             self.mirando = DERECHA
             # Actualizamos la posicion
             self.posicionx += VELOCIDAD_JUGADOR * tiempo
             self.rect.left = self.posicionx
-            # Actualizamos la imagen a mostrar
-            self.actualizarPostura()
-        else:
-            # La postura actual será estar quieto
-            self.numPostura = QUIETO
-            # Actualizamos la imagen a mostrar
-            self.actualizarPostura()
+
+        # Si estamos saltando
+        elif self.movimiento == ARRIBA:
+            # La postura actual sera estar saltando
+            self.numPostura = SPRITE_SALTANDO_UP
+            # Le imprimimos una velocidad en el eje y
+            self.velocidady = VELOCIDAD_SALTO_JUGADOR
+        # Si no se ha pulsado ninguna tecla
+        elif self.movimiento == QUIETO:
+            # Si no estamos saltando, la postura actual será estar quieto
+            if not self.numPostura == SPRITE_SALTANDO_UP and not self.numPostura == SPRITE_SALTANDO_DOWN:
+                self.numPostura = SPRITE_QUIETO
+
+        # Si estamos en el aire
+        if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
+            # Actualizamos la posicion
+            self.posiciony -= self.velocidady * tiempo
+
+            if self.velocidady < 0:
+                self.numPostura = SPRITE_SALTANDO_DOWN
+            else:
+                self.numPostura = SPRITE_SALTANDO_UP
+
+            # Si llegamos a la posicion inferior, paramos de caer y lo ponemos como quieto
+            if self.posiciony>300:
+                self.numPostura = SPRITE_QUIETO
+                self.posiciony = 300
+                self.velovidady = 0
+            # Si no, aplicamos el efecto de la gravedad
+            else:
+                self.velocidady -= 0.004
+
+            # Nos ponemos en esa posicion en el eje y
+            self.rect.bottom = self.posiciony
+
+        # Actualizamos la imagen a mostrar
+        self.actualizarPostura()
         return
 
 # -------------------------------------------------
@@ -188,13 +241,8 @@ def main():
             pygame.quit()
             sys.exit()
 
-        # Indicamos la acción a realizar segun la tecla pulsada para el jugador 1
-        if teclasPulsadas[K_LEFT]:
-            jugador.mover(IZQUIERDA)
-        elif teclasPulsadas[K_RIGHT]:
-            jugador.mover(DERECHA)
-        else:
-            jugador.mover(QUIETO)
+        # Acciones según teclas
+        jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
 
         # Actualizamos el jugador
         jugador.update(tiempo_pasado)
