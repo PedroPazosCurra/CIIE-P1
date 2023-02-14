@@ -45,6 +45,56 @@ def load_image(name, colorkey=-1):
 # -------------------------------------------------
 # Clases de los objetos del juego
 # -------------------------------------------------
+# -------------------------------------------------
+# Clase GestorRecursos
+
+# En este caso se implementa como una clase vacía, solo con métodos de clase
+class GestorRecursos(object):
+    recursos = {}
+
+    @classmethod
+    def CargarImagen(cls, nombre, colorkey=None):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga la imagen indicando la carpeta en la que está
+            fullname = os.path.join('imagenes', nombre)
+            try:
+                imagen = pygame.image.load(fullname)
+            except pygame.error as message:
+                print('Cannot load image:', fullname)
+                raise SystemExit(message)
+            imagen = imagen.convert()
+            if colorkey is not None:
+                if colorkey is -1:
+                    colorkey = imagen.get_at((0, 0))
+                imagen.set_colorkey(colorkey, RLEACCEL)
+            # Se almacena
+            cls.recursos[nombre] = imagen
+            # Se devuelve
+            return imagen
+
+    @classmethod
+    def CargarArchivoCoordenadas(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga el recurso indicando el nombre de su carpeta
+            fullname = os.path.join('imagenes', nombre)
+            pfile = open(fullname, 'r')
+            datos = pfile.read()
+            pfile.close()
+            # Se almacena
+            cls.recursos[nombre] = datos
+            # Se devuelve
+            return datos
+
 
 class Jugador(pygame.sprite.Sprite):
 
@@ -54,7 +104,7 @@ class Jugador(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
 
         # Se carga la hoja
-        self.hoja = load_image('francois_base.png', -1)
+        self.hoja = GestorRecursos.CargarImagen('francois_base.png', -1)
         self.hoja = self.hoja.convert_alpha()
 
         # El movimiento que esta realizando
@@ -64,14 +114,12 @@ class Jugador(pygame.sprite.Sprite):
         self.mirando = DERECHA
 
         # Leemos las coordenadas de un archivo de texto
-        pfile = open('imagenes/coordJugador.txt', 'r')
-        datos = pfile.read()
-        pfile.close()
+        datos = GestorRecursos.CargarArchivoCoordenadas('coordJugador.txt')
         datos = datos.split()
         self.numPostura = 1
         self.numImagenPostura = 0
         cont = 0
-        numImagenes = [3,6,1,1]       # Quieto, Andar, Saltar
+        numImagenes = [3,6,1,1]       # Quieto, Andar, Saltar, Caer
         self.coordenadasHoja = []
         for linea in range(0, 4):
             self.coordenadasHoja.append([])
