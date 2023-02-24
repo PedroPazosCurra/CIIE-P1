@@ -3,10 +3,9 @@
 # Modulos
 import pygame
 import sys
+import escena
+from escena import *
 from pygame.locals import *
-
-ANCHO_PANTALLA = 800
-ALTO_PANTALLA = 600
 
 FPS = 60
 
@@ -16,7 +15,7 @@ class Director():
     def __init__(self):
         # Inicializamos la pantalla y el modo grafico
         self.pantalla = pygame.display.set_mode((ANCHO_PANTALLA, ALTO_PANTALLA))
-        pygame.display.set_caption("[Inserte nombre del juego]")
+        pygame.display.set_caption("Juego panadero")
         # Pila de escenas
         self.pila = []
         # Flag que nos indica cuando quieren salir de la escena
