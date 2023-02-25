@@ -8,6 +8,7 @@ from fase import *
 from director import *
 from jugador import *
 from pygame.locals import *
+from menu import Menu
 
 # -------------------------------------------------
 # Funciones auxiliares
@@ -54,10 +55,17 @@ def main():
     
     """
     
-    fase = Fase(director)
-    director.apilarEscena(fase)
-    
+    # Creamos escena de pantalla inicial
+    #fase = Fase(director)
+    escena = Menu(director)
+
+    # Director, apila esa escena inicial
+    director.apilarEscena(escena)
+
+    # Director, ejecuta el juego
     director.ejecutar()
+
+    # Listo
     pygame.quit()
     
     """    
