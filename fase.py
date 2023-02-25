@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import pygame, escena
+import pygame
 from escena import *
-from jugador import *
+from personajes import *
 from pygame.locals import *
 
 # -------------------------------------------------
@@ -53,34 +53,31 @@ class Fase(Escena):
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
         
-        """
-        # Creamos las plataformas del decorado
-        # La plataforma que conforma todo el suelo
-        plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
-        # La plataforma del techo del edificio
-        plataformaCasa = Plataforma(pygame.Rect(870, 417, 200, 10))
-        # y el grupo con las mismas
-        self.grupoPlataformas = pygame.sprite.Group( plataformaSuelo, plataformaCasa )
 
+        # Creamos las plataformas del decorado
+        # La plataforma que conforma el suelo
+        plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
+        self.grupoPlataformas = pygame.sprite.Group( plataformaSuelo)
+
+        """     NOTA: Cuando creemos enemigos debemos hacerlos aquí y de esta forma
         # Y los enemigos que tendran en este decorado
-        enemigo1 = Sniper()
+        enemigo1 = NoJugador()
         enemigo1.establecerPosicion((1000, 418))
 
         # Creamos un grupo con los enemigos
-        self.grupoEnemigos = pygame.sprite.Group( enemigo1 )
-        """
+        self.grupoEnemigos = pygame.sprite.Group( enemigo1 )"""
+
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1 )
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group( self.jugador1 )
-    
 
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador1):
-        if (jugador1.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right):
+        if jugador1.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right:
             self.scrollx = self.decorado.rect.right - ANCHO_PANTALLA
-        elif (jugador1.posicion[0] - ANCHO_PANTALLA / 2 <= 0):
+        elif jugador1.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
             self.scrollx = 0
         else:
             self.scrollx = jugador1.posicion[0] - ANCHO_PANTALLA / 2
@@ -89,7 +86,6 @@ class Fase(Escena):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
             
             self.decorado.update(self.scrollx)
-    
 
     # Se actualiza el decorado, realizando las siguientes acciones:
     #  Se indica para los personajes no jugadores qué movimiento desean realizar según su IA
@@ -100,12 +96,11 @@ class Fase(Escena):
     #  Se actualiza la posicion del sol y el color del cielo
     def update(self, tiempo):
 
+        """     Cuando haya enemigos, descomentar
         # Primero, se indican las acciones que van a hacer los enemigos segun como esten los jugadores
-        """
         for enemigo in iter(self.grupoEnemigos):
-            enemigo.mover_cpu(self.jugador1, self.jugador2)
-        # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA
-        # En el caso de los jugadores, esto ya se ha realizado
+            enemigo.mover_cpu(self.jugador1)
+        # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA"""
 
         # Actualizamos los Sprites dinamicos
         # De esta forma, se simula que cambian todos a la vez
@@ -120,15 +115,13 @@ class Fase(Escena):
         # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
         #  mostrar alguna animación
 
+        """     Cuando haya enemigos, descomentar
         # Comprobamos si hay colision entre algun jugador y algun enemigo
         # Se comprueba la colision entre ambos grupos
         # Si la hay, indicamos que se ha finalizado la fase
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
             # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
-            self.director.salirEscena()
-        """
-        
-        self.grupoSpritesDinamicos.update(tiempo)
+            self.director.salirEscena()"""
 
         # Actualizamos el scroll
         self.actualizarScroll(self.jugador1)
@@ -141,8 +134,14 @@ class Fase(Escena):
     def dibujar(self, pantalla):
         # Ponemos primero el fondo
         self.fondo.dibujar(pantalla)
+
+        # Si hubiera alguna animación detrás, se dibuja aquí
+
         # Después el decorado
         self.decorado.dibujar(pantalla)
+
+        # Si hubiera alguna animación delante, se dibuja aquí
+
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
 
@@ -160,10 +159,10 @@ class Fase(Escena):
 
 # -------------------------------------------------
 # Clase Plataforma
-"""
+
 #class Plataforma(pygame.sprite.Sprite):
 class Plataforma(MiSprite):
-    def __init__(self,rectangulo):
+    def __init__(self, rectangulo):
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
         # Rectangulo con las coordenadas en pantalla que ocupara
@@ -172,7 +171,7 @@ class Plataforma(MiSprite):
         self.establecerPosicion((self.rect.left, self.rect.bottom))
         # En el caso particular de este juego, las plataformas no se van a ver, asi que no se carga ninguna imagen
         self.image = pygame.Surface((0, 0))
-"""
+
 
 # -------------------------------------------------
 # Clase Cielo
@@ -188,7 +187,7 @@ class Cielo:
 
     def update(self, tiempo):
         self.posicionx += VELOCIDAD_SOL * tiempo
-        if (self.posicionx - self.rect.width >= ANCHO_PANTALLA):
+        if self.posicionx - self.rect.width >= ANCHO_PANTALLA:
             self.posicionx = 0
         self.rect.right = self.posicionx
         # Calculamos el color del cielo

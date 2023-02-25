@@ -46,7 +46,7 @@ class Jugador(pygame.sprite.Sprite):
         self.numPostura = 1
         self.numImagenPostura = 0
         cont = 0
-        numImagenes = [3,6,1,1]       # Quieto, Andar, Saltar, Caer
+        numImagenes = [3, 6, 1, 1]       # Quieto, Andar, Saltar, Caer
         self.coordenadasHoja = []
         for linea in range(0, 4):
             self.coordenadasHoja.append([])
@@ -60,7 +60,7 @@ class Jugador(pygame.sprite.Sprite):
         self.retardoMovimiento = 0
 
         # La posicion inicial del Sprite
-        self.rect = pygame.Rect(100,100,self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+        self.rect = pygame.Rect(100, 100, self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
 
         # La posicion x e y que ocupa
         self.posicion = (0, 0)
