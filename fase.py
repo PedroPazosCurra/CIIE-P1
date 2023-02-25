@@ -40,8 +40,6 @@ class Fase(Escena):
         self.decorado = Decorado()
         self.fondo = Cielo()
 
-        # Que parte del decorado estamos visualizando
-        self.scrollx = 0
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
@@ -51,6 +49,9 @@ class Fase(Escena):
 
         # Ponemos a los jugadores en sus posiciones iniciales
         self.jugador1.establecerPosicion((400, 300))
+        
+        # Que parte del decorado estamos visualizando
+        self.scrollx = 0
         
         """
         # Creamos las plataformas del decorado
@@ -73,72 +74,22 @@ class Fase(Escena):
         self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1 )
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group( self.jugador1 )
-        
-    # Devuelve True o False según se ha tenido que desplazar el scroll
-    def actualizarScrollOrdenados(self, jugador1):
-        # Si el jugador de la izquierda se encuentra más allá del borde izquierdo
-        if (jugador1.rect.left<MINIMO_X_JUGADOR):
-            desplazamiento = MINIMO_X_JUGADOR - jugador1.rect.left
+    
 
-            # Si el escenario ya está a la izquierda del todo, no lo movemos mas
-            if self.scrollx <= 0:
-                self.scrollx = 0
-
-                # En su lugar, colocamos al jugador que esté más a la izquierda a la izquierda de todo
-                jugador1.establecerPosicion((MINIMO_X_JUGADOR, jugador1.posicion[1]))
-
-                return False; # No se ha actualizado el scroll
-
-            # Si se puede hacer scroll a la izquierda
-            else:
-                # Calculamos el nivel de scroll actual: el anterior - desplazamiento
-                #  (desplazamos a la izquierda)
-                self.scrollx = self.scrollx - desplazamiento;
-
-                return True; # Se ha actualizado el scroll
-
-        # Si el jugador de la derecha se encuentra más allá del borde derecho
-        if (jugador1.rect.right>MAXIMO_X_JUGADOR):
-
-            # Se calcula cuantos pixeles esta fuera del borde
-            desplazamiento = jugador1.rect.right - MAXIMO_X_JUGADOR
-
-            # Si el escenario ya está a la derecha del todo, no lo movemos mas
-            if self.scrollx + ANCHO_PANTALLA >= self.decorado.rect.right:
-                self.scrollx = self.decorado.rect.right - ANCHO_PANTALLA
-
-                # En su lugar, colocamos al jugador que esté más a la derecha a la derecha de todo
-                jugador1.establecerPosicion((self.scrollx+MAXIMO_X_JUGADOR-jugador1.rect.width, jugador1.posicion[1]))
-
-                return False; # No se ha actualizado el scroll
-
-            # Si se puede hacer scroll a la derecha
-            else:
-
-                # Calculamos el nivel de scroll actual: el anterior + desplazamiento
-                #  (desplazamos a la derecha)
-                self.scrollx = self.scrollx + desplazamiento;
-
-                return True; # Se ha actualizado el scroll
-
-        # Si ambos jugadores están entre los dos límites de la pantalla, no se hace nada
-        return False;
-
-
-    def actualizarScroll(self, jugador1 ):
-        # Se ordenan los jugadores según el eje x, y se mira si hay que actualizar el scroll
-        cambioScroll = self.actualizarScrollOrdenados(jugador1)
-
-        # Si se cambio el scroll, se desplazan todos los Sprites y el decorado
-        if cambioScroll:
-            # Actualizamos la posición en pantalla de todos los Sprites según el scroll actual
+    # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
+    def actualizarScroll(self, jugador1):
+        if (jugador1.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right):
+            self.scrollx = self.decorado.rect.right - ANCHO_PANTALLA
+        elif (jugador1.posicion[0] - ANCHO_PANTALLA / 2 <= 0):
+            self.scrollx = 0
+        else:
+            self.scrollx = jugador1.posicion[0] - ANCHO_PANTALLA / 2
+            
             for sprite in iter(self.grupoSprites):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
-
-            # Ademas, actualizamos el decorado para que se muestre una parte distinta
+            
             self.decorado.update(self.scrollx)
-
-
+    
 
     # Se actualiza el decorado, realizando las siguientes acciones:
     #  Se indica para los personajes no jugadores qué movimiento desean realizar según su IA
