@@ -44,11 +44,11 @@ class Fase(Escena):
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
         # Creamos los sprites de los jugadores
-        self.jugador1 = Jugador()
-        self.grupoJugadores = pygame.sprite.Group( self.jugador1 )
+        self.jugador = Jugador()
+        self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.jugador1.establecerPosicion((400, 300))
+        self.jugador.establecerPosicion((400, 300))
         
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
@@ -57,7 +57,10 @@ class Fase(Escena):
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
         plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
-        self.grupoPlataformas = pygame.sprite.Group( plataformaSuelo)
+        self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
+
+        self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
+        self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
 
         """     NOTA: Cuando creemos enemigos debemos hacerlos aquí y de esta forma
         # Y los enemigos que tendran en este decorado
@@ -69,18 +72,18 @@ class Fase(Escena):
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group( self.jugador1 )
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group( self.jugador1 )
+        self.grupoSprites = pygame.sprite.Group(self.jugador)
 
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
-    def actualizarScroll(self, jugador1):
-        if jugador1.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right:
+    def actualizarScroll(self, jugador):
+        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right:
             self.scrollx = self.decorado.rect.right - ANCHO_PANTALLA
-        elif jugador1.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
+        elif jugador.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
             self.scrollx = 0
         else:
-            self.scrollx = jugador1.posicion[0] - ANCHO_PANTALLA / 2
+            self.scrollx = jugador.posicion[0] - ANCHO_PANTALLA / 2
             
             for sprite in iter(self.grupoSprites):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
@@ -123,8 +126,20 @@ class Fase(Escena):
             # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
             self.director.salirEscena()"""
 
+        # Comprobamos si hay colision entre jugador y triggers
+
+        # Trigger izquierdo
+        if self.trigger_izq.rect.colliderect(self.jugador.rect):
+            fase = Fase(self.director)
+            self.director.cambiarEscena(fase)
+
+        # Trigger derecho
+        if self.trigger_der.rect.colliderect(self.jugador.rect):
+            fase = Fase(self.director)
+            self.director.cambiarEscena(fase)
+
         # Actualizamos el scroll
-        self.actualizarScroll(self.jugador1)
+        self.actualizarScroll(self.jugador)
   
         # Actualizamos el fondo:
         #  la posicion del sol y el color del cielo
@@ -155,7 +170,7 @@ class Fase(Escena):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
-        self.jugador1.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
+        self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT)
 
 # -------------------------------------------------
 # Clase Plataforma
@@ -173,35 +188,63 @@ class Plataforma(MiSprite):
         self.image = pygame.Surface((0, 0))
 
 
+
+# ------------------------------------------------
+# Clase trigger para pasar entre fases
+class Trigger(MiSprite):
+    def __init__(self, rectangulo):
+
+        MiSprite.__init__(self)
+
+        self.rect = rectangulo
+
+        self.establecerPosicion((self.rect.left, self.rect.bottom))
+
+        self.image = pygame.Surface((0, 0))
+
+
 # -------------------------------------------------
 # Clase Cielo
 
 class Cielo:
     def __init__(self):
-        self.sol = GestorRecursos.CargarImagen('sol.png', -1)
-        self.sol = pygame.transform.scale(self.sol, (300, 200))
 
-        self.rect = self.sol.get_rect()
-        self.posicionx = 0 # El lado izquierdo de la subimagen que se esta visualizando
+        self.nubes = GestorRecursos.CargarImagen('cielo_fondo1.png', 0)
+        self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
+
+        self.nubesdup = GestorRecursos.CargarImagen('cielo_fondo1.png', 0)
+        self.nubesdup = pygame.transform.scale(self.nubesdup, (1100, 550))
+
+        self.rect_nubes = self.nubes.get_rect()
+        self.rect_nubesdup = self.nubesdup.get_rect()
+        self.posicionx = 0
+        self.posicionxdup = -1100
         self.update(0)
 
     def update(self, tiempo):
+
         self.posicionx += VELOCIDAD_SOL * tiempo
-        if self.posicionx - self.rect.width >= ANCHO_PANTALLA:
-            self.posicionx = 0
-        self.rect.right = self.posicionx
-        # Calculamos el color del cielo
-        if self.posicionx >= ((self.rect.width + ANCHO_PANTALLA) / 2):
-            ratio = 2 * ((self.rect.width + ANCHO_PANTALLA) - self.posicionx) / (self.rect.width + ANCHO_PANTALLA)
-        else:
-            ratio = 2 * self.posicionx / (self.rect.width + ANCHO_PANTALLA)
-        self.colorCielo = (100*ratio, 200*ratio, 255)
+        self.posicionxdup += VELOCIDAD_SOL * tiempo
+
+        if self.posicionx >= ANCHO_PANTALLA:
+            self.posicionx = -1100
+
+        if self.posicionxdup >= ANCHO_PANTALLA:
+            self.posicionxdup = -1100
+
+        self.rect_nubes.left = self.posicionx
+        self.rect_nubesdup.left = self.posicionxdup
+
         
-    def dibujar(self,pantalla):
-        # Dibujamos el color del cielo
-        pantalla.fill(self.colorCielo)
+    def dibujar(self, pantalla):
+
+        pantalla.fill((100, 200, 255))
+
+        pantalla.blit(self.nubes, self.rect_nubes)
+        pantalla.blit(self.nubesdup, self.rect_nubesdup)
+
         # Y ponemos el sol
-        pantalla.blit(self.sol, self.rect)
+        #pantalla.blit(self.sol, self.rect)
 
 
 # -------------------------------------------------
@@ -209,8 +252,8 @@ class Cielo:
 
 class Decorado:
     def __init__(self):
-        self.imagen = GestorRecursos.CargarImagen('decorado.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (1200, 300))
+        self.imagen = GestorRecursos.CargarImagen('road.png', -1)
+        self.imagen = pygame.transform.scale(self.imagen, (1200, 400))
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = ALTO_PANTALLA

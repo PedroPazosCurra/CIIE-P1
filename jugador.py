@@ -113,7 +113,7 @@ class Jugador(pygame.sprite.Sprite):
     def incrementarPosicion(self, incremento):
         (posx, posy) = self.posicion
         (incrementox, incrementoy) = incremento
-        self.estableceerPosicion((posx+incrementox, posy+incrementoy))
+        self.establecerPosicion((posx+incrementox, posy+incrementoy))
 
     def mover(self,teclasPulsadas, arriba, abajo, izquierda, derecha):
 
