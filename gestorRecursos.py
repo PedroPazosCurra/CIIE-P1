@@ -2,6 +2,7 @@ import os
 import pygame
 import sys
 from pygame.locals import *
+import json
 
 # -------------------------------------------------
 # Clases de los objetos del juego
@@ -23,11 +24,13 @@ class GestorRecursos(object):
         else:
             # Se carga la imagen indicando la carpeta en la que está
             fullname = os.path.join('imagenes', nombre)
+            
             try:
                 imagen = pygame.image.load(fullname)
             except pygame.error as message:
                 print('Cannot load image:', fullname)
                 raise SystemExit(message)
+                
             imagen = imagen.convert()
             if colorkey is not None:
                 if colorkey is -1:
@@ -48,10 +51,41 @@ class GestorRecursos(object):
         else:
             # Se carga el recurso indicando el nombre de su carpeta
             fullname = os.path.join('imagenes', nombre)
-            pfile = open(fullname, 'r')
-            datos = pfile.read()
-            pfile.close()
+            
+            try:
+                pfile = open(fullname, 'r')
+                datos = pfile.read()
+            except pygame.error as message:
+                print('Cannot load coordinates file:', fullname)
+                raise SystemExit(message)
+            finally:    
+                pfile.close()
+            
             # Se almacena
             cls.recursos[nombre] = datos
             # Se devuelve
             return datos
+
+
+    @classmethod
+    def CargarArchivoFaseJSON(cls,nombre):       
+		# Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:     
+			# Se carga el recurso indicando el nombre de su carpeta                
+            fullname = os.path.join('fases', nombre+'.json')
+            
+            try: 
+                f=open(fullname, 'r')
+                datos=json.load(f)
+            except pygame.error as message:
+                print ('Cannot load JSON file:', fullname)
+                raise SystemExit(message)
+            finally:
+                f.close()
+            
+            cls.recursos[nombre]=datos
+            return datos  
