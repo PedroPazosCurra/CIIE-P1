@@ -11,6 +11,8 @@ from pygame.locals import *
 # -------------------------------------------------
 # -------------------------------------------------
 
+VIDA_JUGADOR = 5
+
 # Movimientos
 QUIETO = 0
 IZQUIERDA = 1
@@ -257,6 +259,8 @@ class Jugador(Personaje):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         Personaje.__init__(self, 'francois_base.png', 'coordJugador.txt', [3, 6, 1, 1], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
+        
+        self.vida = VIDA_JUGADOR
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador

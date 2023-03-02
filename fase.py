@@ -53,6 +53,9 @@ class Fase(Escena):
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
         
+        
+        self.vida = Vida(self.jugador)
+        
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
@@ -154,6 +157,7 @@ class Fase(Escena):
 
         # Después el decorado
         self.decorado.dibujar(pantalla)
+        self.vida.dibujar(pantalla)
 
         # Si hubiera alguna animación delante, se dibuja aquí
 
@@ -209,10 +213,10 @@ class Trigger(MiSprite):
 class Cielo:
     def __init__(self):
 
-        self.nubes = GestorRecursos.CargarImagen('cielo_fondo1.png', 0)
+        self.nubes = GestorRecursos.CargarImagen('Cielo_fondo1.png', 0)
         self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
 
-        self.nubesdup = GestorRecursos.CargarImagen('cielo_fondo1.png', 0)
+        self.nubesdup = GestorRecursos.CargarImagen('Cielo_fondo1.png', 0)
         self.nubesdup = pygame.transform.scale(self.nubesdup, (1100, 550))
 
         self.rect_nubes = self.nubes.get_rect()
@@ -267,3 +271,24 @@ class Decorado:
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
+        
+# -------------------------------------------------
+# Clase Vida
+
+class Vida:
+    def __init__(self, jugador):
+        self.vidaAct = jugador.vida
+        self.imagen = []
+        for i in range(5):
+            auxImg = GestorRecursos.CargarImagen('vidas' + str(i+1) + '.png', -1)
+            auxImg = pygame.transform.scale(auxImg, (200,50))
+            self.imagen.append(auxImg)
+        
+        self.rect = self.imagen[0].get_rect()
+    
+    def update(self):
+        if(self.vidaAct >= 1):
+            self.vidaAct -= 1
+    
+    def dibujar(self, pantalla):
+        pantalla.blit(self.imagen[self.vidaAct-1], self.rect)
