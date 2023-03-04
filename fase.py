@@ -13,15 +13,11 @@ from pygame.locals import *
 
 VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
 
-# Los bordes de la pantalla para hacer scroll horizontal
-MINIMO_X_JUGADOR = 50
-MAXIMO_X_JUGADOR = ANCHO_PANTALLA - MINIMO_X_JUGADOR
-
 # -------------------------------------------------
 # Clase Fase
 
 class Fase(Escena):
-    def __init__(self, director):
+    def __init__(self, director, nombre_fase):
 
         # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
         #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
@@ -36,8 +32,12 @@ class Fase(Escena):
         # Primero invocamos al constructor de la clase padre
         Escena.__init__(self, director)
 
+        self.nombre_fase = nombre_fase
+        self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
+        
+        
         # Creamos el decorado y el fondo
-        self.decorado = Decorado()
+        self.decorado = Decorado(self.datos)
         self.fondo = Cielo()
 
         #  En ese caso solo hay scroll horizontal
@@ -48,18 +48,17 @@ class Fase(Escena):
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.jugador.establecerPosicion((400, 300))
+        self.jugador.establecerPosicion((self.datos["POS_INICIAL"]))
         
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
         
         
         self.vida = Vida(self.jugador)
-        
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
-        plataformaSuelo = Plataforma(pygame.Rect(0, 550, 1200, 15))
+        plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]))
         self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
 
         self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
@@ -133,12 +132,12 @@ class Fase(Escena):
 
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director)
+            fase = Fase(self.director, self.nombre_fase)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director)
+            fase = Fase(self.director, self.nombre_fase)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll
@@ -255,9 +254,9 @@ class Cielo:
 # Clase Decorado
 
 class Decorado:
-    def __init__(self):
-        self.imagen = GestorRecursos.CargarImagen('road.png', -1)
-        self.imagen = pygame.transform.scale(self.imagen, (1200, 400))
+    def __init__(self, datos):
+        self.imagen = GestorRecursos.CargarImagen(datos["DECORADO"], -1)
+        self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = ALTO_PANTALLA
