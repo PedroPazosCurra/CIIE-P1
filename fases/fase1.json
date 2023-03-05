@@ -1,0 +1,9 @@
+{
+	"NOMBRE": "Fase1",
+	"POS_INICIAL": [400,300],
+	"SIZE": [1200,400],
+	"DECORADO": "road.png",
+	"PLATAFORMA": [0, 550, 1200, 15],
+	"PARED": [],
+	"ENEMIGOS": []
+}
