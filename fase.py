@@ -5,7 +5,7 @@ from escena import *
 from personajes import *
 from pygame.locals import *
 
-VELOCIDAD_NUBES = 0.08 # Pixeles por milisegundo
+VELOCIDAD_NUBES = 0.08  # Pixeles por milisegundo
 
 
 class Fase(Escena):
@@ -22,7 +22,8 @@ class Fase(Escena):
         # Creamos el suelo, el decorado y el fondo
         self.suelo = Suelo(self.datos)
         self.decorado = Decorado(self.datos)
-        self.fondo = Cielo(self.datos)
+        self.fondo = Fondo(self.datos)
+        self.cielo = Cielo(self.datos)
 
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
@@ -33,7 +34,7 @@ class Fase(Escena):
 
         # Ponemos a los jugadores en sus posiciones iniciales
         self.jugador.establecerPosicion((self.datos["POS_INICIAL"]))
-        
+
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
 
@@ -41,7 +42,7 @@ class Fase(Escena):
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
-        plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]))
+        plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]), self.datos["PLATAFORMA_SPRITE"])
         self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
 
         self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
@@ -67,17 +68,18 @@ class Fase(Escena):
 
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
-        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.decorado.rect.right:
-            self.scrollx = self.decorado.rect.right - ANCHO_PANTALLA
+        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.fondo.rect.right:
+            self.scrollx = self.fondo.rect.right - ANCHO_PANTALLA
         elif jugador.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
             self.scrollx = 0
         else:
             self.scrollx = jugador.posicion[0] - ANCHO_PANTALLA / 2
-            
+
             for sprite in iter(self.grupoSprites):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
-            
+
             self.decorado.update(self.scrollx)
+            self.fondo.update(self.scrollx)
             self.suelo.update(self.scrollx)
 
     # Se actualiza el decorado
@@ -85,7 +87,7 @@ class Fase(Escena):
 
         # Primero, se indican las acciones que van a hacer los enemigos segun como esten los jugadores
         for enemigo in iter(self.grupoEnemigos):
-           enemigo.mover_cpu(self.jugador)
+            enemigo.mover_cpu(self.jugador)
 
         for npc in iter(self.grupoNPCs):
             npc.mover_cpu(self.jugador)
@@ -119,22 +121,20 @@ class Fase(Escena):
 
         # Actualizamos el scroll
         self.actualizarScroll(self.jugador)
-  
-        # Actualizamos el fondo:
-        self.fondo.update(tiempo)
+
+        # Actualizamos el cielo:
+        self.cielo.update(tiempo)
 
     def dibujar(self, pantalla):
-        # Ponemos primero el fondo
-        self.fondo.dibujar(pantalla)
 
-        # Si hubiera alguna animación detrás, se dibuja aquí
+        # Ponemos primero el fondo
+        self.cielo.dibujar(pantalla)
+        self.fondo.dibujar(pantalla)
 
         # Después el decorado
         self.decorado.dibujar(pantalla)
         self.suelo.dibujar(pantalla)
         self.vida.dibujar(pantalla)
-
-        # Si hubiera alguna animación delante, se dibuja aquí
 
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
@@ -153,21 +153,22 @@ class Fase(Escena):
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
 class Plataforma(MiSprite):
-    def __init__(self, rectangulo):
-        # Primero invocamos al constructor de la clase padre
+    def __init__(self, rectangulo, imagen=None):
+
         MiSprite.__init__(self)
         # Rectangulo con las coordenadas en pantalla que ocupara
         self.rect = rectangulo
-        # Y lo situamos de forma global en esas coordenadas
         self.establecerPosicion((self.rect.left, self.rect.bottom))
-        # En el caso particular de este juego, las plataformas no se van a ver, asi que no se carga ninguna imagen
-        self.image = pygame.Surface((0, 0))
+
+        if imagen is not None:
+            self.image = imagen
+        else:
+            self.image = pygame.Surface((0, 0))
 
 
 # ------------------------------------------------Trigger--------------------------------------------------------------
 class Trigger(MiSprite):
     def __init__(self, rectangulo):
-
         MiSprite.__init__(self)
         self.rect = rectangulo
         self.establecerPosicion((self.rect.left, self.rect.bottom))
@@ -177,7 +178,7 @@ class Trigger(MiSprite):
 # ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------
 
 class Cielo:
-    def __init__(self,datos):
+    def __init__(self, datos):
 
         self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], 0)
         self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
@@ -212,10 +213,9 @@ class Cielo:
         pantalla.blit(self.nubesdup, self.rect_nubesdup)
 
 
-class Decorado:
+class Fondo:
     def __init__(self, datos):
-
-        self.imagen = GestorRecursos.CargarImagen(datos["DECORADO"], -1)
+        self.imagen = GestorRecursos.CargarImagen(datos["FONDO"], -1)
         self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
         self.rect = self.imagen.get_rect()
@@ -223,10 +223,28 @@ class Decorado:
 
         # La subimagen que estamos viendo
         self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
-        self.rectSubimagen.left = 0 # El scroll horizontal empieza en la posicion 0 por defecto
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
 
     def update(self, scrollx):
-        self.rectSubimagen.left = scrollx
+        self.rectSubimagen.left = scrollx/4
+
+    def dibujar(self, pantalla):
+        pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
+
+class Decorado:
+    def __init__(self, datos):
+        self.imagen = GestorRecursos.CargarImagen(datos["DECORADO"], -1)
+        #self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
+
+        self.rect = self.imagen.get_rect()
+        self.rect.bottom = ALTO_PANTALLA
+
+        # La subimagen que estamos viendo
+        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
+
+    def update(self, scrollx):
+        self.rectSubimagen.left = scrollx/2
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
@@ -250,24 +268,24 @@ class Suelo:
     def dibujar(self, pantalla):
         pantalla.blit(self.suelo, self.rect, self.rectSubimagen)
 
+
 # --------------------------------------------------Vida----------------------------------------------------------------
 class Vida:
     def __init__(self, jugador):
         self.vida_actual = jugador.vida
         self.imagen = []
         for i in range(5):
-            auxImg = GestorRecursos.CargarImagen('vidas' + str(i+1) + '.png', -1)
-            auxImg = pygame.transform.scale(auxImg, (200,50))
+            auxImg = GestorRecursos.CargarImagen('vidas' + str(i + 1) + '.png', -1)
+            auxImg = pygame.transform.scale(auxImg, (200, 50))
             self.imagen.append(auxImg)
-        
+
         self.rect = self.imagen[0].get_rect()
-    
+
     def quitar_vida(self):
         if self.vida_actual >= 1:
             self.vida_actual -= 1
         else:
             print("Muere")
 
-    
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
