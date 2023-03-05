@@ -5,13 +5,7 @@ from escena import *
 from gestorRecursos import *
 from pygame.locals import *
 
-# -------------------------------------------------
-# -------------------------------------------------
-# Constantes
-# -------------------------------------------------
-# -------------------------------------------------
-
-VIDA_JUGADOR = 5
+VIDA_TOTAL = 5
 
 # Movimientos
 QUIETO = 0
@@ -36,22 +30,13 @@ RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
 
 VELOCIDAD_ENEMIGOS = 0.12  # Pixeles por milisegundo
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
-RETARDO_ANIMACION_ENEMIGOS = 5  # updates que durará cada imagen del personaje
+RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
 # El Sniper camina un poco más lento que el jugador, y salta menos
 
-GRAVEDAD = 0.0003  # Píxeles / ms2
+GRAVEDAD = 0.00055  # Píxeles / ms2
 
 
-# -------------------------------------------------
-# -------------------------------------------------
-# Clases de los objetos del juego
-# -------------------------------------------------
-# -------------------------------------------------
-
-
-# -------------------------------------------------
-# Clase MiSprite
 class MiSprite(pygame.sprite.Sprite):
     "Los Sprites que tendra este juego"
 
@@ -84,10 +69,6 @@ class MiSprite(pygame.sprite.Sprite):
         self.incrementarPosicion((incrementox, incrementoy))
 
 
-# -------------------------------------------------
-# Clases Personaje
-
-# class Personaje(pygame.sprite.Sprite):
 class Personaje(MiSprite):
     "Cualquier personaje del juego"
 
@@ -97,13 +78,13 @@ class Personaje(MiSprite):
     #  Numero de imagenes en cada postura
     #  Velocidad de caminar y de salto
     #  Retardo para mostrar la animacion del personaje
-    def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidadCarrera, velocidadSalto, retardoAnimacion):
+    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadSalto, retardoAnimacion):
 
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
 
         # Se carga la hoja
-        self.hoja = GestorRecursos.CargarImagen(archivoImagen, -1)
+        self.hoja = GestorRecursos.CargarImagen(imagen, 0)
         self.hoja = self.hoja.convert_alpha()
         # El movimiento que esta realizando
         self.movimiento = QUIETO
@@ -111,7 +92,7 @@ class Personaje(MiSprite):
         self.mirando = IZQUIERDA
 
         # Leemos las coordenadas de un archivo de texto
-        datos = GestorRecursos.CargarArchivoCoordenadas(archivoCoordenadas)
+        datos = GestorRecursos.CargarArchivoCoordenadas(coordenadas)
         datos = datos.split()
         self.numPostura = 1
         self.numImagenPostura = 0
@@ -147,7 +128,7 @@ class Personaje(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
-            if self.movimiento == ARRIBA:
+            if movimiento == ARRIBA:
                 # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
                 if self.numPostura == SPRITE_SALTANDO_UP:
                     self.movimiento = QUIETO
@@ -155,9 +136,6 @@ class Personaje(MiSprite):
                     self.movimiento = ARRIBA
             else:
                 self.movimiento = movimiento
-
-
-
 
     def actualizarPostura(self):
         self.retardoMovimiento -= 1
@@ -258,8 +236,7 @@ class Personaje(MiSprite):
         return
 
 
-# -------------------------------------------------
-# Clase Jugador
+# ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):
     "Cualquier personaje del juego"
@@ -269,7 +246,7 @@ class Jugador(Personaje):
         Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 3], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
         
-        self.vida = VIDA_JUGADOR
+        self.vida = VIDA_TOTAL
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
@@ -288,29 +265,22 @@ class Jugador(Personaje):
         # Rectangulo colision de ataque
         rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
 
-        
-
-
-# -------------------------------------------------
-# Clase NoJugador
 
 class NoJugador(Personaje):
     "El resto de personajes no jugadores"
 
-    def __init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
+    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
         # Primero invocamos al constructor de la clase padre con los parametros pasados
-        Personaje.__init__(self, archivoImagen, archivoCoordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion)
+        Personaje.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion)
 
-    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
-    # La implementacion por defecto, este metodo deberia de ser implementado en las clases inferiores
-    #  mostrando la personalidad de cada enemigo
-    def mover_cpu(self, jugador1):
-        # Por defecto no hace nada
-        #  (se podria programar, por ejemplo, que disparase al jugador por defecto)
-        return
+    def mover_cpu(self, jugador):
+        if jugador.posicion[0] < self.posicion[0]:
+            self.mirando = IZQUIERDA
+        else:
+            self.mirando = DERECHA
 
 
-# -------------------------------------------------
+# -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------
 # Clase para enemigo concreto
 
 """class Sniper(NoJugador):
@@ -336,3 +306,59 @@ class NoJugador(Personaje):
         # Si este personaje no esta en pantalla, no hara nada
         else:
             Personaje.mover(self, QUIETO)"""""
+
+
+class Tomate(NoJugador):
+
+    def __init__(self):
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+
+    def mover_cpu(self, jugador):
+
+        # Movemos solo a los enemigos que esten en la pantalla
+        if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
+
+            if jugador.posicion[0] < self.posicion[0]:
+                #Personaje.mover(self, IZQUIERDA)
+                self.mirando = DERECHA
+            else:
+                #Personaje.mover(self, DERECHA)
+                self.mirando = IZQUIERDA
+
+        # Si este personaje no esta en pantalla, no hara nada
+        else:
+            Personaje.mover(self, QUIETO)
+
+
+class Zanahoria(NoJugador):
+
+    def __init__(self):
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6,2,7,0,0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+
+    def mover_cpu(self, jugador):
+
+        # Movemos solo a los enemigos que esten en la pantalla
+        if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
+
+            if jugador.posicion[0] < self.posicion[0]:
+                #Personaje.mover(self, IZQUIERDA)
+                self.mirando = DERECHA
+            else:
+                #Personaje.mover(self, DERECHA)
+                self.mirando = IZQUIERDA
+
+        # Si este personaje no esta en pantalla, no hara nada
+        else:
+            Personaje.mover(self, QUIETO)
+
+
+class Madre(NoJugador):
+    def __init__(self):
+        NoJugador.__init__(self, 'Madre-sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
+
+    def mover_cpu(self, jugador):
+        if jugador.posicion[0] < self.posicion[0]:
+            self.mirando = IZQUIERDA
+        else:
+            self.mirando = DERECHA

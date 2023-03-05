@@ -1,12 +1,10 @@
 import os
 import pygame
 import sys
-import jugador
 import director
 import fase
 from fase import *
 from director import *
-from jugador import *
 from pygame.locals import *
 from menu import Menu
 

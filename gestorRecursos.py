@@ -66,26 +66,26 @@ class GestorRecursos(object):
             # Se devuelve
             return datos
 
-
     @classmethod
-    def CargarArchivoFaseJSON(cls,nombre):       
-		# Si el nombre de archivo está entre los recursos ya cargados
+    def CargarArchivoFaseJSON(cls,nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
         if nombre in cls.recursos:
             # Se devuelve ese recurso
             return cls.recursos[nombre]
+
         # Si no ha sido cargado anteriormente
-        else:     
-			# Se carga el recurso indicando el nombre de su carpeta                
+        else:
+            # Se carga el recurso indicando el nombre de su carpeta
             fullname = os.path.join('fases', nombre+'.json')
             
             try: 
-                f=open(fullname, 'r')
-                datos=json.load(f)
+                f = open(fullname, 'r')
+                datos = json.load(f)
             except pygame.error as message:
-                print ('Cannot load JSON file:', fullname)
+                print('Cannot load JSON file:', fullname)
                 raise SystemExit(message)
             finally:
                 f.close()
             
-            cls.recursos[nombre]=datos
+            cls.recursos[nombre] = datos
             return datos  

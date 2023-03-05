@@ -63,7 +63,7 @@ class Director():
         # Indicamos en el flag que se quiere salir de la escena
         self.salir_escena = True
         # Eliminamos la escena actual de la pila (si la hay)
-        if (len(self.pila)>0):
+        if len(self.pila)>0:
             self.pila.pop()
 
     def salirPrograma(self):

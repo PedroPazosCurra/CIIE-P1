@@ -1,0 +1,11 @@
+{
+	"NOMBRE": "Pueblo",
+	"POS_INICIAL": [400,550],
+	"SIZE": [1200,400],
+	"SUELO": "road.png",
+	"DECORADO": "pueblo-sheet.png",
+	"CIELO": "Cielo_fondo1.png",
+	"PLATAFORMA": [0, 550, 1200, 15],
+	"PARED": [],
+	"ENEMIGOS": []
+}

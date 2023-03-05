@@ -5,40 +5,24 @@ from escena import *
 from personajes import *
 from pygame.locals import *
 
-# -------------------------------------------------
-# -------------------------------------------------
-# Constantes
-# -------------------------------------------------
-# -------------------------------------------------
+VELOCIDAD_NUBES = 0.08 # Pixeles por milisegundo
 
-VELOCIDAD_SOL = 0.1 # Pixeles por milisegundo
-
-# -------------------------------------------------
-# Clase Fase
 
 class Fase(Escena):
     def __init__(self, director, nombre_fase):
 
-        # Habria que pasarle como parámetro el número de fase, a partir del cual se cargue
-        #  un fichero donde este la configuracion de esa fase en concreto, con cosas como
-        #   - Nombre del archivo con el decorado
-        #   - Posiciones de las plataformas
-        #   - Posiciones de los enemigos
-        #   - Posiciones de inicio de los jugadores
-        #  etc.
-        # Y cargar esa configuracion del archivo en lugar de ponerla a mano, como aqui abajo
-        # De esta forma, se podrian tener muchas fases distintas con esta clase
+        # TODO: Tenemos que abstraer esta clase para hacer todo con JSON y no depender de lo puesto aquí
 
         # Primero invocamos al constructor de la clase padre
         Escena.__init__(self, director)
 
         self.nombre_fase = nombre_fase
         self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
-        
-        
-        # Creamos el decorado y el fondo
+
+        # Creamos el suelo, el decorado y el fondo
+        self.suelo = Suelo(self.datos)
         self.decorado = Decorado(self.datos)
-        self.fondo = Cielo()
+        self.fondo = Cielo(self.datos)
 
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
@@ -52,8 +36,7 @@ class Fase(Escena):
         
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
-        
-        
+
         self.vida = Vida(self.jugador)
 
         # Creamos las plataformas del decorado
@@ -64,19 +47,23 @@ class Fase(Escena):
         self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
         self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
 
-        """     NOTA: Cuando creemos enemigos debemos hacerlos aquí y de esta forma
         # Y los enemigos que tendran en este decorado
-        enemigo1 = NoJugador()
-        enemigo1.establecerPosicion((1000, 418))
+        tomate = Tomate()
+        tomate.establecerPosicion((500, 550))
 
-        # Creamos un grupo con los enemigos
-        self.grupoEnemigos = pygame.sprite.Group( enemigo1 )"""
+        zanahoria = Zanahoria()
+        zanahoria.establecerPosicion((550, 550))
+        self.grupoEnemigos = pygame.sprite.Group(tomate, zanahoria)
+
+        madre = Madre()
+        madre.establecerPosicion((600, 550))
+        self.grupoNPCs = pygame.sprite.Group(madre)
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.jugador)
+        self.grupoSprites = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
 
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
@@ -91,27 +78,21 @@ class Fase(Escena):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
             
             self.decorado.update(self.scrollx)
+            self.suelo.update(self.scrollx)
 
-    # Se actualiza el decorado, realizando las siguientes acciones:
-    #  Se indica para los personajes no jugadores qué movimiento desean realizar según su IA
-    #  Se mueven los sprites dinámicos, todos a la vez
-    #  Se comprueba si hay colision entre algun jugador y algun enemigo
-    #  Se comprueba si algún jugador ha salido de la pantalla, y se actualiza el scroll en consecuencia
-    #     Actualizar el scroll implica tener que desplazar todos los sprites por pantalla
-    #  Se actualiza la posicion del sol y el color del cielo
+    # Se actualiza el decorado
     def update(self, tiempo):
 
-        """     Cuando haya enemigos, descomentar
         # Primero, se indican las acciones que van a hacer los enemigos segun como esten los jugadores
         for enemigo in iter(self.grupoEnemigos):
-            enemigo.mover_cpu(self.jugador1)
-        # Esta operación es aplicable también a cualquier Sprite que tenga algún tipo de IA"""
+           enemigo.mover_cpu(self.jugador)
+
+        for npc in iter(self.grupoNPCs):
+            npc.mover_cpu(self.jugador)
 
         # Actualizamos los Sprites dinamicos
-        # De esta forma, se simula que cambian todos a la vez
-        # Esta operación de update ya comprueba que los movimientos sean correctos
-        #  y, si lo son, realiza el movimiento de los Sprites
         self.grupoSpritesDinamicos.update(self.grupoPlataformas, tiempo)
+
         # Dentro del update ya se comprueba que todos los movimientos son válidos
         #  (que no choque con paredes, etc.)
 
@@ -120,15 +101,11 @@ class Fase(Escena):
         # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
         #  mostrar alguna animación
 
-        """     Cuando haya enemigos, descomentar
-        # Comprobamos si hay colision entre algun jugador y algun enemigo
-        # Se comprueba la colision entre ambos grupos
-        # Si la hay, indicamos que se ha finalizado la fase
-        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False)!={}:
-            # Se le dice al director que salga de esta escena y ejecute la siguiente en la pila
-            self.director.salirEscena()"""
+        # Colision entre jugador y enemigo -> quita vida
+        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
+            self.vida.quitar_vida()
 
-        # Comprobamos si hay colision entre jugador y triggers
+        # Colision entre jugador y triggers -> cambia fase
 
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
@@ -144,10 +121,8 @@ class Fase(Escena):
         self.actualizarScroll(self.jugador)
   
         # Actualizamos el fondo:
-        #  la posicion del sol y el color del cielo
         self.fondo.update(tiempo)
 
-        
     def dibujar(self, pantalla):
         # Ponemos primero el fondo
         self.fondo.dibujar(pantalla)
@@ -156,13 +131,13 @@ class Fase(Escena):
 
         # Después el decorado
         self.decorado.dibujar(pantalla)
+        self.suelo.dibujar(pantalla)
         self.vida.dibujar(pantalla)
 
         # Si hubiera alguna animación delante, se dibuja aquí
 
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
-
 
     def eventos(self, lista_eventos):
         # Miramos a ver si hay algun evento de salir del programa
@@ -175,10 +150,8 @@ class Fase(Escena):
         teclasPulsadas = pygame.key.get_pressed()
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z)
 
-# -------------------------------------------------
-# Clase Plataforma
 
-#class Plataforma(pygame.sprite.Sprite):
+# ----------------------------------------------Plataforma--------------------------------------------------------------
 class Plataforma(MiSprite):
     def __init__(self, rectangulo):
         # Primero invocamos al constructor de la clase padre
@@ -191,31 +164,25 @@ class Plataforma(MiSprite):
         self.image = pygame.Surface((0, 0))
 
 
-
-# ------------------------------------------------
-# Clase trigger para pasar entre fases
+# ------------------------------------------------Trigger--------------------------------------------------------------
 class Trigger(MiSprite):
     def __init__(self, rectangulo):
 
         MiSprite.__init__(self)
-
         self.rect = rectangulo
-
         self.establecerPosicion((self.rect.left, self.rect.bottom))
-
         self.image = pygame.Surface((0, 0))
 
 
-# -------------------------------------------------
-# Clase Cielo
+# ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------
 
 class Cielo:
-    def __init__(self):
+    def __init__(self,datos):
 
-        self.nubes = GestorRecursos.CargarImagen('Cielo_fondo1.png', 0)
+        self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], 0)
         self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
 
-        self.nubesdup = GestorRecursos.CargarImagen('Cielo_fondo1.png', 0)
+        self.nubesdup = GestorRecursos.CargarImagen(datos['CIELO'], 0)
         self.nubesdup = pygame.transform.scale(self.nubesdup, (1100, 550))
 
         self.rect_nubes = self.nubes.get_rect()
@@ -226,8 +193,8 @@ class Cielo:
 
     def update(self, tiempo):
 
-        self.posicionx += VELOCIDAD_SOL * tiempo
-        self.posicionxdup += VELOCIDAD_SOL * tiempo
+        self.posicionx += VELOCIDAD_NUBES * tiempo
+        self.posicionxdup += VELOCIDAD_NUBES * tiempo
 
         if self.posicionx >= ANCHO_PANTALLA:
             self.posicionx = -1100
@@ -238,23 +205,16 @@ class Cielo:
         self.rect_nubes.left = self.posicionx
         self.rect_nubesdup.left = self.posicionxdup
 
-        
     def dibujar(self, pantalla):
-
         pantalla.fill((100, 200, 255))
 
         pantalla.blit(self.nubes, self.rect_nubes)
         pantalla.blit(self.nubesdup, self.rect_nubesdup)
 
-        # Y ponemos el sol
-        #pantalla.blit(self.sol, self.rect)
-
-
-# -------------------------------------------------
-# Clase Decorado
 
 class Decorado:
     def __init__(self, datos):
+
         self.imagen = GestorRecursos.CargarImagen(datos["DECORADO"], -1)
         self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
@@ -270,13 +230,30 @@ class Decorado:
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
-        
-# -------------------------------------------------
-# Clase Vida
 
+
+class Suelo:
+    def __init__(self, datos):
+        self.suelo = GestorRecursos.CargarImagen(datos["SUELO"], -1)
+        self.suelo = pygame.transform.scale(self.suelo, datos["SIZE"])
+
+        self.rect = self.suelo.get_rect()
+        self.rect.bottom = ALTO_PANTALLA
+
+        # La subimagen que estamos viendo
+        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
+
+    def update(self, scrollx):
+        self.rectSubimagen.left = scrollx
+
+    def dibujar(self, pantalla):
+        pantalla.blit(self.suelo, self.rect, self.rectSubimagen)
+
+# --------------------------------------------------Vida----------------------------------------------------------------
 class Vida:
     def __init__(self, jugador):
-        self.vidaAct = jugador.vida
+        self.vida_actual = jugador.vida
         self.imagen = []
         for i in range(5):
             auxImg = GestorRecursos.CargarImagen('vidas' + str(i+1) + '.png', -1)
@@ -285,9 +262,12 @@ class Vida:
         
         self.rect = self.imagen[0].get_rect()
     
-    def update(self):
-        if(self.vidaAct >= 1):
-            self.vidaAct -= 1
+    def quitar_vida(self):
+        if self.vida_actual >= 1:
+            self.vida_actual -= 1
+        else:
+            print("Muere")
+
     
     def dibujar(self, pantalla):
-        pantalla.blit(self.imagen[self.vidaAct-1], self.rect)
+        pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
