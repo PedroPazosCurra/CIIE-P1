@@ -19,12 +19,14 @@ IZQUIERDA = 1
 DERECHA = 2
 ARRIBA = 3
 ABAJO = 4
+ATACAR_BAGUETTE = 5
 
 # Posturas
 SPRITE_QUIETO = 0
 SPRITE_ANDANDO = 1
 SPRITE_SALTANDO_UP = 2
 SPRITE_SALTANDO_DOWN = 3
+SPRITE_BAGUETTAZO = 4
 
 # Velocidades de los distintos personajes
 VELOCIDAD_JUGADOR = 0.2  # Pixeles por milisegundo
@@ -115,7 +117,7 @@ class Personaje(MiSprite):
         self.numImagenPostura = 0
         cont = 0
         self.coordenadasHoja = []
-        for linea in range(0, 3):
+        for linea in range(0, 5):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for postura in range(1, numImagenes[linea] + 1):
@@ -145,14 +147,17 @@ class Personaje(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
-        if movimiento == ARRIBA:
-            # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
-            if self.numPostura == SPRITE_SALTANDO_UP:
-                self.movimiento = QUIETO
+            if self.movimiento == ARRIBA:
+                # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
+                if self.numPostura == SPRITE_SALTANDO_UP:
+                    self.movimiento = QUIETO
+                else:
+                    self.movimiento = ARRIBA
             else:
-                self.movimiento = ARRIBA
-        else:
-            self.movimiento = movimiento
+                self.movimiento = movimiento
+
+
+
 
     def actualizarPostura(self):
         self.retardoMovimiento -= 1
@@ -207,6 +212,10 @@ class Personaje(MiSprite):
             # Le imprimimos una velocidad en el eje y
             velocidady = -self.velocidadSalto
 
+        # Si queremos atacar
+        elif self.movimiento == ATACAR_BAGUETTE:
+            self.numPostura = SPRITE_BAGUETTAZO
+
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == QUIETO:
             # Si no estamos saltando, la postura actual será estar quieto
@@ -257,12 +266,12 @@ class Jugador(Personaje):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Personaje.__init__(self, 'francois_base.png', 'coordJugador.txt', [3, 6, 1, 1], VELOCIDAD_JUGADOR,
+        Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 3], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
         
         self.vida = VIDA_JUGADOR
 
-    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha):
+    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if teclasPulsadas[arriba]:
             Personaje.mover(self, ARRIBA)
@@ -270,8 +279,16 @@ class Jugador(Personaje):
             Personaje.mover(self, IZQUIERDA)
         elif teclasPulsadas[derecha]:
             Personaje.mover(self, DERECHA)
+        elif teclasPulsadas[ataque]:
+            Personaje.mover(self, ATACAR_BAGUETTE)
         else:
             Personaje.mover(self, QUIETO)
+
+    def atacar(self, superficie):
+        # Rectangulo colision de ataque
+        rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
+
+        
 
 
 # -------------------------------------------------
