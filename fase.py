@@ -5,7 +5,7 @@ from escena import *
 from personajes import *
 from pygame.locals import *
 
-VELOCIDAD_NUBES = 0.08  # Pixeles por milisegundo
+VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
 
 class Fase(Escena):
@@ -226,7 +226,7 @@ class Fondo:
         self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
 
     def update(self, scrollx):
-        self.rectSubimagen.left = scrollx/4
+        self.rectSubimagen.left = scrollx/3
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
@@ -234,7 +234,7 @@ class Fondo:
 class Decorado:
     def __init__(self, datos):
         self.imagen = GestorRecursos.CargarImagen(datos["DECORADO"], -1)
-        #self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
+        self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
         self.rect = self.imagen.get_rect()
         self.rect.bottom = ALTO_PANTALLA
@@ -244,7 +244,7 @@ class Decorado:
         self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
 
     def update(self, scrollx):
-        self.rectSubimagen.left = scrollx/2
+        self.rectSubimagen.left = scrollx/1.2
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect, self.rectSubimagen)

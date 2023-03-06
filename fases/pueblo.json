@@ -3,7 +3,7 @@
 	"POS_INICIAL": [400,550],
 	"SIZE": [1200,400],
 	"SUELO": "pueblo_suelo.png",
-	"DECORADO": "pueblo_tienda.png",
+	"DECORADO": "pueblo_decorado.png",
 	"FONDO": "pueblo_fondo.png",
 	"CIELO": "Cielo_fondo1.png",
 	"PLATAFORMA": [0, 550, 1200, 15],
