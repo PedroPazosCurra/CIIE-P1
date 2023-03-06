@@ -4,8 +4,7 @@ import pygame
 from pygame.locals import *
 from escena import *
 from gestorRecursos import *
-from fase import Fase
-from menu import Menu
+
 
 # -------------------------------------------------
 # Clase abstracta ElementoGUI
@@ -52,13 +51,13 @@ class Boton(ElementoGUI):
 
 class BotonJugar(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_verde.png', (202, 733))
+        Boton.__init__(self, pantalla, 'boton_restart.png', (202, 733))
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
 class BotonSalir(Boton):
     def __init__(self, pantalla):
-        Boton.__init__(self, pantalla, 'boton_rojo.png', (392, 733))
+        Boton.__init__(self, pantalla, 'boton_restart.png', (392, 733))
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
@@ -80,7 +79,7 @@ class TextoJugar(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 26)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Jugar', (302, 535))
+        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Reset', (302, 535))
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
@@ -89,14 +88,6 @@ class TextoSalir(TextoGUI):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 26)
         TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Salir', (500, 535))
-    def accion(self):
-        self.pantalla.menu.salirPrograma()
-
-class TextoTitulo(TextoGUI):
-    def __init__(self, pantalla):
-        # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('gabriola', 60)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'La palmaste', (300, 120))
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
@@ -134,24 +125,23 @@ class PantallaGUI:
 
 class PantallaInicialGUI(PantallaGUI):
     def __init__(self, menu):
-        PantallaGUI.__init__(self, menu, 'portada.png')
+        PantallaGUI.__init__(self, menu, 'pantalla_muerte.png')
         # Creamos los botones y los metemos en la lista
         botonJugar = BotonJugar(self)
         botonSalir = BotonSalir(self)
         self.elementosGUI.append(botonJugar)
         self.elementosGUI.append(botonSalir)
         # Creamos el texto y lo metemos en la lista
-        textoTitulo = TextoTitulo(self)
+
         textoJugar = TextoJugar(self)
         textoSalir = TextoSalir(self)
         self.elementosGUI.append(textoJugar)
         self.elementosGUI.append(textoSalir)
-        self.elementosGUI.append(textoTitulo)
 
 # -------------------------------------------------
 # Clase Menu, la escena en sí
 
-class Menu(Escena):
+class Muerte(Escena):
 
     def __init__(self, director):
         # Llamamos al constructor de la clase padre
@@ -189,9 +179,9 @@ class Menu(Escena):
     def salirPrograma(self):
         self.director.salirPrograma()
 
-    def volverMenu(self):
-        menu = Menu(self)
-        self.director.apilarEscena(fase2)
+    def ejecutarJuego(self):
+        fase = Fase(self.director, 'pueblo')
+        self.director.apilarEscena(fase)
 
     def mostrarPantallaInicial(self):
         self.pantallaActual = 0

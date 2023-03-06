@@ -88,6 +88,8 @@ class Personaje(MiSprite):
         self.hoja = self.hoja.convert_alpha()
         # El movimiento que esta realizando
         self.movimiento = QUIETO
+        # Movimiento extra -> Permite desplazarse a la vez que se salta
+        self.movimiento_extra = None
         # Lado hacia el que esta mirando
         self.mirando = IZQUIERDA
 
@@ -128,7 +130,7 @@ class Personaje(MiSprite):
         self.actualizarPostura()
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
-    def mover(self, movimiento):
+    def mover(self, movimiento):	
             if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE:
                 # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
                 if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
@@ -136,8 +138,11 @@ class Personaje(MiSprite):
                     self.atacando = False
                 else:
                     self.movimiento = movimiento
+            elif self.movimiento == ARRIBA and movimiento != QUIETO:
+                self.movimiento_extra = movimiento
             else:
                 self.movimiento = movimiento
+                self.movimiento_extra = None
             
 
     def actualizarPostura(self):
@@ -169,26 +174,22 @@ class Personaje(MiSprite):
 
         # Si vamos a la izquierda o a la derecha
         if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
-            # Esta mirando hacia ese lado
-            self.mirando = self.movimiento
-
-            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-            if self.movimiento == IZQUIERDA:
-                velocidadx = -self.velocidadCarrera
-            # Si vamos a la derecha, le ponemos velocidad en esa dirección
-            else:
-                velocidadx = self.velocidadCarrera
-
+            velocidadx = self.desplHorizontal(self.movimiento)
+            
             # Si no estamos en el aire
             if self.numPostura != SPRITE_SALTANDO_UP:
-                # La postura actual sera estar caminando
-                self.numPostura = SPRITE_ANDANDO
-                # Ademas, si no estamos encima de ninguna plataforma, caeremos
-                if pygame.sprite.spritecollideany(self, grupoPlataformas) is None:
-                    self.numPostura = SPRITE_SALTANDO_UP
+               # La postura actual sera estar caminando
+               self.numPostura = SPRITE_ANDANDO
+               # Ademas, si no estamos encima de ninguna plataforma, caeremos
+               if pygame.sprite.spritecollideany(self, grupoPlataformas) is None:
+                  self.numPostura = SPRITE_SALTANDO_UP
 
         # Si queremos saltar
         elif self.movimiento == ARRIBA:
+			
+            if (self.movimiento_extra == IZQUIERDA) or (self.movimiento_extra == DERECHA):
+                 velocidadx = self.desplHorizontal(self.movimiento_extra)
+            
             # La postura actual sera estar saltando
             self.numPostura = SPRITE_SALTANDO_UP
             # Le imprimimos una velocidad en el eje y
@@ -243,6 +244,19 @@ class Personaje(MiSprite):
         return
 
 
+    def desplHorizontal(self, movimiento):
+        self.mirando = movimiento
+
+        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+        if self.movimiento == IZQUIERDA:
+            return -self.velocidadCarrera
+        # Si vamos a la derecha, le ponemos velocidad en esa dirección
+        else:
+            return self.velocidadCarrera
+
+        
+            
+        return velocidadx
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):
@@ -260,18 +274,19 @@ class Jugador(Personaje):
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if self.atacando == False:
+            Personaje.mover(self, QUIETO)
+			
             if teclasPulsadas[arriba]:
                 Personaje.mover(self, ARRIBA)
-            elif teclasPulsadas[izquierda]:
+            if teclasPulsadas[izquierda]:
                 Personaje.mover(self, IZQUIERDA)
-            elif teclasPulsadas[derecha]:
+            if teclasPulsadas[derecha]:
                 Personaje.mover(self, DERECHA)
-            elif teclasPulsadas[ataque]:
+            if teclasPulsadas[ataque]:
                 if self.cooldownBaguette <= 0:
                     self.atacar()
                     Personaje.mover(self, ATACAR_BAGUETTE)
-            else:
-                Personaje.mover(self, QUIETO)
+                
 
         # Reduccion en el cooldown desde el ultimo ataque        
         if self.cooldownBaguette > 0:

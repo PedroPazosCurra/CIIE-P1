@@ -95,7 +95,7 @@ class TextoTitulo(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 60)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Titulo del juego', (300, 120))
+        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Honoratia', (300, 120))
     def accion(self):
         self.pantalla.menu.salirPrograma()
 

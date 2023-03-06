@@ -4,6 +4,7 @@ import pygame
 from escena import *
 from personajes import *
 from pygame.locals import *
+from muerte import Muerte
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
@@ -15,6 +16,8 @@ class Fase(Escena):
 
         # Primero invocamos al constructor de la clase padre
         Escena.__init__(self, director)
+
+        self.director = director
 
         self.nombre_fase = nombre_fase
         self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
@@ -42,8 +45,6 @@ class Fase(Escena):
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
-        #plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]), self.datos["PLATAFORMA_SPRITE"])
-        #self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
         self.grupoPlataformas = pygame.sprite.Group()
         self.crearPlataformas()
 
@@ -51,28 +52,52 @@ class Fase(Escena):
         self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
 
         # Y los enemigos que tendran en este decorado
-        tomate = Tomate()
-        tomate.establecerPosicion((500, 550))
-
-        zanahoria = Zanahoria()
-        zanahoria.establecerPosicion((550, 550))
-        self.grupoEnemigos = pygame.sprite.Group(tomate, zanahoria)
-
-        madre = Madre()
-        madre.establecerPosicion((600, 550))
-        self.grupoNPCs = pygame.sprite.Group(madre)
+        self.grupoEnemigos = pygame.sprite.Group()
+        self.grupoNPCs = pygame.sprite.Group()
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
+        self.grupoSprites = pygame.sprite.Group(self.jugador)
+        
+        self.crearEnemigos()
+        self.crearNPCs()
 
     def crearPlataformas(self):
         plataformas = []
         for plataforma in self.datos["PLATAFORMA"]:
            plataformas.append(Plataforma(pygame.Rect(plataforma),self.datos["PLATAFORMA_SPRITE"]))
         self.grupoPlataformas.add(plataformas)
+    
+    def crearEnemigos(self):
+        enemigos = []
+        for enemigo in self.datos["ENEMIGOS"]:
+            if (enemigo == "tomate"):
+                for pos in self.datos["ENEMIGOS"].get("tomate"):
+                    tomate = Tomate()
+                    tomate.establecerPosicion(pos)
+                    enemigos.append(tomate)
+            if (enemigo == "zanahoria"):
+                for pos in self.datos["ENEMIGOS"].get("zanahoria"):
+                    zanahoria = Zanahoria()
+                    zanahoria.establecerPosicion(pos)
+                    enemigos.append(zanahoria)
+        self.grupoEnemigos.add(enemigos)
+        self.grupoSpritesDinamicos.add(enemigos)
+        self.grupoSprites.add(enemigos)
+        
+    def crearNPCs(self):
+        listaNPC = []
+        for npc in self.datos["NPCS"]:
+            if (npc == "madre"):
+                for pos in self.datos["NPCS"].get("madre"):
+                    madre = Madre()
+                    madre.establecerPosicion(pos)
+                    listaNPC.append(madre)
+        self.grupoNPCs.add(listaNPC)
+        self.grupoSpritesDinamicos.add(listaNPC)
+        self.grupoSprites.add(listaNPC)
     
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
@@ -114,7 +139,8 @@ class Fase(Escena):
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
             if self.vida.cooldownDano <= 0:
-                self.vida.quitar_vida()
+                if self.vida.quitar_vida() == 1:
+                    self.director.cambiarEscena(Muerte(self.director))
 
         # Cooldown tras recibir daño
         if self.vida.cooldownDano > 0:
@@ -297,12 +323,13 @@ class Vida:
 
     def quitar_vida(self):
 
-        self.cooldownDano = 120
+        self.cooldownDano = 80
 
         if self.vida_actual >= 1:
             self.vida_actual -= 1
         else:
             print("Muere")
+            return 1
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
