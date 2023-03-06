@@ -138,7 +138,7 @@ class Personaje(MiSprite):
                     self.atacando = False
                 else:
                     self.movimiento = movimiento
-            elif self.movimiento == ARRIBA:
+            elif self.movimiento == ARRIBA and movimiento != QUIETO:
                 self.movimiento_extra = movimiento
             else:
                 self.movimiento = movimiento
