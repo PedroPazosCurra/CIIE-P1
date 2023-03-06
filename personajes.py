@@ -96,6 +96,7 @@ class Personaje(MiSprite):
         datos = datos.split()
         self.numPostura = 1
         self.numImagenPostura = 0
+        self.prevPostura = 1
         cont = 0
         self.coordenadasHoja = []
         for linea in range(0, 5):
@@ -144,7 +145,7 @@ class Personaje(MiSprite):
             self.retardoMovimiento = self.retardoAnimacion
             # Si ha pasado, actualizamos la postura
             self.numImagenPostura += 1
-            if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura]):
+            if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura]) or self.numPostura != self.prevPostura:
                 self.numImagenPostura = 0
             if self.numImagenPostura < 0:
                 self.numImagenPostura = len(self.coordenadasHoja[self.numPostura]) - 1
@@ -157,6 +158,7 @@ class Personaje(MiSprite):
             elif self.mirando == IZQUIERDA:
                 self.image = pygame.transform.flip(
                     self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
+        self.prevPostura = self.numPostura
 
     def update(self, grupoPlataformas, tiempo):
 
@@ -193,6 +195,9 @@ class Personaje(MiSprite):
         # Si queremos atacar
         elif self.movimiento == ATACAR_BAGUETTE:
             self.numPostura = SPRITE_BAGUETTAZO
+            if self.numImagenPostura >= 3:
+                self.atacando = False
+                self.movimiento = QUIETO
 
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == QUIETO:
@@ -243,27 +248,38 @@ class Jugador(Personaje):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 3], VELOCIDAD_JUGADOR,
+        Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
         
         self.vida = VIDA_TOTAL
+        self.atacando = False
+        self.cooldownBaguette = 0
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
-        if teclasPulsadas[arriba]:
-            Personaje.mover(self, ARRIBA)
-        elif teclasPulsadas[izquierda]:
-            Personaje.mover(self, IZQUIERDA)
-        elif teclasPulsadas[derecha]:
-            Personaje.mover(self, DERECHA)
-        elif teclasPulsadas[ataque]:
-            Personaje.mover(self, ATACAR_BAGUETTE)
-        else:
-            Personaje.mover(self, QUIETO)
+        if self.atacando == False:
+            if teclasPulsadas[arriba]:
+                Personaje.mover(self, ARRIBA)
+            elif teclasPulsadas[izquierda]:
+                Personaje.mover(self, IZQUIERDA)
+            elif teclasPulsadas[derecha]:
+                Personaje.mover(self, DERECHA)
+            elif teclasPulsadas[ataque]:
+                if self.cooldownBaguette <= 0:
+                    self.atacar()
+                    Personaje.mover(self, ATACAR_BAGUETTE)
+            else:
+                Personaje.mover(self, QUIETO)
 
-    def atacar(self, superficie):
+        # Reduccion en el cooldown desde el ultimo ataque        
+        if self.cooldownBaguette > 0:
+            self.cooldownBaguette -= 1
+
+    def atacar(self):
+        self.atacando = True
+        self.cooldownBaguette = 70
         # Rectangulo colision de ataque
-        rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
+        #rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
 
 
 class NoJugador(Personaje):
