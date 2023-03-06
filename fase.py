@@ -4,6 +4,7 @@ import pygame
 from escena import *
 from personajes import *
 from pygame.locals import *
+from muerte import Muerte
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
@@ -15,6 +16,8 @@ class Fase(Escena):
 
         # Primero invocamos al constructor de la clase padre
         Escena.__init__(self, director)
+
+        self.director = director
 
         self.nombre_fase = nombre_fase
         self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
@@ -114,7 +117,8 @@ class Fase(Escena):
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
             if self.vida.cooldownDano <= 0:
-                self.vida.quitar_vida()
+                if self.vida.quitar_vida() == 1:
+                    self.director.cambiarEscena(Muerte(self.director))
 
         # Cooldown tras recibir daño
         if self.vida.cooldownDano > 0:
@@ -297,12 +301,13 @@ class Vida:
 
     def quitar_vida(self):
 
-        self.cooldownDano = 120
+        self.cooldownDano = 80
 
         if self.vida_actual >= 1:
             self.vida_actual -= 1
         else:
             print("Muere")
+            return 1
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
