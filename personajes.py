@@ -4,6 +4,7 @@ import sys
 from escena import *
 from gestorRecursos import *
 from pygame.locals import *
+from pygame import mixer
 
 VIDA_TOTAL = 5
 
@@ -293,10 +294,20 @@ class Jugador(Personaje):
             self.cooldownBaguette -= 1
 
     def atacar(self):
+        attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
+        attack_sound.play()
         self.atacando = True
         self.cooldownBaguette = 70
+        
+        # TODO -> colision 
+        
         # Rectangulo colision de ataque
         #rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
+        """
+        if (colisiona):
+            hit = mixer.Sound("music/punch.mp3")
+            hit.play()
+        """
 
 
 class NoJugador(Personaje):

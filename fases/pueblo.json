@@ -12,5 +12,6 @@
 	"ENEMIGOS": {"tomate": [[500,550],
 				[450,550]],
 		    "zanahoria": [[550,550]]},
-	"NPCS": {"madre": [[600,550]]}        
+	"NPCS": {"madre": [[600,550]]},
+	"MUSICA": "pueblo.wav"
 }

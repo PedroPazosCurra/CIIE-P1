@@ -4,6 +4,7 @@ import pygame
 from personajes import *
 from pygame.locals import *
 from muerte import Muerte
+from pygame import mixer
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
@@ -62,6 +63,9 @@ class Fase(Escena):
         
         self.crearEnemigos()
         self.crearNPCs()
+        
+        self.musica = Musica(self.datos)
+        self.musica.play()
 
     def crearPlataformas(self):
         plataformas = []
@@ -332,3 +336,12 @@ class Vida:
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
+
+
+# --------------------------------------------------Musica----------------------------------------------------------------
+class Musica:
+    def __init__(self, datos):
+        self.music = GestorRecursos.CargarMusica(datos["MUSICA"])
+    
+    def play(self):
+        mixer.music.play(-1)

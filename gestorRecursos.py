@@ -3,6 +3,7 @@ import pygame
 import sys
 from pygame.locals import *
 import json
+from pygame import mixer
 
 # -------------------------------------------------
 # Clases de los objetos del juego
@@ -40,6 +41,50 @@ class GestorRecursos(object):
             cls.recursos[nombre] = imagen
             # Se devuelve
             return imagen
+    
+    @classmethod
+    def CargarMusica(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga la imagen indicando la carpeta en la que está
+            fullname = os.path.join('musica', nombre)
+            
+            try:
+                musica = mixer.music.load(fullname)
+            except pygame.error as message:
+                print('Cannot load image:', fullname)
+                raise SystemExit(message)
+                
+            # Se almacena
+            cls.recursos[nombre] = musica
+            # Se devuelve
+            return musica
+    
+    @classmethod
+    def CargarSonido(cls, nombre):
+        # Si el nombre de archivo está entre los recursos ya cargados
+        if nombre in cls.recursos:
+            # Se devuelve ese recurso
+            return cls.recursos[nombre]
+        # Si no ha sido cargado anteriormente
+        else:
+            # Se carga la imagen indicando la carpeta en la que está
+            fullname = os.path.join('musica', nombre)
+            
+            try:
+                sonido = mixer.Sound(fullname)
+            except pygame.error as message:
+                print('Cannot load image:', fullname)
+                raise SystemExit(message)
+                
+            # Se almacena
+            cls.recursos[nombre] = sonido
+            # Se devuelve
+            return sonido
 
     @classmethod
     def CargarArchivoCoordenadas(cls, nombre):
