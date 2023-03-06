@@ -370,7 +370,7 @@ class Zanahoria(NoJugador):
 
 class Madre(NoJugador):
     def __init__(self):
-        NoJugador.__init__(self, 'Madre-sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
+        NoJugador.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
 
     def mover_cpu(self, jugador):
