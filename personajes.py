@@ -129,14 +129,16 @@ class Personaje(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
-            if movimiento == ARRIBA:
+            if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE:
                 # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
-                if self.numPostura == SPRITE_SALTANDO_UP:
+                if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
                     self.movimiento = QUIETO
+                    self.atacando = False
                 else:
-                    self.movimiento = ARRIBA
+                    self.movimiento = movimiento
             else:
                 self.movimiento = movimiento
+            
 
     def actualizarPostura(self):
         self.retardoMovimiento -= 1
@@ -195,7 +197,7 @@ class Personaje(MiSprite):
         # Si queremos atacar
         elif self.movimiento == ATACAR_BAGUETTE:
             self.numPostura = SPRITE_BAGUETTAZO
-            if self.numImagenPostura >= 3:
+            if self.numImagenPostura >= 4 and self.prevPostura == SPRITE_BAGUETTAZO:
                 self.atacando = False
                 self.movimiento = QUIETO
 

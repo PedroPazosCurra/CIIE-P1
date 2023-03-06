@@ -105,7 +105,12 @@ class Fase(Escena):
 
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
-            self.vida.quitar_vida()
+            if self.vida.cooldownDano <= 0:
+                self.vida.quitar_vida()
+
+        # Cooldown tras recibir daño
+        if self.vida.cooldownDano > 0:
+            self.vida.cooldownDano -= 1
 
         # Colision entre jugador y triggers -> cambia fase
 
@@ -280,8 +285,12 @@ class Vida:
             self.imagen.append(auxImg)
 
         self.rect = self.imagen[0].get_rect()
+        self.cooldownDano = 0
 
     def quitar_vida(self):
+
+        self.cooldownDano = 120
+
         if self.vida_actual >= 1:
             self.vida_actual -= 1
         else:
