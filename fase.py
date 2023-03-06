@@ -45,8 +45,6 @@ class Fase(Escena):
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
-        #plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]), self.datos["PLATAFORMA_SPRITE"])
-        #self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
         self.grupoPlataformas = pygame.sprite.Group()
         self.crearPlataformas()
 
@@ -55,18 +53,16 @@ class Fase(Escena):
 
         # Y los enemigos que tendran en este decorado
         self.grupoEnemigos = pygame.sprite.Group()
-
-        madre = Madre()
-        madre.establecerPosicion((600, 550))
-        self.grupoNPCs = pygame.sprite.Group(madre)
+        self.grupoNPCs = pygame.sprite.Group()
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador, madre)
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.jugador, madre)
+        self.grupoSprites = pygame.sprite.Group(self.jugador)
         
         self.crearEnemigos()
+        self.crearNPCs()
 
     def crearPlataformas(self):
         plataformas = []
@@ -90,6 +86,18 @@ class Fase(Escena):
         self.grupoEnemigos.add(enemigos)
         self.grupoSpritesDinamicos.add(enemigos)
         self.grupoSprites.add(enemigos)
+        
+    def crearNPCs(self):
+        listaNPC = []
+        for npc in self.datos["NPCS"]:
+            if (npc == "madre"):
+                for pos in self.datos["NPCS"].get("madre"):
+                    madre = Madre()
+                    madre.establecerPosicion(pos)
+                    listaNPC.append(madre)
+        self.grupoNPCs.add(listaNPC)
+        self.grupoSpritesDinamicos.add(listaNPC)
+        self.grupoSprites.add(listaNPC)
     
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
