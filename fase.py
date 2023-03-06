@@ -54,12 +54,7 @@ class Fase(Escena):
         self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
 
         # Y los enemigos que tendran en este decorado
-        tomate = Tomate()
-        tomate.establecerPosicion((500, 550))
-
-        zanahoria = Zanahoria()
-        zanahoria.establecerPosicion((550, 550))
-        self.grupoEnemigos = pygame.sprite.Group(tomate, zanahoria)
+        self.grupoEnemigos = pygame.sprite.Group()
 
         madre = Madre()
         madre.establecerPosicion((600, 550))
@@ -67,15 +62,34 @@ class Fase(Escena):
 
         # Creamos un grupo con los Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
-        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
+        self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador, madre)
         # Creamos otro grupo con todos los Sprites
-        self.grupoSprites = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
+        self.grupoSprites = pygame.sprite.Group(self.jugador, madre)
+        
+        self.crearEnemigos()
 
     def crearPlataformas(self):
         plataformas = []
         for plataforma in self.datos["PLATAFORMA"]:
            plataformas.append(Plataforma(pygame.Rect(plataforma),self.datos["PLATAFORMA_SPRITE"]))
         self.grupoPlataformas.add(plataformas)
+    
+    def crearEnemigos(self):
+        enemigos = []
+        for enemigo in self.datos["ENEMIGOS"]:
+            if (enemigo == "tomate"):
+                for pos in self.datos["ENEMIGOS"].get("tomate"):
+                    tomate = Tomate()
+                    tomate.establecerPosicion(pos)
+                    enemigos.append(tomate)
+            if (enemigo == "zanahoria"):
+                for pos in self.datos["ENEMIGOS"].get("zanahoria"):
+                    zanahoria = Zanahoria()
+                    zanahoria.establecerPosicion(pos)
+                    enemigos.append(zanahoria)
+        self.grupoEnemigos.add(enemigos)
+        self.grupoSpritesDinamicos.add(enemigos)
+        self.grupoSprites.add(enemigos)
     
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
