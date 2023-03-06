@@ -42,8 +42,10 @@ class Fase(Escena):
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
-        plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]), self.datos["PLATAFORMA_SPRITE"])
-        self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
+        #plataformaSuelo = Plataforma(pygame.Rect(self.datos["PLATAFORMA"]), self.datos["PLATAFORMA_SPRITE"])
+        #self.grupoPlataformas = pygame.sprite.Group(plataformaSuelo)
+        self.grupoPlataformas = pygame.sprite.Group()
+        self.crearPlataformas()
 
         self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
         self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
@@ -66,6 +68,12 @@ class Fase(Escena):
         # Creamos otro grupo con todos los Sprites
         self.grupoSprites = pygame.sprite.Group(self.jugador, tomate, zanahoria, madre)
 
+    def crearPlataformas(self):
+        plataformas = []
+        for plataforma in self.datos["PLATAFORMA"]:
+           plataformas.append(Plataforma(pygame.Rect(plataforma),self.datos["PLATAFORMA_SPRITE"]))
+        self.grupoPlataformas.add(plataformas)
+    
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
         if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.fondo.rect.right:
