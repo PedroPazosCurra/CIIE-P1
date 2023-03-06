@@ -61,6 +61,8 @@ class BotonSalir(Boton):
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
+
+
 # -------------------------------------------------
 # Clase TextoGUI y los distintos textos
 
@@ -98,6 +100,7 @@ class TextoTitulo(TextoGUI):
         TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Honoratia', (300, 120))
     def accion(self):
         self.pantalla.menu.salirPrograma()
+
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas

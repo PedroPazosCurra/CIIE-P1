@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-from escena import *
 from personajes import *
 from pygame.locals import *
 from muerte import Muerte
@@ -90,7 +89,7 @@ class Fase(Escena):
     def crearNPCs(self):
         listaNPC = []
         for npc in self.datos["NPCS"]:
-            if (npc == "madre"):
+            if npc == "madre":
                 for pos in self.datos["NPCS"].get("madre"):
                     madre = Madre()
                     madre.establecerPosicion(pos)
@@ -325,7 +324,7 @@ class Vida:
 
         self.cooldownDano = 80
 
-        if self.vida_actual >= 1:
+        if self.vida_actual > 1:
             self.vida_actual -= 1
         else:
             print("Muere")
