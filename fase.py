@@ -72,8 +72,9 @@ class Fase(Escena):
 
     def crearPlataformas(self):
         plataformas = []
-        for plataforma in self.datos["PLATAFORMA"]:
-           plataformas.append(Plataforma(pygame.Rect(plataforma),self.datos["PLATAFORMA_SPRITE"]))
+        for reg_plataforma in self.datos["PLATAFORMAS"]:
+           plataforma = Plataforma(pygame.Rect(reg_plataforma["RECT"]), reg_plataforma["IMAGEN"])
+           plataformas.append(plataforma)
         self.grupoPlataformas.add(plataformas)
     
     def crearEnemigos(self):
