@@ -1,6 +1,6 @@
 {
 	"NOMBRE": "Pueblo",
-	"POS_INICIAL": [400,550],
+	"POS_INICIAL_PERSONAJE": [400,550],
 	"SIZE": [1200,400],
 	"SUELO": "pueblo_suelo.png",
 	"DECORADO": "pueblo_decorado.png",
@@ -9,9 +9,10 @@
 	"PLATAFORMA": [[0, 550, 1200, 15]],
 	"PLATAFORMA_SPRITE": "",
 	"PARED": [],
-	"ENEMIGOS": {"tomate": [[500,550],
-				[450,550]],
-		    "zanahoria": [[550,550]]},
-	"NPCS": {"madre": [[600,550]]},
+	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
+		     {"CLASE":"Tomate", "POS": [450,550]},
+		     {"CLASE":"Zanahoria", "POS": [550,550]}
+		    ],
+	"NPCS": [{"CLASE":"Madre", "POS": [600,550]}],
 	"MUSICA": "pueblo.wav"
 }

@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import pygame
-from personajes import *
+import personajes
+from personajes import Jugador, MiSprite
 from pygame.locals import *
 from muerte import Muerte
 from pygame import mixer
+from escena import *
+from gestorRecursos import GestorRecursos
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
@@ -36,7 +39,7 @@ class Fase(Escena):
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
         # Ponemos a los jugadores en sus posiciones iniciales
-        self.jugador.establecerPosicion((self.datos["POS_INICIAL"]))
+        self.jugador.establecerPosicion((self.datos["POS_INICIAL_PERSONAJE"]))
 
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
@@ -75,30 +78,26 @@ class Fase(Escena):
     
     def crearEnemigos(self):
         enemigos = []
-        for enemigo in self.datos["ENEMIGOS"]:
-            if (enemigo == "tomate"):
-                for pos in self.datos["ENEMIGOS"].get("tomate"):
-                    tomate = Tomate()
-                    tomate.establecerPosicion(pos)
-                    enemigos.append(tomate)
-            if (enemigo == "zanahoria"):
-                for pos in self.datos["ENEMIGOS"].get("zanahoria"):
-                    zanahoria = Zanahoria()
-                    zanahoria.establecerPosicion(pos)
-                    enemigos.append(zanahoria)
+        
+        for reg_enemigo in self.datos["ENEMIGOS"]:
+            clase_enemigo = getattr(personajes, reg_enemigo["CLASE"])
+            inst_enemigo = clase_enemigo()
+            inst_enemigo.establecerPosicion(reg_enemigo["POS"])
+            enemigos.append(inst_enemigo)
+
         self.grupoEnemigos.add(enemigos)
         self.grupoSpritesDinamicos.add(enemigos)
         self.grupoSprites.add(enemigos)
         
     def crearNPCs(self):
         listaNPC = []
-        for npc in self.datos["NPCS"]:
-            if npc == "madre":
-                for pos in self.datos["NPCS"].get("madre"):
-                    madre = Madre()
-                    madre.establecerPosicion(pos)
-                    listaNPC.append(madre)
-        self.grupoNPCs.add(listaNPC)
+        
+        for reg_npc in self.datos["NPCS"]:
+            clase_npc = getattr(personajes, reg_npc["CLASE"])
+            inst_npc = clase_npc()
+            inst_npc.establecerPosicion(reg_npc["POS"])
+            listaNPC.append(inst_npc)
+        
         self.grupoSpritesDinamicos.add(listaNPC)
         self.grupoSprites.add(listaNPC)
     
