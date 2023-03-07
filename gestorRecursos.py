@@ -1,6 +1,5 @@
 import os
 import pygame
-import sys
 from pygame.locals import *
 import json
 from pygame import mixer
@@ -56,7 +55,7 @@ class GestorRecursos(object):
             try:
                 musica = mixer.music.load(fullname)
             except pygame.error as message:
-                print('Cannot load image:', fullname)
+                print('Cannot load music file:', fullname)
                 raise SystemExit(message)
                 
             # Se almacena
@@ -78,7 +77,7 @@ class GestorRecursos(object):
             try:
                 sonido = mixer.Sound(fullname)
             except pygame.error as message:
-                print('Cannot load image:', fullname)
+                print('Cannot load sound file:', fullname)
                 raise SystemExit(message)
                 
             # Se almacena

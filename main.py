@@ -1,11 +1,5 @@
-import os
 import pygame
-import sys
-import director
-import fase
-from fase import *
-from director import *
-from pygame.locals import *
+from director import Director
 from menu import Menu
 
 # -------------------------------------------------

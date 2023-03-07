@@ -5,7 +5,6 @@ import personajes
 from personajes import Jugador, MiSprite
 from pygame.locals import *
 from muerte import Muerte
-from pygame import mixer
 from escena import *
 from gestorRecursos import GestorRecursos
 
@@ -344,4 +343,4 @@ class Musica:
         self.music = GestorRecursos.CargarMusica(datos["MUSICA"])
     
     def play(self):
-        mixer.music.play(-1)
+        pygame.mixer.music.play(-1)

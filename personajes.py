@@ -1,10 +1,7 @@
-import os
 import pygame
-import sys
 from escena import *
-from gestorRecursos import *
+from gestorRecursos import GestorRecursos
 from pygame.locals import *
-from pygame import mixer
 
 VIDA_TOTAL = 5
 

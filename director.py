@@ -2,8 +2,6 @@
 
 # Modulos
 import pygame
-import sys
-import escena
 from escena import *
 from pygame.locals import *
 
