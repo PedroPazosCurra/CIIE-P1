@@ -27,7 +27,7 @@ class ElementoGUI:
         else:
             return False
 
-    def dibujar(self):
+    def dibujar(self, pantalla):
         raise NotImplemented("Tiene que implementar el metodo dibujar.")
     def accion(self):
         raise NotImplemented("Tiene que implementar el metodo accion.")
@@ -113,7 +113,7 @@ class PantallaGUI:
             if evento.type == MOUSEBUTTONUP:
                 for elemento in self.elementosGUI:
                     if elemento.posicionEnElemento(evento.pos):
-                        if (elemento == self.elementoClic):
+                        if elemento == self.elementoClic:
                             elemento.accion()
 
     def dibujar(self, pantalla):

@@ -282,7 +282,7 @@ class Jugador(Personaje):
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
-        if self.atacando == False:
+        if not self.atacando:
             Personaje.mover(self, QUIETO)
 			
             if teclasPulsadas[arriba]:

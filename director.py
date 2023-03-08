@@ -8,7 +8,7 @@ from pygame.locals import *
 FPS = 60
 
 
-class Director():
+class Director:
 
     def __init__(self):
         # Inicializamos la pantalla y el modo grafico
@@ -48,7 +48,7 @@ class Director():
     def ejecutar(self):
 
         # Mientras haya escenas en la pila, ejecutaremos la de arriba
-        while (len(self.pila)>0):
+        while len(self.pila)>0:
 
             # Se coge la escena a ejecutar como la que este en la cima de la pila
             escena = self.pila[len(self.pila)-1]

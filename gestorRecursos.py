@@ -43,25 +43,14 @@ class GestorRecursos(object):
     
     @classmethod
     def CargarMusica(cls, nombre):
-        # Si el nombre de archivo está entre los recursos ya cargados
-        if nombre in cls.recursos:
-            # Se devuelve ese recurso
-            return cls.recursos[nombre]
-        # Si no ha sido cargado anteriormente
-        else:
-            # Se carga la imagen indicando la carpeta en la que está
-            fullname = os.path.join('musica', nombre)
-            
-            try:
-                musica = mixer.music.load(fullname)
-            except pygame.error as message:
-                print('Cannot load music file:', fullname)
-                raise SystemExit(message)
-                
-            # Se almacena
-            cls.recursos[nombre] = musica
-            # Se devuelve
-            return musica
+        # La música se reproduce por streaming, no es un recurso en memoria que podamos referenciar
+        fullname = os.path.join('musica', nombre)
+        try:
+            mixer.music.load(fullname)
+        except pygame.error as message:
+            print('Cannot load music file:', fullname)
+            raise SystemExit(message)
+
     
     @classmethod
     def CargarSonido(cls, nombre):

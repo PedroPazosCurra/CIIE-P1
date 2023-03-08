@@ -340,7 +340,7 @@ class Vida:
 # --------------------------------------------------Musica----------------------------------------------------------------
 class Musica:
     def __init__(self, datos):
-        self.music = GestorRecursos.CargarMusica(datos["MUSICA"])
+        GestorRecursos.CargarMusica(datos["MUSICA"])
     
     def play(self):
         pygame.mixer.music.play(-1)
