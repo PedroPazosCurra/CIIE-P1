@@ -12,6 +12,7 @@ DERECHA = 2
 ARRIBA = 3
 ABAJO = 4
 ATACAR_BAGUETTE = 5
+DISPARO = 6
 
 # Posturas
 SPRITE_QUIETO = 0
@@ -19,12 +20,15 @@ SPRITE_ANDANDO = 1
 SPRITE_SALTANDO_UP = 2
 SPRITE_SALTANDO_DOWN = 3
 SPRITE_BAGUETTAZO = 4
+SPRITE_DISPARANDO = 5
 
 # Velocidades de los distintos personajes
 VELOCIDAD_JUGADOR = 0.2  # Pixeles por milisegundo
 VELOCIDAD_SALTO_JUGADOR = 0.25  # Pixeles por milisegundo
 RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
+
+# Movimientos Especiales Proyectiles
 
 VELOCIDAD_ENEMIGOS = 0.12  # Pixeles por milisegundo
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
@@ -99,7 +103,7 @@ class Personaje(MiSprite):
         self.prevPostura = 1
         cont = 0
         self.coordenadasHoja = []
-        for linea in range(0, 5):
+        for linea in range(0, 6):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
             for postura in range(1, numImagenes[linea] + 1):
@@ -129,7 +133,7 @@ class Personaje(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):	
-            if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE:
+            if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE or movimiento == DISPARO:
                 # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
                 if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
                     self.movimiento = QUIETO
@@ -215,6 +219,13 @@ class Personaje(MiSprite):
                 self.atacando = False
                 self.movimiento = QUIETO
 
+        # Si queremos disparar
+        elif self.movimiento == DISPARO:
+            self.numPostura = SPRITE_DISPARANDO
+            if self.numImagenPostura >= 3 and self.prevPostura == SPRITE_DISPARANDO:
+                self.atacando = False
+                self.movimiento = QUIETO 
+
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == QUIETO:
             # Si no estamos saltando, la postura actual será estar quieto
@@ -273,14 +284,15 @@ class Jugador(Personaje):
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5], VELOCIDAD_JUGADOR,
+        Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5, 4], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
         
         self.vida = VIDA_TOTAL
         self.atacando = False
         self.cooldownBaguette = 0
+        self.cooldownCroissant = 0
 
-    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque):
+    def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if self.atacando == False:
             Personaje.mover(self, QUIETO)
@@ -295,17 +307,39 @@ class Jugador(Personaje):
                 if self.cooldownBaguette <= 0:
                     self.atacar()
                     Personaje.mover(self, ATACAR_BAGUETTE)
-                
+            if teclasPulsadas[disparo]:
+                if self.cooldownCroissant <= 0:
+                    self.disparar()
+                    Personaje.mover(self, DISPARO)
 
         # Reduccion en el cooldown desde el ultimo ataque        
         if self.cooldownBaguette > 0:
             self.cooldownBaguette -= 1
+        
+        if self.cooldownCroissant > 0:
+            self.cooldownCroissant -= 1
 
     def atacar(self):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
         self.atacando = True
         self.cooldownBaguette = 70
+        
+        # TODO -> colision 
+        
+        # Rectangulo colision de ataque
+        #rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
+        """
+        if (colisiona):
+            hit = mixer.Sound("music/punch.mp3")
+            hit.play()
+        """
+    
+    def disparar(self):
+        attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
+        attack_sound.play()
+        self.atacando = True
+        self.cooldownBaguette = 30
         
         # TODO -> colision 
         
@@ -363,7 +397,7 @@ class NoJugador(Personaje):
 class Tomate(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
 
     def mover_cpu(self, jugador):
 
@@ -385,7 +419,7 @@ class Tomate(NoJugador):
 class Zanahoria(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6,2,7,0,0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6,2,7,0,0,0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
 
     def mover_cpu(self, jugador):
 
@@ -406,7 +440,7 @@ class Zanahoria(NoJugador):
 
 class Madre(NoJugador):
     def __init__(self):
-        NoJugador.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
+        NoJugador.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
 
     def mover_cpu(self, jugador):
@@ -414,3 +448,81 @@ class Madre(NoJugador):
             self.mirando = IZQUIERDA
         else:
             self.mirando = DERECHA
+
+
+# ----------------------------------------- Proyectiles -------------------------------------------------------
+
+class Proyectil(MiSprite):
+    "Croissants"
+
+    # Parametros pasados al constructor de esta clase:
+    #  Archivo con la hoja de Sprites
+    #  Archivo con las coordenadoas dentro de la hoja
+    #  Numero de imagenes en cada postura
+    #  Velocidad de caminar y de rotacion
+    #  Retardo para mostrar la animacion del personaje
+    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadRotacion, retardoAnimacion):
+
+        # Primero invocamos al constructor de la clase padre
+        MiSprite.__init__(self)
+
+        # Se carga la hoja
+        self.hoja = GestorRecursos.CargarImagen(imagen, 0)
+        self.hoja = self.hoja.convert_alpha()
+        # El movimiento que esta realizando
+        self.movimiento = DERECHA
+        # Movimiento extra -> Permite desplazarse a la vez que se salta
+        self.movimiento_extra = None
+        # Lado hacia el que esta mirando
+        self.mirando = DERECHA
+
+        # Leemos las coordenadas de un archivo de texto
+        datos = GestorRecursos.CargarArchivoCoordenadas(coordenadas)
+        datos = datos.split()
+        self.numPostura = 1
+        self.numImagenPostura = 0
+        self.prevPostura = 1
+        cont = 0
+        self.coordenadasHoja = []
+        for linea in range(0, 1):
+            self.coordenadasHoja.append([])
+            tmp = self.coordenadasHoja[linea]
+            for postura in range(1, numImagenes[linea] + 1):
+                tmp.append(
+                    pygame.Rect((int(datos[cont]), int(datos[cont + 1])), (int(datos[cont + 2]), int(datos[cont + 3]))))
+                cont += 4
+
+        # El retardo a la hora de cambiar la imagen del Sprite (para que no se mueva demasiado rápido)
+        self.retardoMovimiento = 0
+
+        # En que postura esta inicialmente
+        self.numPostura = QUIETO
+
+        # El rectangulo del Sprite
+        self.rect = pygame.Rect(100, 100, self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],
+                                self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+
+        # Las velocidades de caminar y salto
+        self.velocidadCarrera = velocidadCarrera
+        self.velocidadRotacion = velocidadRotacion
+
+        # El retardo en la animacion del personaje (podria y deberia ser distinto para cada postura)
+        self.retardoAnimacion = retardoAnimacion
+
+        # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
+        self.actualizarPostura()
+
+    # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
+    def mover(self, movimiento):	
+            self.movimiento = movimiento
+            
+
+    def desplHorizontal(self, movimiento):
+        self.mirando = movimiento
+
+        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+        if self.movimiento == IZQUIERDA:
+            return -self.velocidadCarrera
+        # Si vamos a la derecha, le ponemos velocidad en esa dirección
+        else:
+            return self.velocidadCarrera
