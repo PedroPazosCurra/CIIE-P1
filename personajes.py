@@ -254,8 +254,6 @@ class Personaje(MiSprite):
         #  calcule la nueva posición del Sprite
         MiSprite.update(self, tiempo)
 
-        return
-
 
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento
@@ -267,9 +265,7 @@ class Personaje(MiSprite):
         else:
             return self.velocidadCarrera
 
-        
-            
-        return velocidadx
+
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):

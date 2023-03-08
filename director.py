@@ -12,7 +12,7 @@ class Director():
 
     def __init__(self):
         # Inicializamos la pantalla y el modo grafico
-        self.pantalla = pygame.display.set_mode((ANCHO_PANTALLA, ALTO_PANTALLA))
+        self.pantalla = pygame.display.set_mode((ANCHO_PANTALLA, ALTO_PANTALLA), DOUBLEBUF)
         pygame.display.set_caption("Juego panadero")
         # Pila de escenas
         self.pila = []
