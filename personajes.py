@@ -144,26 +144,41 @@ class Personaje(MiSprite):
             
 
     def actualizarPostura(self):
+        cambiarImagen = False
         self.retardoMovimiento -= 1
-        # Miramos si ha pasado el retardo para dibujar una nueva postura
-        if self.retardoMovimiento < 0:
-            self.retardoMovimiento = self.retardoAnimacion
+        
+        # Comprobamos si hay que reiniciar self.numImagenPostura porque hemos cambiado de postura
+        if self.prevPostura != self.numPostura:
+            cambiarImagen = True
+            self.numImagenPostura = 0
+        
+        # Miramos si ha pasado el retardo para dibujar una nueva imagen de la postura actual
+        elif self.retardoMovimiento < 0:
+            cambiarImagen = True
+            
             # Si ha pasado, actualizamos la postura
             self.numImagenPostura += 1
             if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura]) or self.numPostura != self.prevPostura:
                 self.numImagenPostura = 0
             if self.numImagenPostura < 0:
                 self.numImagenPostura = len(self.coordenadasHoja[self.numPostura]) - 1
-            self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
-
+        
+        # Modificar la imagen a mostrar si el contador de retardo ha llegado a 0 o si se ha cambiado la postura
+        if cambiarImagen:
+            self.retardoMovimiento = self.retardoAnimacion # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
+			
             # Si esta mirando a la izquiera, cogemos la porcion de la hoja
             if self.mirando == DERECHA:
                 self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
             #  Si no, si mira a la derecha, invertimos esa imagen
             elif self.mirando == IZQUIERDA:
-                self.image = pygame.transform.flip(
-                    self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
+                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
+        
+            # Actualizamos el tamaño del rect para que coincida con la imagen actual
+            self.rect.size = (self.coordenadasHoja[self.numPostura][self.numImagenPostura][2], self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+        
         self.prevPostura = self.numPostura
+
 
     def update(self, grupoPlataformas, tiempo):
 
