@@ -1,17 +1,27 @@
 {
 	"NOMBRE": "Pueblo",
+
 	"POS_INICIAL_PERSONAJE": [400,550],
 	"SIZE": [1200,400],
 	"SUELO": "pueblo_suelo.png",
 	"DECORADO": "pueblo_decorado.png",
 	"FONDO": "pueblo_fondo.png",
 	"CIELO": "Cielo_fondo1.png",
+
+	"TRIGGER_IZQ_ESCENA": "Prueba",
+	"TRIGGER_DER_ESCENA": "Pueblo",
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
 		     {"CLASE":"Tomate", "POS": [450,550]},
 		     {"CLASE":"Zanahoria", "POS": [550,550]}
 		    ],
-	"NPCS": [{"CLASE":"Madre", "POS": [600,550]}],
+	"NPCS": [{"CLASE":"Madre", "POS": [600,550]},
+			{"CLASE":"AldeanoFalda", "POS": [650,550]},
+			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
+
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
+				{"CLASE":"Tarta", "POS": [350,550]}],
+
 	"MUSICA": "pueblo.wav"
 }

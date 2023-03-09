@@ -3,7 +3,10 @@ from escena import *
 from gestorRecursos import GestorRecursos
 from pygame.locals import *
 
-VIDA_TOTAL = 5
+VIDA_JUGADOR = 5
+VIDA_ZANAHORIA = 3
+VIDA_TOMATE = 1
+VIDA_NPC = 999
 
 # Movimientos
 QUIETO = 0
@@ -81,7 +84,7 @@ class Personaje(MiSprite):
     #  Numero de imagenes en cada postura
     #  Velocidad de caminar y de salto
     #  Retardo para mostrar la animacion del personaje
-    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadSalto, retardoAnimacion):
+    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadSalto, retardoAnimacion, vida):
 
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
@@ -95,6 +98,8 @@ class Personaje(MiSprite):
         self.movimiento_extra = None
         # Lado hacia el que esta mirando
         self.mirando = IZQUIERDA
+
+        self.vida = vida
 
         # Leemos las coordenadas de un archivo de texto
         datos = GestorRecursos.CargarArchivoCoordenadas(coordenadas)
@@ -146,7 +151,6 @@ class Personaje(MiSprite):
             else:
                 self.movimiento = movimiento
                 self.movimiento_extra = None
-            
 
     def actualizarPostura(self):
         cambiarImagen = False
@@ -183,7 +187,6 @@ class Personaje(MiSprite):
             self.rect.size = (self.coordenadasHoja[self.numPostura][self.numImagenPostura][2], self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
         
         self.prevPostura = self.numPostura
-
 
     def update(self, grupoPlataformas, tiempo):
 
@@ -266,7 +269,6 @@ class Personaje(MiSprite):
         #  calcule la nueva posición del Sprite
         MiSprite.update(self, tiempo)
 
-
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento
 
@@ -278,6 +280,13 @@ class Personaje(MiSprite):
             return self.velocidadCarrera
 
 
+class Tarta(Personaje):
+    """Objeto de vida"""
+    def __init__(self):
+        Personaje.__init__(self, 'PiePumpkin.png', 'coordTarta.txt', [1, 0, 0, 0, 0, 0], VELOCIDAD_JUGADOR, VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+
+
+
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):
@@ -286,9 +295,10 @@ class Jugador(Personaje):
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5, 4], VELOCIDAD_JUGADOR,
-                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR)
-        
-        self.vida = VIDA_TOTAL
+                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+
+        self.hitbox_croissant = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
+        self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
         self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
@@ -327,14 +337,8 @@ class Jugador(Personaje):
         self.cooldownBaguette = 70
         
         # TODO -> colision 
-        
-        # Rectangulo colision de ataque
-        #rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
-        """
-        if (colisiona):
-            hit = mixer.Sound("music/punch.mp3")
-            hit.play()
-        """
+
+        # Activa la hitbox de alguna forma
     
     def disparar(self):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
@@ -344,21 +348,15 @@ class Jugador(Personaje):
         
         # TODO -> colision 
         
-        # Rectangulo colision de ataque
-        #rect_ataque = pygame.Rect(self.rect.centerx, self.rect.y, 1.5 * self.rect.width, self.rect.height)
-        """
-        if (colisiona):
-            hit = mixer.Sound("music/punch.mp3")
-            hit.play()
-        """
+        # Activa la hitbox
 
 
 class NoJugador(Personaje):
     "El resto de personajes no jugadores"
 
-    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion):
-        # Primero invocamos al constructor de la clase padre con los parametros pasados
-        Personaje.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion)
+    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida):
+
+        Personaje.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida)
 
     def mover_cpu(self, jugador):
         if jugador.posicion[0] < self.posicion[0]:
@@ -368,37 +366,11 @@ class NoJugador(Personaje):
 
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------
-# Clase para enemigo concreto
-
-"""class Sniper(NoJugador):
-    "El enemigo 'Sniper'"
-
-    def __init__(self):
-        # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
-        NoJugador.__init__(self, 'Sniper.png', 'coordSniper.txt', [5, 10, 6], VELOCIDAD_ENEMIGOS, VELOCIDAD_SALTO_ENEMIGOS,
-                           RETARDO_ANIMACION_ENEMIGOS);
-
-    # Aqui vendria la implementacion de la IA segun las posiciones de los jugadores
-    # La implementacion de la inteligencia segun este personaje particular
-    def mover_cpu(self, jugador1):
-
-        # Movemos solo a los enemigos que esten en la pantalla
-        if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
-
-            if jugador1.posicion[0] < self.posicion[0]:
-                Personaje.mover(self, IZQUIERDA)
-            else:
-                Personaje.mover(self, DERECHA)
-
-        # Si este personaje no esta en pantalla, no hara nada
-        else:
-            Personaje.mover(self, QUIETO)"""""
-
 
 class Tomate(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
 
     def mover_cpu(self, jugador):
 
@@ -409,8 +381,8 @@ class Tomate(NoJugador):
                 #Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
-                #Personaje.mover(self, DERECHA)
-                self.mirando = IZQUIERDA
+                Personaje.mover(self, DERECHA)
+                #self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
         else:
@@ -420,29 +392,28 @@ class Tomate(NoJugador):
 class Zanahoria(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6,2,7,0,0,0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS)
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
 
     def mover_cpu(self, jugador):
 
-        # Movemos solo a los enemigos que esten en la pantalla
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
                 #Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
-                #Personaje.mover(self, DERECHA)
-                self.mirando = IZQUIERDA
+                Personaje.mover(self, DERECHA)
+                #self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
         else:
             Personaje.mover(self, QUIETO)
 
 
-class Madre(NoJugador):
-    def __init__(self):
-        NoJugador.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
+class NPC(NoJugador):
+    def __init__(self, sheet, coord, array_coord):
+        NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_ENEMIGOS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC)
 
     def mover_cpu(self, jugador):
         if jugador.posicion[0] < self.posicion[0]:
@@ -451,8 +422,31 @@ class Madre(NoJugador):
             self.mirando = DERECHA
 
 
-# ----------------------------------------- Proyectiles -------------------------------------------------------
+class Madre(NPC):
+    def __init__(self):
+        NPC.__init__(self,'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0])
 
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+class AldeanoFalda(NPC):
+    def __init__(self):
+        NPC.__init__(self,'AldeanoFalda-sheet.png', 'coordFalda.txt', [7, 0, 0, 0, 0, 0])
+
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+class AldeanoSombrero(NPC):
+    def __init__(self):
+        NPC.__init__(self,'AldeanoSombrero-sheet.png', 'coordSombrero.txt', [4, 0, 0, 0, 0, 0])
+
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+# ----------------------------------------- Proyectiles y Hitbox -------------------------------------------------------
 class Proyectil(MiSprite):
     "Croissants"
 
@@ -573,5 +567,8 @@ class Croissant(Proyectil):
             return self.velocidadCarrera
 
 
+class Hitbox(MiSprite):
+    def __init__(self, rectangulo):
 
-    
+        MiSprite.__init__(self)
+        self.rect = Rect(rectangulo)
