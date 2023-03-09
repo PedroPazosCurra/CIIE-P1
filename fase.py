@@ -40,7 +40,7 @@ class Fase(Escena):
         self.scrollx = 0
 
         # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-        self.jugador.vida = Vida(self.jugador)
+        self.jugador.vida = Vida(self.jugador, 5)
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
@@ -352,10 +352,11 @@ class Suelo:
 
 # --------------------------------------------------Vida----------------------------------------------------------------
 class Vida:
-    def __init__(self, personaje):
-        self.vida_actual = personaje.vida
+    def __init__(self, personaje, vida_max):
+        self.vida_actual = vida_max
         self.imagen = []
-        for i in range(5):
+        self.vida_max = vida_max
+        for i in range(vida_max):
             auxImg = GestorRecursos.CargarImagen('vidas' + str(i + 1) + '.png', -1)
             auxImg = pygame.transform.scale(auxImg, (200, 50))
             self.imagen.append(auxImg)
@@ -364,7 +365,8 @@ class Vida:
         self.cooldownDano = 0
 
     def curar(self):
-        self.vida_actual += 1
+        if self.vida_actual < self.vida_max:
+            self.vida_actual += 1
 
     def quitar_vida(self):
 
