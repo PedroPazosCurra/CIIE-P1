@@ -87,13 +87,15 @@ class GestorRecursos(object):
             fullname = os.path.join('imagenes', nombre)
             
             try:
+                pfile = None
                 pfile = open(fullname, 'r')
                 datos = pfile.read()
             except pygame.error as message:
                 print('Cannot load coordinates file:', fullname)
                 raise SystemExit(message)
-            finally:    
-                pfile.close()
+            finally:
+                if pfile != None:
+                    pfile.close()
             
             # Se almacena
             cls.recursos[nombre] = datos
@@ -112,14 +114,16 @@ class GestorRecursos(object):
             # Se carga el recurso indicando el nombre de su carpeta
             fullname = os.path.join('fases', nombre+'.json')
             
-            try: 
+            try:
+                f = None
                 f = open(fullname, 'r')
                 datos = json.load(f)
             except pygame.error as message:
                 print('Cannot load JSON file:', fullname)
                 raise SystemExit(message)
             finally:
-                f.close()
+                if f != None:
+                    f.close()
             
             cls.recursos[nombre] = datos
             return datos  
