@@ -2,7 +2,7 @@
 
 import pygame
 import personajes
-from personajes import Jugador, MiSprite, Tarta
+from personajes import Jugador, MiSprite, Tarta, VIDA_JUGADOR
 from pygame.locals import *
 from muerte import Muerte
 from escena import *
@@ -40,7 +40,7 @@ class Fase(Escena):
         self.scrollx = 0
 
         # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-        self.jugador.vida = Vida(self.jugador, 5)
+        self.jugador.vida = Vida(self.jugador, VIDA_JUGADOR)
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
