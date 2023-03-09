@@ -65,6 +65,7 @@ class GestorRecursos(object):
             
             try:
                 sonido = mixer.Sound(fullname)
+
             except pygame.error as message:
                 print('Cannot load sound file:', fullname)
                 raise SystemExit(message)

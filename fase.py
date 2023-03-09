@@ -14,11 +14,7 @@ VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 class Fase(Escena):
     def __init__(self, director, nombre_fase):
 
-        # TODO: Tenemos que abstraer esta clase para hacer todo con JSON y no depender de lo puesto aquí
-
-        # Primero invocamos al constructor de la clase padre
         Escena.__init__(self, director)
-
         self.director = director
 
         self.nombre_fase = nombre_fase
@@ -43,15 +39,19 @@ class Fase(Escena):
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
 
-        self.vida = Vida(self.jugador)
+        # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
+        self.jugador.vida = Vida(self.jugador)
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
         self.grupoPlataformas = pygame.sprite.Group()
         self.crearPlataformas()
 
-        self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, 500))
-        self.trigger_der = Trigger(pygame.Rect(800, 550, -100, 500))
+        # Triggers para cambiar de escena parametrizados
+        ancho = self.datos["SIZE"][0]
+        alto = self.datos["SIZE"][1]
+        self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, alto), self.datos["TRIGGER_IZQ_ESCENA"])
+        self.trigger_der = Trigger(pygame.Rect(ancho - 400, 550, -100, alto), self.datos["TRIGGER_DER_ESCENA"])
 
         # Y los enemigos que tendran en este decorado
         self.grupoEnemigos = pygame.sprite.Group()
@@ -130,34 +130,54 @@ class Fase(Escena):
         # Actualizamos los Sprites dinamicos
         self.grupoSpritesDinamicos.update(self.grupoPlataformas, tiempo)
 
-        # Dentro del update ya se comprueba que todos los movimientos son válidos
-        #  (que no choque con paredes, etc.)
-
-        # Los Sprites que no se mueven no hace falta actualizarlos,
-        #  si se actualiza el scroll, sus posiciones en pantalla se actualizan más abajo
-        # En cambio, sí haría falta actualizar los Sprites que no se mueven pero que tienen que
-        #  mostrar alguna animación
-
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
-            if self.vida.cooldownDano <= 0:
-                if self.vida.quitar_vida() == 1:
+            if self.jugador.vida.cooldownDano <= 0:
+                if self.jugador.vida.quitar_vida() == 1:
+                    self.musica.stop()
                     self.director.cambiarEscena(Muerte(self.director))
 
         # Cooldown tras recibir daño
-        if self.vida.cooldownDano > 0:
-            self.vida.cooldownDano -= 1
+        if self.jugador.vida.cooldownDano > 0:
+            self.jugador.vida.cooldownDano -= 1
+
+
+        # Colision con hitbox de baguette
+        if (pygame.sprite.spritecollide(self.jugador, self.grupoEnemigos, False, False) != {}) and (self.jugador.atacando is True):
+
+            hit = GestorRecursos.CargarSonido("punch.mp3")
+            hit.play()
+
+            # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
+            # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]
+            # (...)
+            # if (bicho.vida >= 1) bicho.vida.quitar_vida()
+            # else                 bicho.matar()
+
+
+        # TODO: Colision con croissant seguramente sea un pelin diferente por el tema de ser muchos
+        # Colision con hitbox de croissant
+        #if pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False) != {}:
+
+            #hit = GestorRecursos.CargarSonido("punch.mp3")
+            #hit.play()
+
+            # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
+            # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]
+            # (...)
+            # if (bicho.vida >= 1) bicho.vida.quitar_vida()
+            # else                 bicho.matar()
+
 
         # Colision entre jugador y triggers -> cambia fase
-
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.nombre_fase)
+            fase = Fase(self.director, self.trigger_izq.escena)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.nombre_fase)
+            fase = Fase(self.director, self.trigger_der.escena)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll
@@ -175,7 +195,7 @@ class Fase(Escena):
         # Después el decorado
         self.decorado.dibujar(pantalla)
         self.suelo.dibujar(pantalla)
-        self.vida.dibujar(pantalla)
+        self.jugador.vida.dibujar(pantalla)
 
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
@@ -209,11 +229,12 @@ class Plataforma(MiSprite):
 
 # ------------------------------------------------Trigger--------------------------------------------------------------
 class Trigger(MiSprite):
-    def __init__(self, rectangulo):
+    def __init__(self, rectangulo, escena):
         MiSprite.__init__(self)
         self.rect = rectangulo
         self.establecerPosicion((self.rect.left, self.rect.bottom))
         self.image = pygame.Surface((0, 0))
+        self.escena = escena
 
 
 # ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------
@@ -312,8 +333,8 @@ class Suelo:
 
 # --------------------------------------------------Vida----------------------------------------------------------------
 class Vida:
-    def __init__(self, jugador):
-        self.vida_actual = jugador.vida
+    def __init__(self, personaje):
+        self.vida_actual = personaje.vida
         self.imagen = []
         for i in range(5):
             auxImg = GestorRecursos.CargarImagen('vidas' + str(i + 1) + '.png', -1)
@@ -329,6 +350,7 @@ class Vida:
 
         if self.vida_actual > 1:
             self.vida_actual -= 1
+
         else:
             print("Muere")
             return 1
@@ -344,3 +366,7 @@ class Musica:
     
     def play(self):
         pygame.mixer.music.play(-1)
+
+    def stop(self):
+        pygame.mixer.music.stop()
+

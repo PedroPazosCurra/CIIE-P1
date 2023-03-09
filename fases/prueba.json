@@ -1,0 +1,21 @@
+{
+	"NOMBRE": "Prueba",
+
+	"POS_INICIAL_PERSONAJE": [400,550],
+	"SIZE": [1200,400],
+	"SUELO": "pueblo_suelo.png",
+	"DECORADO": "Cielo_fondo1.png",
+	"FONDO": "Cielo_fondo2.png",
+	"CIELO": "Sky.png",
+
+	"TRIGGER_IZQ_ESCENA": "Prueba",
+	"TRIGGER_DER_ESCENA": "Pueblo",
+	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PARED": [],
+	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
+		 {"CLASE":"Tomate", "POS": [450,550]},
+		 {"CLASE":"Zanahoria", "POS": [550,550]}
+		],
+	"NPCS": [{"CLASE":"Madre", "POS": [600,550]}],
+	"MUSICA": "retro_forest.mp3"
+}

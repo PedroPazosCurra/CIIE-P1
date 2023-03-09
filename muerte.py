@@ -180,8 +180,7 @@ class Muerte(Escena):
         self.director.salirPrograma()
 
     def ejecutarJuego(self):
-        fase = Fase(self.director, 'pueblo')
-        self.director.apilarEscena(fase)
+        self.director.salirEscena()
 
     def mostrarPantallaInicial(self):
         self.pantallaActual = 0
