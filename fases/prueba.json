@@ -17,5 +17,9 @@
 		 {"CLASE":"Zanahoria", "POS": [550,550]}
 		],
 	"NPCS": [{"CLASE":"Madre", "POS": [600,550]}],
+
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
+				{"CLASE":"Tarta", "POS": [350,550]}],
+
 	"MUSICA": "retro_forest.mp3"
 }

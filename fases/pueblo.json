@@ -16,6 +16,12 @@
 		     {"CLASE":"Tomate", "POS": [450,550]},
 		     {"CLASE":"Zanahoria", "POS": [550,550]}
 		    ],
-	"NPCS": [{"CLASE":"Madre", "POS": [600,550]}],
+	"NPCS": [{"CLASE":"Madre", "POS": [600,550]},
+			{"CLASE":"AldeanoFalda", "POS": [650,550]},
+			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
+
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
+				{"CLASE":"Tarta", "POS": [350,550]}],
+
 	"MUSICA": "pueblo.wav"
 }

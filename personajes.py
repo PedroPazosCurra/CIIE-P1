@@ -279,6 +279,13 @@ class Personaje(MiSprite):
             return self.velocidadCarrera
 
 
+class Tarta(Personaje):
+    """Objeto de vida"""
+    def __init__(self):
+        Personaje.__init__(self, 'PiePumpkin.png', 'coordTarta.txt', [1, 0, 0, 0, 0, 0], VELOCIDAD_JUGADOR, VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+
+
+
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):
@@ -318,8 +325,6 @@ class Jugador(Personaje):
         # Reduccion en el cooldown desde el ultimo ataque        
         if self.cooldownBaguette > 0:
             self.cooldownBaguette -= 1
-            if self.cooldownBaguette < 30:
-                self.atacando = False
         
         if self.cooldownCroissant > 0:
             self.cooldownCroissant -= 1
@@ -404,9 +409,9 @@ class Zanahoria(NoJugador):
             Personaje.mover(self, QUIETO)
 
 
-class Madre(NoJugador):
-    def __init__(self):
-        NoJugador.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0], VELOCIDAD_ENEMIGOS,
+class NPC(NoJugador):
+    def __init__(self, sheet, coord, array_coord):
+        NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_ENEMIGOS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC)
 
     def mover_cpu(self, jugador):
@@ -416,8 +421,31 @@ class Madre(NoJugador):
             self.mirando = DERECHA
 
 
-# ----------------------------------------- Proyectiles y Hitbox -------------------------------------------------------
+class Madre(NPC):
+    def __init__(self):
+        NPC.__init__(self,'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0])
 
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+class AldeanoFalda(NPC):
+    def __init__(self):
+        NPC.__init__(self,'AldeanoFalda-sheet.png', 'coordFalda.txt', [7, 0, 0, 0, 0, 0])
+
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+class AldeanoSombrero(NPC):
+    def __init__(self):
+        NPC.__init__(self,'AldeanoSombrero-sheet.png', 'coordSombrero.txt', [4, 0, 0, 0, 0, 0])
+
+    def mover_cpu(self, jugador):
+        NPC.mover_cpu(self, jugador)
+
+
+# ----------------------------------------- Proyectiles y Hitbox -------------------------------------------------------
 class Proyectil(MiSprite):
     "Croissants"
 
