@@ -16,6 +16,7 @@ ARRIBA = 3
 ABAJO = 4
 ATACAR_BAGUETTE = 5
 DISPARO = 6
+DISPARO_CERTERO = 7
 
 # Posturas
 SPRITE_QUIETO = 0
@@ -504,12 +505,56 @@ class Proyectil(MiSprite):
         self.retardoAnimacion = retardoAnimacion
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
-        self.actualizarPostura()
+        self.actualizarRotacion()
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):	
             self.movimiento = movimiento
-            
+
+    def update(self, grupoPlataformas, tiempo):
+
+        # Las velocidades a las que iba hasta este momento
+        (velocidadx, velocidady) = self.velocidad
+
+        # Si vamos a la izquierda o a la derecha
+        if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
+            velocidadx = self.desplHorizontal(self.movimiento)
+
+        if pygame.sprite.spritecollideany(self, grupoPlataformas) is not None:
+            self.kill()
+
+        # Actualizamos la imagen a mostrar
+        self.actualizarRotacion()
+
+        # Aplicamos la velocidad en cada eje
+        self.velocidad = (velocidadx, velocidady)
+
+        # Y llamamos al método de la superclase para que, según la velocidad y el tiempo
+        #  calcule la nueva posición del Sprite
+        MiSprite.update(self, tiempo)            
+
+    def desplHorizontal(self, movimiento):
+        self.mirando = movimiento
+
+        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+        if self.movimiento == IZQUIERDA:
+            return -self.velocidadCarrera
+        # Si vamos a la derecha, le ponemos velocidad en esa dirección
+        else:
+            return self.velocidadCarrera
+
+class Croissant(Proyectil):
+    def __init__(self):
+        NoJugador.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1], VELOCIDAD_ENEMIGOS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
+
+    def mover_cpu(self, jugador):
+        if jugador.mirando == DERECHA:
+            self.mirando = DERECHA
+        else:
+            self.mirando = IZQUIERDA
+
+        #if pygame.sprite.spritecollideany()
 
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento
