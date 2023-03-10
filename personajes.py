@@ -280,6 +280,14 @@ class Personaje(MiSprite):
             return self.velocidadCarrera
 
 
+    def quitar_vida(self):
+        if self.vida > 1:
+            self.vida -= 1
+            return False
+        else:
+            print("Muere")
+            return True
+
 class Tarta(Personaje):
     """Objeto de vida"""
     def __init__(self):

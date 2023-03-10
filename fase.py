@@ -2,7 +2,7 @@
 
 import pygame
 import personajes
-from personajes import Jugador, MiSprite, Tarta, VIDA_JUGADOR
+from personajes import Jugador, MiSprite, VIDA_JUGADOR
 from pygame.locals import *
 from muerte import Muerte
 from escena import *
@@ -149,7 +149,7 @@ class Fase(Escena):
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
             if self.jugador.vida.cooldownDano <= 0:
-                if self.jugador.vida.quitar_vida() == 1:
+                if self.jugador.vida.quitar_vida():
                     self.musica.stop()
                     self.director.cambiarEscena(Muerte(self.director))
 
@@ -162,30 +162,33 @@ class Fase(Escena):
             self.jugador.vida.curar()
 
         # Colision con hitbox de baguette
-        if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and (self.jugador.atacando is True):
+        if (self.jugador.atacando):
 
-            hit = GestorRecursos.CargarSonido("punch.mp3")
-            hit.play()
 
-            # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
+            if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False) != []):
+
+                hit = GestorRecursos.CargarSonido("punch.mp3")
+                hit.play()
+
+                # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
         # if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and (self.jugador.atacando is True):
-            # (...)
-            # if (bicho.vida >= 1) bicho.vida.quitar_vida()
-            # else                 bicho.matar()
+        # (...)
+        # if (bicho.vida >= 1) bicho.vida.quitar_vida()
+        # else                 bicho.matar()
 
 
         # TODO: Colision con croissant seguramente sea un pelin diferente por el tema de ser muchos
         # Colision con hitbox de croissant
         #if pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False) != {}:
 
-            #hit = GestorRecursos.CargarSonido("punch.mp3")
-            #hit.play()
+        #hit = GestorRecursos.CargarSonido("punch.mp3")
+        #hit.play()
 
-            # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
-            # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]
-            # (...)
-            # if (bicho.vida >= 1) bicho.vida.quitar_vida()
-            # else                 bicho.matar()
+        # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
+        # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]
+        # (...)
+        # if (bicho.vida >= 1) bicho.vida.quitar_vida()
+        # else                 bicho.matar()
 
 
         # Colision entre jugador y triggers -> cambia fase
@@ -387,10 +390,10 @@ class Vida:
 
         if self.vida_actual > 1:
             self.vida_actual -= 1
-
+            return False
         else:
             print("Muere")
-            return 1
+            return True
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
