@@ -218,6 +218,11 @@ class Fase(Escena):
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
 
+        for sprite in self.grupoSprites.sprites():
+            pygame.draw.rect(pantalla, (255,255,255), sprite.rect, 2)
+
+        pygame.draw.rect(pantalla, (255, 255, 255), self.jugador.hitbox_baguette.rect, 2)
+
     def eventos(self, lista_eventos):
         # Miramos a ver si hay algun evento de salir del programa
         for evento in lista_eventos:

@@ -85,9 +85,9 @@ class GestorRecursos(object):
         else:
             # Se carga el recurso indicando el nombre de su carpeta
             fullname = os.path.join('imagenes', nombre)
-            
+
+            pfile = None
             try:
-                pfile = None
                 pfile = open(fullname, 'r')
                 datos = pfile.read()
             except pygame.error as message:
@@ -113,9 +113,9 @@ class GestorRecursos(object):
         else:
             # Se carga el recurso indicando el nombre de su carpeta
             fullname = os.path.join('fases', nombre+'.json')
-            
+
+            f = None
             try:
-                f = None
                 f = open(fullname, 'r')
                 datos = json.load(f)
             except pygame.error as message:
