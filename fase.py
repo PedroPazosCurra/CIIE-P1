@@ -164,11 +164,15 @@ class Fase(Escena):
         # Colision con hitbox de baguette
         if (self.jugador.atacando):
 
-
-            if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False) != []):
+            enemigos_hit_list = pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False)
+            if (enemigos_hit_list != []):
 
                 hit = GestorRecursos.CargarSonido("punch.mp3")
-                hit.play()
+
+                for enemigo in enemigos_hit_list:
+                    hit.play()
+                    if enemigo.quitar_vida():
+                        enemigo.kill()
 
                 # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
         # if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and (self.jugador.atacando is True):
