@@ -351,6 +351,21 @@ class Jugador(Personaje):
         # Activa la hitbox
 
 
+    # Redefinición de operaciones de posición para que la hitbox se mueva con el jugador.
+    def establecerPosicion(self, posicion):
+        MiSprite.establecerPosicion(self, posicion)
+        posx_media = posicion[0] + self.rect.width/2
+
+        if self.mirando == IZQUIERDA:
+            self.hitbox_baguette.establecerPosicion((posx_media - self.hitbox_baguette.rect.width, posicion[1]))
+        else:
+            self.hitbox_baguette.establecerPosicion((posx_media, posicion[1]))
+
+    def establecerPosicionPantalla(self, scrollDecorado):
+        MiSprite.establecerPosicionPantalla(self, scrollDecorado)
+        self.hitbox_baguette.establecerPosicionPantalla(scrollDecorado)
+
+
 class NoJugador(Personaje):
     "El resto de personajes no jugadores"
 
