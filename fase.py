@@ -2,7 +2,7 @@
 
 import pygame
 import personajes
-from personajes import Jugador, MiSprite, VIDA_JUGADOR
+from personajes import Jugador, MiSprite
 from pygame.locals import *
 from muerte import Muerte
 from escena import *
@@ -30,18 +30,21 @@ class Fase(Escena):
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
-        # Creamos los sprites de los jugadores
+        # Creamos los sprites de los jugadores y el display de su vida
+
         self.jugador = Jugador()
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
-        # Ponemos a los jugadores en sus posiciones iniciales
+        # Ponemos a los jugadores en sus posiciones iniciales y le añadimos el display de vida
         self.jugador.establecerPosicion((self.datos["POS_INICIAL_PERSONAJE"]))
+        self.vida_display = VidaDisplay(self.jugador.max_vida)
+        self.jugador.establecerVidaDisplay(self.vida_display)
 
         # Que parte del decorado estamos visualizando
         self.scrollx = 0
 
         # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-        self.jugador.vida = Vida(self.jugador, VIDA_JUGADOR)
+
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
@@ -148,18 +151,13 @@ class Fase(Escena):
 
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
-            if self.jugador.vida.cooldownDano <= 0:
-                if self.jugador.vida.quitar_vida():
-                    self.musica.stop()
-                    self.director.cambiarEscena(Muerte(self.director))
+            if self.jugador.quitar_vida() and self.jugador.muerto():
+                self.musica.stop()
+                self.director.cambiarEscena(Muerte(self.director))
 
-        # Cooldown tras recibir daño
-        if self.jugador.vida.cooldownDano > 0:
-            self.jugador.vida.cooldownDano -= 1
 
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
-
-            self.jugador.vida.curar()
+            self.jugador.curar()
 
         # Colision con hitbox de baguette
         if (self.jugador.atacando):
@@ -230,7 +228,7 @@ class Fase(Escena):
         # Después el decorado
         self.decorado.dibujar(pantalla)
         self.suelo.dibujar(pantalla)
-        self.jugador.vida.dibujar(pantalla)
+        self.vida_display.dibujar(pantalla)
 
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
@@ -373,11 +371,11 @@ class Suelo:
 
 
 # --------------------------------------------------Vida----------------------------------------------------------------
-class Vida:
-    def __init__(self, personaje, vida_max):
-        self.vida_actual = vida_max
+class VidaDisplay:
+    def __init__(self, vida_max):
+        self.vida = vida_max
         self.imagen = []
-        self.vida_max = vida_max
+
         for i in range(vida_max):
             auxImg = GestorRecursos.CargarImagen('vidas' + str(i + 1) + '.png', -1)
             auxImg = pygame.transform.scale(auxImg, (200, 50))
@@ -386,23 +384,11 @@ class Vida:
         self.rect = self.imagen[0].get_rect()
         self.cooldownDano = 0
 
-    def curar(self):
-        if self.vida_actual < self.vida_max:
-            self.vida_actual += 1
-
-    def quitar_vida(self):
-
-        self.cooldownDano = 80
-
-        if self.vida_actual > 1:
-            self.vida_actual -= 1
-            return False
-        else:
-            print("Muere")
-            return True
+    def notificar(self, nueva_vida):
+        self.vida = nueva_vida
 
     def dibujar(self, pantalla):
-        pantalla.blit(self.imagen[self.vida_actual - 1], self.rect)
+        pantalla.blit(self.imagen[self.vida - 1], self.rect)
 
 
 # --------------------------------------------------Musica----------------------------------------------------------------

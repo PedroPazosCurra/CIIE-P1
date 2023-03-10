@@ -323,6 +323,8 @@ class Jugador(Personaje):
         self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
+        self.max_vida = self.vida # Jugador puede recuperar vida asi que ponemos un tope máximo
+        self.vida_display = None
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
@@ -371,6 +373,27 @@ class Jugador(Personaje):
         
         # Activa la hitbox
 
+    # Notificar cambio en el valor de vida al display
+    def notificarVidaDisplay(self):
+        self.vida_display.notificar(self.vida)
+
+    def establecerVidaDisplay(self, vida_display):
+        self.vida_display = vida_display  # Elemento que muestra la información de vida
+        self.notificarVidaDisplay()  # Le pasamos la información de vida inicial
+
+    def quitar_vida(self):
+        vida_quitada = Personaje.quitar_vida(self)
+        if vida_quitada and self.vida_display != None:
+            self.notificarVidaDisplay()
+
+        return vida_quitada
+
+    def curar(self):
+        if self.vida < self.max_vida:
+            self.vida += 1
+
+            if self.vida_display != None:
+                self.notificarVidaDisplay()
 
     # Redefinición de operaciones de posición para que la hitbox se mueva con el jugador.
     def establecerPosicion(self, posicion):
