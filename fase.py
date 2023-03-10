@@ -10,6 +10,7 @@ from gestorRecursos import GestorRecursos
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
+DIBUJAR_RECTS = False # Flag para marcar si se dibujan o no rects
 
 class Fase(Escena):
     def __init__(self, director, nombre_fase):
@@ -204,6 +205,13 @@ class Fase(Escena):
         # Actualizamos el cielo:
         self.cielo.update(tiempo)
 
+    # Dibuja los rectangulos: Útil mientras que aún estemos ajustando las colisiones
+    def dibujar_rects(self, pantalla):
+        for sprite in self.grupoSprites.sprites():
+            pygame.draw.rect(pantalla, (255, 255, 255), sprite.rect, 2)
+
+        pygame.draw.rect(pantalla, (255, 0, 0), self.jugador.hitbox_baguette.rect, 2)
+
     def dibujar(self, pantalla):
 
         # Ponemos primero el fondo
@@ -218,10 +226,10 @@ class Fase(Escena):
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
 
-        for sprite in self.grupoSprites.sprites():
-            pygame.draw.rect(pantalla, (255,255,255), sprite.rect, 2)
+        if  DIBUJAR_RECTS:
+            self.dibujar_rects(pantalla)
 
-        pygame.draw.rect(pantalla, (255, 0, 0), self.jugador.hitbox_baguette.rect, 2)
+
 
     def eventos(self, lista_eventos):
         # Miramos a ver si hay algun evento de salir del programa
