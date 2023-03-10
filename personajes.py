@@ -7,6 +7,7 @@ VIDA_JUGADOR = 5
 VIDA_ZANAHORIA = 3
 VIDA_TOMATE = 1
 VIDA_NPC = 999
+INVENCIBILITY_FRAMES = 80
 
 # Movimientos
 QUIETO = 0
@@ -134,6 +135,9 @@ class Personaje(MiSprite):
         # El retardo en la animacion del personaje (podria y deberia ser distinto para cada postura)
         self.retardoAnimacion = retardoAnimacion
 
+        # Cooldown de daño (frames de invencibilidad)
+        self.cooldownDano = 0
+
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
         self.actualizarPostura()
 
@@ -189,6 +193,10 @@ class Personaje(MiSprite):
         self.prevPostura = self.numPostura
 
     def update(self, grupoPlataformas, tiempo):
+
+        # Comprobamos si el coolDown para ser golpeado debe descontarse
+        if self.cooldownDano > 0:
+            self.cooldownDano -= 1
 
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
@@ -279,14 +287,19 @@ class Personaje(MiSprite):
         else:
             return self.velocidadCarrera
 
-
+    # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
-        if self.vida > 1:
+        if self.cooldownDano <= 0:
+            self.cooldownDano = INVENCIBILITY_FRAMES
             self.vida -= 1
-            return False
-        else:
-            print("Muere")
             return True
+        else:
+            return False
+
+    def muerto(self):
+        return self.vida < 1
+
+
 
 class Tarta(Personaje):
     """Objeto de vida"""

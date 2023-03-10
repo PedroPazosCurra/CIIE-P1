@@ -168,10 +168,12 @@ class Fase(Escena):
             if (enemigos_hit_list != []):
 
                 hit = GestorRecursos.CargarSonido("punch.mp3")
-
                 for enemigo in enemigos_hit_list:
-                    hit.play()
+
                     if enemigo.quitar_vida():
+                        hit.play()
+
+                    if enemigo.muerto():
                         enemigo.kill()
 
                 # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
