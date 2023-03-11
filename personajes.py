@@ -604,7 +604,7 @@ class Proyectil(MiSprite):
 
 class Croissant(Proyectil):
     def __init__(self):
-        NoJugador.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1], VELOCIDAD_ENEMIGOS,
+        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1], VELOCIDAD_ENEMIGOS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
 
     def mover_cpu(self, jugador):
