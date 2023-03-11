@@ -15,7 +15,7 @@ def main():
     director = Director()
 
     # Creamos escena de pantalla inicial
-    #fase = Fase(director)
+    # fase = Fase(director)
     escena = Menu(director)
 
     # Director, apila esa escena inicial

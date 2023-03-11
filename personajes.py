@@ -45,7 +45,7 @@ GRAVEDAD = 0.00055  # Píxeles / ms2
 
 
 class MiSprite(pygame.sprite.Sprite):
-    "Los Sprites que tendra este juego"
+    """Los Sprites que tendra este juego"""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -77,7 +77,7 @@ class MiSprite(pygame.sprite.Sprite):
 
 
 class Personaje(MiSprite):
-    "Cualquier personaje del juego"
+    """Cualquier personaje del juego"""
 
     # Parametros pasados al constructor de esta clase:
     #  Archivo con la hoja de Sprites
@@ -143,18 +143,18 @@ class Personaje(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):	
-            if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE or movimiento == DISPARO:
-                # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
-                if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
-                    self.movimiento = QUIETO
-                    self.atacando = False
-                else:
-                    self.movimiento = movimiento
-            elif self.movimiento == ARRIBA and movimiento != QUIETO:
-                self.movimiento_extra = movimiento
+        if movimiento == ARRIBA or movimiento == ATACAR_BAGUETTE or movimiento == DISPARO:
+            # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
+            if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
+                self.movimiento = QUIETO
+                self.atacando = False
             else:
                 self.movimiento = movimiento
-                self.movimiento_extra = None
+        elif self.movimiento == ARRIBA and movimiento != QUIETO:
+            self.movimiento_extra = movimiento
+        else:
+            self.movimiento = movimiento
+            self.movimiento_extra = None
 
     def actualizarPostura(self):
         cambiarImagen = False
@@ -178,14 +178,14 @@ class Personaje(MiSprite):
         
         # Modificar la imagen a mostrar si el contador de retardo ha llegado a 0 o si se ha cambiado la postura
         if cambiarImagen:
-            self.retardoMovimiento = self.retardoAnimacion # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
-			
+            self.retardoMovimiento = self.retardoAnimacion  # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
+
             # Si esta mirando a la izquiera, cogemos la porcion de la hoja
             if self.mirando == DERECHA:
                 self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
             #  Si no, si mira a la derecha, invertimos esa imagen
             elif self.mirando == IZQUIERDA:
-                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), 1, 0)
+                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), True, False)
         
             # Actualizamos el tamaño del rect para que coincida con la imagen actual
             self.rect.size = (self.coordenadasHoja[self.numPostura][self.numImagenPostura][2], self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
@@ -215,9 +215,9 @@ class Personaje(MiSprite):
 
         # Si queremos saltar
         elif self.movimiento == ARRIBA:
-			
+
             if (self.movimiento_extra == IZQUIERDA) or (self.movimiento_extra == DERECHA):
-                 velocidadx = self.desplHorizontal(self.movimiento_extra)
+                velocidadx = self.desplHorizontal(self.movimiento_extra)
             
             # La postura actual sera estar saltando
             self.numPostura = SPRITE_SALTANDO_UP
@@ -311,7 +311,7 @@ class Tarta(Personaje):
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
 class Jugador(Personaje):
-    "Cualquier personaje del juego"
+    """Cualquier personaje del juego"""
 
     def __init__(self):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
@@ -323,14 +323,14 @@ class Jugador(Personaje):
         self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
-        self.max_vida = self.vida # Jugador puede recuperar vida asi que ponemos un tope máximo
+        self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
         if not self.atacando:
             Personaje.mover(self, QUIETO)
-			
+
             if teclasPulsadas[arriba]:
                 Personaje.mover(self, ARRIBA)
             if teclasPulsadas[izquierda]:
@@ -383,7 +383,7 @@ class Jugador(Personaje):
 
     def quitar_vida(self):
         vida_quitada = Personaje.quitar_vida(self)
-        if vida_quitada and self.vida_display != None:
+        if vida_quitada and self.vida_display is not None:
             self.notificarVidaDisplay()
 
         return vida_quitada
@@ -392,7 +392,7 @@ class Jugador(Personaje):
         if self.vida < self.max_vida:
             self.vida += 1
 
-            if self.vida_display != None:
+            if self.vida_display is not None:
                 self.notificarVidaDisplay()
 
     # Redefinición de operaciones de posición para que la hitbox se mueva con el jugador.
@@ -411,7 +411,7 @@ class Jugador(Personaje):
 
 
 class NoJugador(Personaje):
-    "El resto de personajes no jugadores"
+    """El resto de personajes no jugadores"""
 
     def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida):
 
@@ -429,7 +429,7 @@ class NoJugador(Personaje):
 class Tomate(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_ENEMIGOS, VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
 
     def mover_cpu(self, jugador):
 
@@ -437,11 +437,11 @@ class Tomate(NoJugador):
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
-                #Personaje.mover(self, IZQUIERDA)
+                # Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
                 Personaje.mover(self, DERECHA)
-                #self.mirando = IZQUIERDA
+                # self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
         else:
@@ -451,18 +451,18 @@ class Tomate(NoJugador):
 class Zanahoria(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0],VELOCIDAD_ENEMIGOS,VELOCIDAD_SALTO_ENEMIGOS,RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ENEMIGOS, VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
 
     def mover_cpu(self, jugador):
 
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
-                #Personaje.mover(self, IZQUIERDA)
+                # Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
                 Personaje.mover(self, DERECHA)
-                #self.mirando = IZQUIERDA
+                # self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
         else:
@@ -483,7 +483,7 @@ class NPC(NoJugador):
 
 class Madre(NPC):
     def __init__(self):
-        NPC.__init__(self,'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0])
+        NPC.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0])
 
     def mover_cpu(self, jugador):
         NPC.mover_cpu(self, jugador)
@@ -491,7 +491,7 @@ class Madre(NPC):
 
 class AldeanoFalda(NPC):
     def __init__(self):
-        NPC.__init__(self,'AldeanoFalda-sheet.png', 'coordFalda.txt', [7, 0, 0, 0, 0, 0])
+        NPC.__init__(self, 'AldeanoFalda-sheet.png', 'coordFalda.txt', [7, 0, 0, 0, 0, 0])
 
     def mover_cpu(self, jugador):
         NPC.mover_cpu(self, jugador)
@@ -499,7 +499,7 @@ class AldeanoFalda(NPC):
 
 class AldeanoSombrero(NPC):
     def __init__(self):
-        NPC.__init__(self,'AldeanoSombrero-sheet.png', 'coordSombrero.txt', [4, 0, 0, 0, 0, 0])
+        NPC.__init__(self, 'AldeanoSombrero-sheet.png', 'coordSombrero.txt', [4, 0, 0, 0, 0, 0])
 
     def mover_cpu(self, jugador):
         NPC.mover_cpu(self, jugador)
@@ -507,7 +507,7 @@ class AldeanoSombrero(NPC):
 
 # ----------------------------------------- Proyectiles y Hitbox -------------------------------------------------------
 class Proyectil(MiSprite):
-    "Croissants"
+    """Croissants"""
 
     # Parametros pasados al constructor de esta clase:
     #  Archivo con la hoja de Sprites
@@ -567,8 +567,8 @@ class Proyectil(MiSprite):
         self.actualizarRotacion()
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
-    def mover(self, movimiento):	
-            self.movimiento = movimiento
+    def mover(self, movimiento):
+        self.movimiento = movimiento
 
     def update(self, grupoPlataformas, tiempo):
 
@@ -613,7 +613,7 @@ class Croissant(Proyectil):
         else:
             self.mirando = IZQUIERDA
 
-        #if pygame.sprite.spritecollideany()
+        # if pygame.sprite.spritecollideany()
 
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento

@@ -94,7 +94,7 @@ class GestorRecursos(object):
                 print('Cannot load coordinates file:', fullname)
                 raise SystemExit(message)
             finally:
-                if pfile != None:
+                if pfile is not None:
                     pfile.close()
             
             # Se almacena
@@ -103,7 +103,7 @@ class GestorRecursos(object):
             return datos
 
     @classmethod
-    def CargarArchivoFaseJSON(cls,nombre):
+    def CargarArchivoFaseJSON(cls, nombre):
         # Si el nombre de archivo está entre los recursos ya cargados
         if nombre in cls.recursos:
             # Se devuelve ese recurso
@@ -122,7 +122,7 @@ class GestorRecursos(object):
                 print('Cannot load JSON file:', fullname)
                 raise SystemExit(message)
             finally:
-                if f != None:
+                if f is not None:
                     f.close()
             
             cls.recursos[nombre] = datos

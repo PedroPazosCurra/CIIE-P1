@@ -10,7 +10,7 @@ from gestorRecursos import GestorRecursos
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
-DIBUJAR_RECTS = False # Flag para marcar si se dibujan o no rects
+DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
 class Fase(Escena):
     def __init__(self, director, nombre_fase):
@@ -160,10 +160,10 @@ class Fase(Escena):
             self.jugador.curar()
 
         # Colision con hitbox de baguette
-        if (self.jugador.atacando):
+        if self.jugador.atacando:
 
             enemigos_hit_list = pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False)
-            if (enemigos_hit_list != []):
+            if enemigos_hit_list:
 
                 hit = GestorRecursos.CargarSonido("punch.mp3")
                 for enemigo in enemigos_hit_list:
@@ -183,10 +183,10 @@ class Fase(Escena):
 
         # TODO: Colision con croissant seguramente sea un pelin diferente por el tema de ser muchos
         # Colision con hitbox de croissant
-        #if pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False) != {}:
+        # if pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False) != {}:
 
-        #hit = GestorRecursos.CargarSonido("punch.mp3")
-        #hit.play()
+        # hit = GestorRecursos.CargarSonido("punch.mp3")
+        # hit.play()
 
         # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
         # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]

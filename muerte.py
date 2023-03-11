@@ -22,13 +22,14 @@ class ElementoGUI:
 
     def posicionEnElemento(self, posicion):
         (posicionx, posiciony) = posicion
-        if (posicionx>=self.rect.left) and (posicionx<=self.rect.right) and (posiciony>=self.rect.top) and (posiciony<=self.rect.bottom):
+        if (posicionx >= self.rect.left) and (posicionx <= self.rect.right) and (posiciony >= self.rect.top) and (posiciony <= self.rect.bottom):
             return True
         else:
             return False
 
     def dibujar(self, pantalla):
         raise NotImplemented("Tiene que implementar el metodo dibujar.")
+
     def accion(self):
         raise NotImplemented("Tiene que implementar el metodo accion.")
 
@@ -52,12 +53,14 @@ class Boton(ElementoGUI):
 class BotonJugar(Boton):
     def __init__(self, pantalla):
         Boton.__init__(self, pantalla, 'boton_restart.png', (202, 733))
+
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
 class BotonSalir(Boton):
     def __init__(self, pantalla):
         Boton.__init__(self, pantalla, 'boton_restart.png', (392, 733))
+
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
@@ -72,6 +75,7 @@ class TextoGUI(ElementoGUI):
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
         # Se coloca el rectangulo en su posicion
         self.establecerPosicion(posicion)
+
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
 
@@ -80,6 +84,7 @@ class TextoJugar(TextoGUI):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 26)
         TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Reset', (302, 535))
+
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
@@ -88,6 +93,7 @@ class TextoSalir(TextoGUI):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 26)
         TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Salir', (500, 535))
+
     def accion(self):
         self.pantalla.menu.salirPrograma()
 
@@ -173,7 +179,7 @@ class Muerte(Escena):
     def dibujar(self, pantalla):
         self.listaPantallas[self.pantallaActual].dibujar(pantalla)
 
-    #--------------------------------------
+    # --------------------------------------
     # Metodos propios del menu
 
     def salirPrograma(self):

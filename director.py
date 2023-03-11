@@ -48,7 +48,7 @@ class Director:
     def ejecutar(self):
 
         # Mientras haya escenas en la pila, ejecutaremos la de arriba
-        while len(self.pila)>0:
+        while len(self.pila) > 0:
 
             # Se coge la escena a ejecutar como la que este en la cima de la pila
             escena = self.pila[len(self.pila)-1]
@@ -61,7 +61,7 @@ class Director:
         # Indicamos en el flag que se quiere salir de la escena
         self.salir_escena = True
         # Eliminamos la escena actual de la pila (si la hay)
-        if len(self.pila)>0:
+        if len(self.pila) > 0:
             self.pila.pop()
 
     def salirPrograma(self):
