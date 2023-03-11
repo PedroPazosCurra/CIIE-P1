@@ -207,11 +207,11 @@ class Personaje(MiSprite):
             
             # Si no estamos en el aire
             if self.numPostura != SPRITE_SALTANDO_UP:
-               # La postura actual sera estar caminando
-               self.numPostura = SPRITE_ANDANDO
-               # Ademas, si no estamos encima de ninguna plataforma, caeremos
-               if pygame.sprite.spritecollideany(self, grupoPlataformas) is None:
-                  self.numPostura = SPRITE_SALTANDO_UP
+                # La postura actual sera estar caminando
+                self.numPostura = SPRITE_ANDANDO
+                # Ademas, si no estamos encima de ninguna plataforma, caeremos
+                if pygame.sprite.spritecollideany(self, grupoPlataformas) is None:
+                    self.numPostura = SPRITE_SALTANDO_UP
 
         # Si queremos saltar
         elif self.movimiento == ARRIBA:
@@ -630,3 +630,4 @@ class Hitbox(MiSprite):
 
         MiSprite.__init__(self)
         self.rect = Rect(rectangulo)
+

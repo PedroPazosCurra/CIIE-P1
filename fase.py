@@ -233,7 +233,7 @@ class Fase(Escena):
         # Luego los Sprites
         self.grupoSprites.draw(pantalla)
 
-        if  DIBUJAR_RECTS:
+        if DIBUJAR_RECTS:
             self.dibujar_rects(pantalla)
 
 

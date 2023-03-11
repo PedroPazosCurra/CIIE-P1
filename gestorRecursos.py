@@ -127,3 +127,4 @@ class GestorRecursos(object):
             
             cls.recursos[nombre] = datos
             return datos  
+

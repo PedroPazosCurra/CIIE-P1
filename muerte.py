@@ -57,12 +57,14 @@ class BotonJugar(Boton):
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
+
 class BotonSalir(Boton):
     def __init__(self, pantalla):
         Boton.__init__(self, pantalla, 'boton_restart.png', (392, 733))
 
     def accion(self):
         self.pantalla.menu.salirPrograma()
+
 
 # -------------------------------------------------
 # Clase TextoGUI y los distintos textos
@@ -79,6 +81,7 @@ class TextoGUI(ElementoGUI):
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
 
+
 class TextoJugar(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
@@ -88,6 +91,7 @@ class TextoJugar(TextoGUI):
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
+
 class TextoSalir(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
@@ -96,6 +100,7 @@ class TextoSalir(TextoGUI):
 
     def accion(self):
         self.pantalla.menu.salirPrograma()
+
 
 # -------------------------------------------------
 # Clase PantallaGUI y las distintas pantallas
@@ -130,6 +135,7 @@ class PantallaGUI:
         for elemento in self.elementosGUI:
             elemento.dibujar(pantalla)
 
+
 class PantallaInicialGUI(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'pantalla_muerte.png')
@@ -144,6 +150,7 @@ class PantallaInicialGUI(PantallaGUI):
         textoSalir = TextoSalir(self)
         self.elementosGUI.append(textoJugar)
         self.elementosGUI.append(textoSalir)
+
 
 # -------------------------------------------------
 # Clase Menu, la escena en sí

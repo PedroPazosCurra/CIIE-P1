@@ -57,6 +57,7 @@ class BotonJugar(Boton):
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
+
 class BotonSalir(Boton):
     def __init__(self, pantalla):
         Boton.__init__(self, pantalla, 'boton_rojo.png', (392, 733))
@@ -77,6 +78,7 @@ class TextoGUI(ElementoGUI):
         ElementoGUI.__init__(self, pantalla, self.imagen.get_rect())
         # Se coloca el rectangulo en su posicion
         self.establecerPosicion(posicion)
+
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
 
@@ -89,6 +91,7 @@ class TextoJugar(TextoGUI):
     def accion(self):
         self.pantalla.menu.ejecutarJuego()
 
+
 class TextoSalir(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
@@ -97,6 +100,7 @@ class TextoSalir(TextoGUI):
 
     def accion(self):
         self.pantalla.menu.salirPrograma()
+
 
 class TextoTitulo(TextoGUI):
     def __init__(self, pantalla):
@@ -156,6 +160,7 @@ class PantallaInicialGUI(PantallaGUI):
         self.elementosGUI.append(textoJugar)
         self.elementosGUI.append(textoSalir)
         self.elementosGUI.append(textoTitulo)
+
 
 # -------------------------------------------------
 # Clase Menu, la escena en sí
