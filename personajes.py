@@ -237,7 +237,8 @@ class Personaje(MiSprite):
         # Si queremos disparar
         elif self.movimiento == DISPARO:
             self.numPostura = SPRITE_DISPARANDO
-            if self.numImagenPostura >= 3 and self.prevPostura == SPRITE_DISPARANDO:
+            if self.numImagenPostura >= 2 and self.prevPostura == SPRITE_DISPARANDO:
+                self.atacando = False
                 self.movimiento = QUIETO
 
         # Si no se ha pulsado ninguna tecla
@@ -330,23 +331,23 @@ class Jugador(Personaje):
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
-        if not self.atacando:
-            Personaje.mover(self, QUIETO)
 
-            if teclasPulsadas[arriba]:
+        if teclasPulsadas[izquierda]:
+            Personaje.mover(self, IZQUIERDA)
+        elif teclasPulsadas[derecha]:
+            Personaje.mover(self, DERECHA)
+        elif teclasPulsadas[arriba]:
                 Personaje.mover(self, ARRIBA)
-            if teclasPulsadas[izquierda]:
-                Personaje.mover(self, IZQUIERDA)
-            if teclasPulsadas[derecha]:
-                Personaje.mover(self, DERECHA)
-            if teclasPulsadas[ataque]:
-                if self.cooldownBaguette <= 0:
-                    self.atacar()
-                    Personaje.mover(self, ATACAR_BAGUETTE)
-            if teclasPulsadas[disparo]:
-                if self.cooldownCroissant <= 0:
-                    self.disparar()
-                    Personaje.mover(self, DISPARO)
+        elif teclasPulsadas[ataque]:
+            if self.cooldownBaguette <= 0:
+                self.atacar()
+                Personaje.mover(self, ATACAR_BAGUETTE)
+        elif teclasPulsadas[disparo]:
+            if self.cooldownCroissant <= 0:
+                self.disparar()
+                Personaje.mover(self, DISPARO)
+        elif self.atacando == False:
+            Personaje.mover(self, QUIETO)
 
         # Reduccion en el cooldown desde el ultimo ataque        
         if self.cooldownBaguette > 0:
@@ -360,6 +361,11 @@ class Jugador(Personaje):
         attack_sound.play()
         self.atacando = True
         self.cooldownBaguette = 70
+
+        if self.mirando == IZQUIERDA:
+            self.hitbox_baguette.establecerPosicion((self.hitbox_baguette.posicion[0] - self.hitbox_baguette.rect.width - 20, self.hitbox_baguette.posicion[1]))
+        else:
+            self.hitbox_baguette.establecerPosicion((self.hitbox_baguette.posicion[0] + 100, self.hitbox_baguette.posicion[1]))
         
         # TODO -> colision 
 
@@ -369,7 +375,7 @@ class Jugador(Personaje):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
         self.atacando = True
-        self.cooldownBaguette = 30
+        self.cooldownCroissant = 30
         
         # TODO -> colision 
         
@@ -519,7 +525,7 @@ class Proyectil(MiSprite):
     #  Numero de imagenes en cada postura
     #  Velocidad de caminar y de rotacion
     #  Retardo para mostrar la animacion del personaje
-    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadRotacion, retardoAnimacion):
+    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadRotacion, retardoAnimacion, direccion):
 
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
@@ -539,26 +545,24 @@ class Proyectil(MiSprite):
         datos = datos.split()
         self.numPostura = 1
         self.numImagenPostura = 0
-        self.prevPostura = 1
+        self.prevPostura = 0
         cont = 0
         self.coordenadasHoja = []
-        for linea in range(0, 1):
-            self.coordenadasHoja.append([])
-            tmp = self.coordenadasHoja[linea]
-            for postura in range(1, numImagenes[linea] + 1):
-                tmp.append(
-                    pygame.Rect((int(datos[cont]), int(datos[cont + 1])), (int(datos[cont + 2]), int(datos[cont + 3]))))
-                cont += 4
+        self.coordenadasHoja.append([])
+        tmp = self.coordenadasHoja[0]
+        for postura in range(1, numImagenes[0] + 1):
+            tmp.append(
+                pygame.Rect((int(datos[cont]), int(datos[cont + 1])), (int(datos[cont + 2]), int(datos[cont + 3]))))
+            cont += 4
 
         # El retardo a la hora de cambiar la imagen del Sprite (para que no se mueva demasiado rápido)
         self.retardoMovimiento = 0
 
         # En que postura esta inicialmente
-        self.numPostura = QUIETO
 
         # El rectangulo del Sprite
-        self.rect = pygame.Rect(100, 100, self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],
-                                self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+        self.rect = pygame.Rect(100, 100, self.coordenadasHoja[0][self.numImagenPostura][2],
+                                self.coordenadasHoja[0][self.numImagenPostura][3])
 
         # Las velocidades de caminar y salto
         self.velocidadCarrera = velocidadCarrera
@@ -568,7 +572,6 @@ class Proyectil(MiSprite):
         self.retardoAnimacion = retardoAnimacion
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
-        self.actualizarRotacion()
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
@@ -587,7 +590,7 @@ class Proyectil(MiSprite):
             self.kill()
 
         # Actualizamos la imagen a mostrar
-        self.actualizarRotacion()
+        #self.actualizarRotacion()
 
         # Aplicamos la velocidad en cada eje
         self.velocidad = (velocidadx, velocidady)
@@ -608,17 +611,15 @@ class Proyectil(MiSprite):
 
 
 class Croissant(Proyectil):
-    def __init__(self):
+    def __init__(self, direccion):
         Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1], VELOCIDAD_ENEMIGOS,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def mover_cpu(self, jugador):
         if jugador.mirando == DERECHA:
             self.mirando = DERECHA
         else:
             self.mirando = IZQUIERDA
-
-        # if pygame.sprite.spritecollideany()
 
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento

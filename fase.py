@@ -71,6 +71,9 @@ class Fase(Escena):
         self.crearNPCs()
         self.crearObjetos()
 
+        self.grupoProyectiles = pygame.sprite.Group()
+        self.crearProyectiles()
+
         # Musica
         self.cargarMusica()
         self.reproducirMusica()
@@ -104,6 +107,18 @@ class Fase(Escena):
         self.grupoSpritesDinamicos.add(enemigos)
         self.grupoSprites.add(enemigos)
         
+    def crearProyectiles(self):
+        proyectiles = []
+
+        clase_proyectil = getattr(personajes, "Croissant")
+        inst_proyectil = clase_proyectil(self.jugador.mirando)
+        inst_proyectil.establecerPosicion(self.jugador.posicion)
+        proyectiles.append(inst_proyectil)
+
+        self.grupoProyectiles.add(proyectiles)
+        #self.grupoSpritesDinamicos.add(proyectiles)
+        #self.grupoSprites.add(proyectiles)
+
     def crearNPCs(self):
         listaNPC = []
         
