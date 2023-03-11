@@ -91,6 +91,7 @@ class Personaje(MiSprite):
         MiSprite.__init__(self)
 
         # Se carga la hoja
+        self.atacando = False
         self.hoja = GestorRecursos.CargarImagen(imagen, 0)
         self.hoja = self.hoja.convert_alpha()
         # El movimiento que esta realizando
@@ -147,7 +148,6 @@ class Personaje(MiSprite):
             # Si estamos en el aire y el personaje quiere saltar, ignoramos este movimiento
             if self.numPostura == SPRITE_SALTANDO_UP or self.numPostura == SPRITE_SALTANDO_DOWN:
                 self.movimiento = QUIETO
-                self.atacando = False
             else:
                 self.movimiento = movimiento
         elif self.movimiento == ARRIBA and movimiento != QUIETO:
@@ -235,8 +235,7 @@ class Personaje(MiSprite):
         elif self.movimiento == DISPARO:
             self.numPostura = SPRITE_DISPARANDO
             if self.numImagenPostura >= 3 and self.prevPostura == SPRITE_DISPARANDO:
-                self.atacando = False
-                self.movimiento = QUIETO 
+                self.movimiento = QUIETO
 
         # Si no se ha pulsado ninguna tecla
         elif self.movimiento == QUIETO:
@@ -320,7 +319,7 @@ class Jugador(Personaje):
 
         self.hitbox_croissant = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
         self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
-        self.atacando = False
+        # self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
         self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo

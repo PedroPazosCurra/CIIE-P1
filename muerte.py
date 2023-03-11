@@ -102,6 +102,7 @@ class TextoSalir(TextoGUI):
 
 class PantallaGUI:
     def __init__(self, menu, nombreImagen):
+        self.elementoClic = None
         self.menu = menu
         # Se carga la imagen de fondo
         self.imagen = GestorRecursos.CargarImagen(nombreImagen)
@@ -152,6 +153,7 @@ class Muerte(Escena):
     def __init__(self, director):
         # Llamamos al constructor de la clase padre
         Escena.__init__(self, director)
+        self.pantallaActual = -1
         # Creamos la lista de pantallas
         self.listaPantallas = []
         # Creamos las pantallas que vamos a tener
