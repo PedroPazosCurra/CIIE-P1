@@ -9,6 +9,7 @@ from fase import Fase
 # -------------------------------------------------
 # Clase abstracta ElementoGUI
 
+
 class ElementoGUI:
 
     def __init__(self, pantalla, rectangulo):
@@ -22,7 +23,8 @@ class ElementoGUI:
 
     def posicionEnElemento(self, posicion):
         (posicionx, posiciony) = posicion
-        if (posicionx >= self.rect.left) and (posicionx <= self.rect.right) and (posiciony >= self.rect.top) and (posiciony <= self.rect.bottom):
+        if (posicionx >= self.rect.left) and (posicionx <= self.rect.right) and (posiciony >= self.rect.top) and \
+           (posiciony <= self.rect.bottom):
             return True
         else:
             return False
@@ -50,6 +52,7 @@ class Boton(ElementoGUI):
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
 
+
 class BotonJugar(Boton):
     def __init__(self, pantalla):
         Boton.__init__(self, pantalla, 'boton_verde.png', (202, 733))
@@ -66,7 +69,6 @@ class BotonSalir(Boton):
         self.pantalla.menu.salirPrograma()
 
 
-
 # -------------------------------------------------
 # Clase TextoGUI y los distintos textos
 
@@ -81,6 +83,7 @@ class TextoGUI(ElementoGUI):
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
+
 
 class TextoJugar(TextoGUI):
     def __init__(self, pantalla):
@@ -144,6 +147,7 @@ class PantallaGUI:
         # Después los botones
         for elemento in self.elementosGUI:
             elemento.dibujar(pantalla)
+
 
 class PantallaInicialGUI(PantallaGUI):
     def __init__(self, menu):

@@ -6,6 +6,7 @@ from menu import Menu
 # Funcion principal del juego
 # -------------------------------------------------
 
+
 def main():
 
     # Inicializar pygame

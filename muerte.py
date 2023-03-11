@@ -22,7 +22,8 @@ class ElementoGUI:
 
     def posicionEnElemento(self, posicion):
         (posicionx, posiciony) = posicion
-        if (posicionx >= self.rect.left) and (posicionx <= self.rect.right) and (posiciony >= self.rect.top) and (posiciony <= self.rect.bottom):
+        if (posicionx >= self.rect.left) and (posicionx <= self.rect.right) and (posiciony >= self.rect.top) and \
+           (posiciony <= self.rect.bottom):
             return True
         else:
             return False
@@ -49,6 +50,7 @@ class Boton(ElementoGUI):
 
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen, self.rect)
+
 
 class BotonJugar(Boton):
     def __init__(self, pantalla):

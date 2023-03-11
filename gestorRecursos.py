@@ -8,9 +8,9 @@ from pygame import mixer
 # Clases de los objetos del juego
 # -------------------------------------------------
 # -------------------------------------------------
-# Clase GestorRecursos
 
-# En este caso se implementa como una clase vacía, solo con métodos de clase
+
+# Clase GestorRecursos. En este caso se implementa como una clase vacía, solo con métodos de clase
 class GestorRecursos(object):
     recursos = {}
 
@@ -51,7 +51,6 @@ class GestorRecursos(object):
             print('Cannot load music file:', fullname)
             raise SystemExit(message)
 
-    
     @classmethod
     def CargarSonido(cls, nombre):
         # Si el nombre de archivo está entre los recursos ya cargados

@@ -86,7 +86,6 @@ class Personaje(MiSprite):
     #  Velocidad de caminar y de salto
     #  Retardo para mostrar la animacion del personaje
     def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadSalto, retardoAnimacion, vida):
-
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
 
@@ -178,7 +177,8 @@ class Personaje(MiSprite):
         
         # Modificar la imagen a mostrar si el contador de retardo ha llegado a 0 o si se ha cambiado la postura
         if cambiarImagen:
-            self.retardoMovimiento = self.retardoAnimacion  # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
+            # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
+            self.retardoMovimiento = self.retardoAnimacion
 
             # Si esta mirando a la izquiera, cogemos la porcion de la hoja
             if self.mirando == DERECHA:
@@ -299,12 +299,11 @@ class Personaje(MiSprite):
         return self.vida < 1
 
 
-
 class Tarta(Personaje):
     """Objeto de vida"""
     def __init__(self):
-        Personaje.__init__(self, 'PiePumpkin.png', 'coordTarta.txt', [1, 0, 0, 0, 0, 0], VELOCIDAD_JUGADOR, VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
-
+        Personaje.__init__(self, 'PiePumpkin.png', 'coordTarta.txt', [1, 0, 0, 0, 0, 0], VELOCIDAD_JUGADOR,
+                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
 
 
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
@@ -428,7 +427,8 @@ class NoJugador(Personaje):
 class Tomate(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_ENEMIGOS, VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_ENEMIGOS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
 
     def mover_cpu(self, jugador):
 
@@ -450,7 +450,8 @@ class Tomate(NoJugador):
 class Zanahoria(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ENEMIGOS, VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ENEMIGOS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
 
     def mover_cpu(self, jugador):
 
@@ -600,6 +601,7 @@ class Proyectil(MiSprite):
         # Si vamos a la derecha, le ponemos velocidad en esa dirección
         else:
             return self.velocidadCarrera
+
 
 class Croissant(Proyectil):
     def __init__(self):

@@ -44,7 +44,6 @@ class Director:
             escena.dibujar(self.pantalla)
             pygame.display.flip()
 
-
     def ejecutar(self):
 
         # Mientras haya escenas en la pila, ejecutaremos la de arriba
@@ -55,7 +54,6 @@ class Director:
 
             # Ejecutamos el bucle de eventos hasta que termine la escena
             self.bucle(escena)
-
 
     def salirEscena(self):
         # Indicamos en el flag que se quiere salir de la escena

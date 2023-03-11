@@ -12,6 +12,7 @@ VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
 DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
+
 class Fase(Escena):
     def __init__(self, director, nombre_fase):
 
@@ -44,7 +45,6 @@ class Fase(Escena):
         self.scrollx = 0
 
         # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
@@ -155,7 +155,6 @@ class Fase(Escena):
                 self.musica.stop()
                 self.director.cambiarEscena(Muerte(self.director))
 
-
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
             self.jugador.curar()
 
@@ -175,11 +174,11 @@ class Fase(Escena):
                         enemigo.kill()
 
                 # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
-        # if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and (self.jugador.atacando is True):
+        # if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and
+        # (self.jugador.atacando is True):
         # (...)
         # if (bicho.vida >= 1) bicho.vida.quitar_vida()
         # else                 bicho.matar()
-
 
         # TODO: Colision con croissant seguramente sea un pelin diferente por el tema de ser muchos
         # Colision con hitbox de croissant
@@ -193,7 +192,6 @@ class Fase(Escena):
         # (...)
         # if (bicho.vida >= 1) bicho.vida.quitar_vida()
         # else                 bicho.matar()
-
 
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
@@ -235,8 +233,6 @@ class Fase(Escena):
 
         if DIBUJAR_RECTS:
             self.dibujar_rects(pantalla)
-
-
 
     def eventos(self, lista_eventos):
         # Miramos a ver si hay algun evento de salir del programa
