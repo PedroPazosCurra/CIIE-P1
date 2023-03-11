@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
 
-# Modulos
-import pygame
-from escena import *
 from pygame.locals import *
+
+# Modulos
+from escena import *
 
 FPS = 60
 

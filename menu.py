@@ -1,10 +1,11 @@
 # -*- encoding: utf-8 -*-
 
-import pygame
 from pygame.locals import *
+
 from escena import *
-from gestorRecursos import GestorRecursos
 from fase import Fase
+from gestorRecursos import GestorRecursos
+
 
 # -------------------------------------------------
 # Clase abstracta ElementoGUI

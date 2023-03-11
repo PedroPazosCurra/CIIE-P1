@@ -1,7 +1,7 @@
-import pygame
+from pygame.locals import *
+
 from escena import *
 from gestorRecursos import GestorRecursos
-from pygame.locals import *
 
 VIDA_JUGADOR = 5
 VIDA_ZANAHORIA = 3
@@ -110,9 +110,11 @@ class Personaje(MiSprite):
         self.prevPostura = 1
         cont = 0
         self.coordenadasHoja = []
+
         for linea in range(0, 6):
             self.coordenadasHoja.append([])
             tmp = self.coordenadasHoja[linea]
+
             for postura in range(1, numImagenes[linea] + 1):
                 tmp.append(
                     pygame.Rect((int(datos[cont]), int(datos[cont + 1])), (int(datos[cont + 2]), int(datos[cont + 3]))))
@@ -188,7 +190,8 @@ class Personaje(MiSprite):
                 self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura]), True, False)
         
             # Actualizamos el tamaño del rect para que coincida con la imagen actual
-            self.rect.size = (self.coordenadasHoja[self.numPostura][self.numImagenPostura][2], self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
+            self.rect.size = (self.coordenadasHoja[self.numPostura][self.numImagenPostura][2],
+                              self.coordenadasHoja[self.numPostura][self.numImagenPostura][3])
         
         self.prevPostura = self.numPostura
 
@@ -299,11 +302,12 @@ class Personaje(MiSprite):
         return self.vida < 1
 
 
-class Tarta(Personaje):
+class Tarta(MiSprite):
     """Objeto de vida"""
     def __init__(self):
-        Personaje.__init__(self, 'PiePumpkin.png', 'coordTarta.txt', [1, 0, 0, 0, 0, 0], VELOCIDAD_JUGADOR,
-                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen('PiePumpkin.png').convert_alpha()
+        self.rect = self.image.get_rect()
 
 
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------

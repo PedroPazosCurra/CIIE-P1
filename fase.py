@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import pygame
-import personajes
-from personajes import Jugador, MiSprite
 from pygame.locals import *
-from muerte import Muerte
+
+import personajes
 from escena import *
 from gestorRecursos import GestorRecursos
+from muerte import Muerte
+from personajes import Jugador, MiSprite
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
@@ -255,9 +255,8 @@ class Fase(Escena):
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
 
 
-
-
 # ----------------------------------------------Plataforma--------------------------------------------------------------
+
 class Plataforma(MiSprite):
     def __init__(self, rectangulo, imagen=None):
 
