@@ -72,8 +72,17 @@ class Fase(Escena):
         self.crearObjetos()
 
         # Musica
-        self.musica = Musica(self.datos)
-        self.musica.play()
+        self.cargarMusica()
+        self.reproducirMusica()
+
+    def cargarMusica(self):
+        GestorRecursos.CargarMusica(self.datos["MUSICA"])
+
+    def reproducirMusica(self):
+        pygame.mixer.music.play(-1)
+
+    def detenerMusica(self):
+        pygame.mixer.music.stop()
 
     def crearPlataformas(self):
         plataformas = []
@@ -152,7 +161,7 @@ class Fase(Escena):
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
             if self.jugador.quitar_vida() and self.jugador.muerto():
-                self.musica.stop()
+                self.detenerMusica()
                 self.director.cambiarEscena(Muerte(self.director))
 
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
@@ -244,6 +253,8 @@ class Fase(Escena):
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
+
+
 
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
@@ -388,13 +399,5 @@ class VidaDisplay:
 
 
 # --------------------------------------------------Musica----------------------------------------------------------------
-class Musica:
-    def __init__(self, datos):
-        GestorRecursos.CargarMusica(datos["MUSICA"])
-    
-    def play(self):
-        pygame.mixer.music.play(-1)
 
-    def stop(self):
-        pygame.mixer.music.stop()
 
