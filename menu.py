@@ -109,11 +109,21 @@ class TextoSalir(TextoGUI):
 class TextoTitulo(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
-        fuente = pygame.font.SysFont('gabriola', 60)
-        TextoGUI.__init__(self, pantalla, fuente, (0, 0, 0), 'Honoratia', (300, 120))
+        fuente = pygame.font.SysFont('gabriola', 120)
+        TextoGUI.__init__(self, pantalla, fuente, (200, 150, 50), 'Honoratia', (210, 160))
 
     def accion(self):
         self.pantalla.menu.salirPrograma()
+
+
+class TextoControles(TextoGUI):
+    def __init__(self, pantalla):
+        # La fuente la debería cargar el estor de recursos
+        fuente = pygame.font.SysFont('gabriola', 26)
+        TextoGUI.__init__(self, pantalla, fuente, (255, 255, 250), 'Controles:    Movimiento: Flechas    Golpe de baguette: Z    Lanzamiento de croissant: X', (60, 595))
+
+    def accion(self):
+        self.pantalla.menu.ejecutarJuego()
 
 
 # -------------------------------------------------
@@ -162,9 +172,11 @@ class PantallaInicialGUI(PantallaGUI):
         textoTitulo = TextoTitulo(self)
         textoJugar = TextoJugar(self)
         textoSalir = TextoSalir(self)
+        textoControles = TextoControles(self)
         self.elementosGUI.append(textoJugar)
         self.elementosGUI.append(textoSalir)
         self.elementosGUI.append(textoTitulo)
+        self.elementosGUI.append(textoControles)
 
 
 # -------------------------------------------------
@@ -183,6 +195,10 @@ class Menu(Escena):
         self.listaPantallas.append(PantallaInicialGUI(self))
         # En que pantalla estamos actualmente
         self.mostrarPantallaInicial()
+
+        # Musica de menú
+        GestorRecursos.CargarMusica("musica_menu.mp3")
+        pygame.mixer.music.play(-1)
 
     def update(self, *args):
         return

@@ -136,7 +136,7 @@ class PantallaGUI:
             elemento.dibujar(pantalla)
 
 
-class PantallaInicialGUI(PantallaGUI):
+class PantallaMuerteGUI(PantallaGUI):
     def __init__(self, menu):
         PantallaGUI.__init__(self, menu, 'pantalla_muerte.png')
         # Creamos los botones y los metemos en la lista
@@ -165,9 +165,13 @@ class Muerte(Escena):
         self.listaPantallas = []
         # Creamos las pantallas que vamos a tener
         #   y las metemos en la lista
-        self.listaPantallas.append(PantallaInicialGUI(self))
+        self.listaPantallas.append(PantallaMuerteGUI(self))
         # En que pantalla estamos actualmente
         self.mostrarPantallaInicial()
+
+        # Musica de muerte
+        GestorRecursos.CargarMusica("musica_muerte.mp3")
+        pygame.mixer.music.play(-1)
 
     def update(self, *args):
         return
@@ -195,6 +199,10 @@ class Muerte(Escena):
         self.director.salirPrograma()
 
     def ejecutarJuego(self):
+
+        #TODO Esta es una aproximación incorrecta para hacer el workaround. La música hay que manejarla en otro lado.
+        GestorRecursos.CargarMusica("musica_menu.mp3")
+        pygame.mixer.music.play(-1)
         self.director.salirEscena()
 
     def mostrarPantallaInicial(self):

@@ -54,8 +54,11 @@ class Fase(Escena):
         # Triggers para cambiar de escena parametrizados
         ancho = self.datos["SIZE"][0]
         alto = self.datos["SIZE"][1]
-        self.trigger_izq = Trigger(pygame.Rect(0, 550, 100, alto), self.datos["TRIGGER_IZQ_ESCENA"])
-        self.trigger_der = Trigger(pygame.Rect(ancho - 400, 550, -100, alto), self.datos["TRIGGER_DER_ESCENA"])
+
+        # TODO: Parametrizar los triggers según largo de fase
+
+        self.trigger_izq = Trigger(pygame.Rect(0, alto, 1, alto), self.datos["TRIGGER_IZQ_ESCENA"])
+        self.trigger_der = Trigger(pygame.Rect(0.5*ancho, alto, 1, alto), self.datos["TRIGGER_DER_ESCENA"])
 
         # Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
@@ -116,8 +119,8 @@ class Fase(Escena):
         proyectiles.append(inst_proyectil)
 
         self.grupoProyectiles.add(proyectiles)
-        #self.grupoSpritesDinamicos.add(proyectiles)
-        #self.grupoSprites.add(proyectiles)
+        self.grupoSpritesDinamicos.add(proyectiles)
+        self.grupoSprites.add(proyectiles)
 
     def crearNPCs(self):
         listaNPC = []
@@ -162,13 +165,6 @@ class Fase(Escena):
 
     # Se actualiza el decorado
     def update(self, tiempo):
-
-        # Primero, se indican las acciones que van a hacer los enemigos segun como esten los jugadores
-        for enemigo in iter(self.grupoEnemigos):
-            enemigo.mover_cpu(self.jugador)
-
-        for npc in iter(self.grupoNPCs):
-            npc.mover_cpu(self.jugador)
 
         # Actualizamos los Sprites dinamicos
         self.grupoSpritesDinamicos.update(self.grupoPlataformas, tiempo)
@@ -233,6 +229,13 @@ class Fase(Escena):
 
         # Actualizamos el cielo:
         self.cielo.update(tiempo)
+
+        # CPU
+        for enemigo in iter(self.grupoEnemigos):
+            enemigo.mover_cpu(self.jugador)
+
+        for npc in iter(self.grupoNPCs):
+            npc.mover_cpu(self.jugador)
 
     # Dibuja los rectangulos: Útil mientras que aún estemos ajustando las colisiones
     def dibujar_rects(self, pantalla):

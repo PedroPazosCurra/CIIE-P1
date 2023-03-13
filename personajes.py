@@ -35,7 +35,7 @@ RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
 
 # Movimientos Especiales Proyectiles
 
-VELOCIDAD_ENEMIGOS = 0.12  # Pixeles por milisegundo
+VELOCIDAD_ENEMIGOS = 0.06  # Pixeles por milisegundo
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
 RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
@@ -45,7 +45,7 @@ GRAVEDAD = 0.00055  # Píxeles / ms2
 
 
 class MiSprite(pygame.sprite.Sprite):
-    """Los Sprites que tendra este juego"""
+    """Clase que engloba a todos los sprites del juego"""
 
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -92,7 +92,7 @@ class Personaje(MiSprite):
         # Se carga la hoja
         self.atacando = False
         self.hoja = GestorRecursos.CargarImagen(imagen, 0)
-        self.hoja = self.hoja.convert_alpha()
+        self.hoja = self.hoja.convert()
         # El movimiento que esta realizando
         self.movimiento = QUIETO
         # Movimiento extra -> Permite desplazarse a la vez que se salta
@@ -182,7 +182,7 @@ class Personaje(MiSprite):
             # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
             self.retardoMovimiento = self.retardoAnimacion
 
-            # Si esta mirando a la izquiera, cogemos la porcion de la hoja
+            # Si esta mirando a la izquierda, cogemos la porcion de la hoja
             if self.mirando == DERECHA:
                 self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura][self.numImagenPostura])
             #  Si no, si mira a la derecha, invertimos esa imagen
@@ -307,7 +307,7 @@ class Tarta(MiSprite):
     """Objeto de vida"""
     def __init__(self):
         MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('PiePumpkin.png').convert_alpha()
+        self.image = GestorRecursos.CargarImagen('PiePumpkin.png', 0).convert_alpha()
         self.rect = self.image.get_rect()
 
 
@@ -419,7 +419,7 @@ class Jugador(Personaje):
 
 
 class NoJugador(Personaje):
-    """El resto de personajes no jugadores"""
+    """Personajes que no son el jugador. CPU por defecto: miran al jugador"""
 
     def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida):
 
@@ -446,7 +446,7 @@ class Tomate(NoJugador):
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
-                # Personaje.mover(self, IZQUIERDA)
+                Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
                 Personaje.mover(self, DERECHA)
@@ -495,9 +495,6 @@ class Madre(NPC):
     def __init__(self):
         NPC.__init__(self, 'Madre-Sheet.png', 'coordMadre.txt', [8, 0, 0, 0, 0, 0])
 
-    def mover_cpu(self, jugador):
-        NPC.mover_cpu(self, jugador)
-
 
 class AldeanoFalda(NPC):
     def __init__(self):
@@ -517,7 +514,7 @@ class AldeanoSombrero(NPC):
 
 # ----------------------------------------- Proyectiles y Hitbox -------------------------------------------------------
 class Proyectil(MiSprite):
-    """Croissants"""
+    """Cada proyectil del juego"""
 
     # Parametros pasados al constructor de esta clase:
     #  Archivo con la hoja de Sprites
@@ -535,8 +532,6 @@ class Proyectil(MiSprite):
         self.hoja = self.hoja.convert_alpha()
         # El movimiento que esta realizando
         self.movimiento = DERECHA
-        # Movimiento extra -> Permite desplazarse a la vez que se salta
-        self.movimiento_extra = None
         # Lado hacia el que esta mirando
         self.mirando = DERECHA
 
@@ -572,6 +567,7 @@ class Proyectil(MiSprite):
         self.retardoAnimacion = retardoAnimacion
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
+        self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura-1][self.numImagenPostura])
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
@@ -611,15 +607,10 @@ class Proyectil(MiSprite):
 
 
 class Croissant(Proyectil):
+    """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
-        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1], VELOCIDAD_ENEMIGOS,
+        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1,1,1,0,0,0], VELOCIDAD_ENEMIGOS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
-
-    def mover_cpu(self, jugador):
-        if jugador.mirando == DERECHA:
-            self.mirando = DERECHA
-        else:
-            self.mirando = IZQUIERDA
 
     def desplHorizontal(self, movimiento):
         self.mirando = movimiento

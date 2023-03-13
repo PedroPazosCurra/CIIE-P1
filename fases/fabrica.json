@@ -1,0 +1,24 @@
+{
+	"NOMBRE": "Fabrica",
+
+	"POS_INICIAL_PERSONAJE": [400,550],
+	"SIZE": [1200,400],
+	"SUELO": "pueblo_suelo.png",
+	"DECORADO": "pueblo_decorado.png",
+	"FONDO": "pueblo_fondo.png",
+	"CIELO": "Sky.png",
+
+	"TRIGGER_IZQ_ESCENA": "pueblo",
+	"TRIGGER_DER_ESCENA": "fabrica",
+	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PARED": [],
+	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [600,550]},
+		     {"CLASE":"Tomate", "POS": [450,550]},
+		     {"CLASE":"Zanahoria", "POS": [550,550]}
+		    ],
+	"NPCS": [],
+
+	"OBJETOS": [],
+
+	"MUSICA": "musica_boss.mp3"
+}
