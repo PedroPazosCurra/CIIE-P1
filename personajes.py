@@ -326,7 +326,7 @@ class Jugador(Personaje):
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
 
         self.hitbox_croissant = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
-        self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
+        self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, (self.rect.width) * 1.7, self.rect.height])
         # self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
@@ -345,6 +345,10 @@ class Jugador(Personaje):
                 Personaje.mover(self, IZQUIERDA)
             elif teclasPulsadas[derecha]:
                 Personaje.mover(self, DERECHA)
+            elif teclasPulsadas[disparo]:
+                if self.cooldownCroissant <= 0:
+                    self.disparar()
+                    Personaje.mover(self, DISPARO)
         elif teclasPulsadas[izquierda]:
             Personaje.mover(self, IZQUIERDA)
         elif teclasPulsadas[derecha]:
@@ -376,7 +380,7 @@ class Jugador(Personaje):
         if self.mirando == IZQUIERDA:
             self.hitbox_baguette.establecerPosicion((self.hitbox_baguette.posicion[0] - self.hitbox_baguette.rect.width - 20, self.hitbox_baguette.posicion[1]))
         else:
-            self.hitbox_baguette.establecerPosicion((self.hitbox_baguette.posicion[0] + 100, self.hitbox_baguette.posicion[1]))
+            self.hitbox_baguette.establecerPosicion((self.hitbox_baguette.posicion[0] + 150, self.hitbox_baguette.posicion[1]))
         
         # TODO -> colision 
 
@@ -386,7 +390,7 @@ class Jugador(Personaje):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
         self.atacando = True
-        self.cooldownCroissant = 30
+        self.cooldownCroissant = 100
         
         # TODO -> colision 
         

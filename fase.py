@@ -32,7 +32,7 @@ class Fase(Escena):
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
 
         # Creamos los sprites de los jugadores y el display de su vida
-
+        
         self.jugador = Jugador()
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
@@ -173,10 +173,11 @@ class Fase(Escena):
         self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas)
 
         # Colision entre jugador y enemigo -> quita vida
-        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
-            if self.jugador.quitar_vida() and self.jugador.muerto():
-                self.detenerMusica()
-                self.director.cambiarEscena(Muerte(self.director))
+        if not self.jugador.atacando:
+            if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
+                if self.jugador.quitar_vida() and self.jugador.muerto():
+                    self.detenerMusica()
+                    self.director.cambiarEscena(Muerte(self.director))
 
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
             self.jugador.curar()
