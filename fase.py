@@ -288,8 +288,6 @@ class Fase(Escena):
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()            
 
-        self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
-
         if teclasPulsadas[K_x] and self.jugador.cooldownCroissant <= 0:
             self.jugador.disparando = False
             for disparo in self.grupoProyectiles:
@@ -297,6 +295,9 @@ class Fase(Escena):
                     disparo.establecerPosicion(self.jugador.posicion)
                     disparo.mover(self.jugador.mirando)
                     break
+
+        self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
+
         
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
