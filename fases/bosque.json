@@ -2,11 +2,11 @@
 	"NOMBRE": "Bosque",
 
 	"POS_INICIAL_PERSONAJE": [400,550],
-	"SIZE": [1700,400],
-	"SUELO": "pueblo_suelo.png",
+	"SIZE": [1400,600],
+	"SUELO": "bosque_fondo.png",
 	"DECORADO": "bosque_fondo2.png",
-	"FONDO": "bosque_fondo2.png",
-	"CIELO": "Cielo_fondo1.png",
+	"FONDO": "pueblo_suelo.png",
+	"CIELO": "bosque_cielo2.png",
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
