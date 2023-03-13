@@ -170,7 +170,7 @@ class Fase(Escena):
     def update(self, tiempo):
 
         # Actualizamos los Sprites dinamicos
-        self.grupoSpritesDinamicos.update(self.grupoPlataformas, tiempo)
+        self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas)
 
         # Colision entre jugador y enemigo -> quita vida
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
@@ -293,10 +293,10 @@ class Fase(Escena):
         if teclasPulsadas[K_x] and self.jugador.cooldownCroissant <= 0:
             self.jugador.disparando = False
             for disparo in self.grupoProyectiles:
-                    if disparo.movimiento == personajes.DISPARO_CERTERO:
-                        disparo.establecerPosicion(self.jugador.posicion)
-                        disparo.mover(self.jugador.mirando)
-                        break
+                if disparo.movimiento == personajes.DISPARO_CERTERO:
+                    disparo.establecerPosicion(self.jugador.posicion)
+                    disparo.mover(self.jugador.mirando)
+                    break
         
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
@@ -440,7 +440,5 @@ class VidaDisplay:
     def dibujar(self, pantalla):
         pantalla.blit(self.imagen[self.vida - 1], self.rect)
 
-
-# --------------------------------------------------Musica----------------------------------------------------------------
 
 

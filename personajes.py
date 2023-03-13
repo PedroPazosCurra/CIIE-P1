@@ -197,7 +197,7 @@ class Personaje(MiSprite):
         
         self.prevPostura = self.numPostura
 
-    def update(self, grupoPlataformas, tiempo):
+    def update(self, tiempo, grupoPlataformas):
 
         # Comprobamos si el coolDown para ser golpeado debe descontarse
         if self.cooldownDano > 0:
@@ -338,13 +338,13 @@ class Jugador(Personaje):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
 
         if teclasPulsadas[arriba]:
-                Personaje.mover(self, ARRIBA)
+            Personaje.mover(self, ARRIBA)
 
-                # Movimiento extra -> Desplazarse a la vez que se salta
-                if teclasPulsadas[izquierda]:
-                    Personaje.mover(self, IZQUIERDA)
-                elif teclasPulsadas[derecha]:
-                    Personaje.mover(self, DERECHA)
+            # Movimiento extra -> Desplazarse a la vez que se salta
+            if teclasPulsadas[izquierda]:
+                Personaje.mover(self, IZQUIERDA)
+            elif teclasPulsadas[derecha]:
+                Personaje.mover(self, DERECHA)
         elif teclasPulsadas[izquierda]:
             Personaje.mover(self, IZQUIERDA)
         elif teclasPulsadas[derecha]:
@@ -582,13 +582,11 @@ class Proyectil(MiSprite):
 
         self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5))
 
-
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
-
         self.movimiento = movimiento
 
-    def update(self, grupoPlataformas, tiempo):
+    def update(self, tiempo, grupoPlataformas):
 
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
@@ -608,7 +606,7 @@ class Proyectil(MiSprite):
             velocidadx = 0
 
         # Actualizamos la imagen a mostrar
-        #self.actualizarRotacion()
+        # self.actualizarRotacion()
 
         # Aplicamos la velocidad en cada eje
         self.velocidad = (velocidadx, velocidady)
@@ -631,7 +629,7 @@ class Proyectil(MiSprite):
 class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
-        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1,1,1,0,0,0], VELOCIDAD_CROISSANT,
+        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1, 1, 1, 0, 0, 0], VELOCIDAD_CROISSANT,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
