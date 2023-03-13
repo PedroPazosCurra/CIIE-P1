@@ -8,8 +8,8 @@
 	"FONDO": "pueblo_fondo.png",
 	"CIELO": "Cielo_fondo1.png",
 
-	"TRIGGER_IZQ_ESCENA": "Bosque",
-	"TRIGGER_DER_ESCENA": "Fabrica",
+	"TRIGGER_IZQ_ESCENA": "bosque",
+	"TRIGGER_DER_ESCENA": "fabrica",
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},

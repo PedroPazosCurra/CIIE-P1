@@ -6,10 +6,10 @@
 	"SUELO": "pueblo_suelo.png",
 	"DECORADO": "bosque_fondo2.png",
 	"FONDO": "bosque_fondo2.png",
-	"CIELO": "cielo_fondo1.png",
+	"CIELO": "Cielo_fondo1.png",
 
-	"TRIGGER_IZQ_ESCENA": "Honoratia",
-	"TRIGGER_DER_ESCENA": "Pueblo",
+	"TRIGGER_IZQ_ESCENA": "honoratia",
+	"TRIGGER_DER_ESCENA": "pueblo",
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
