@@ -203,6 +203,8 @@ class Personaje(MiSprite):
         if self.cooldownDano > 0:
             self.cooldownDano -= 1
 
+        self.atacando = self.movimiento == ATACAR_BAGUETTE or self.movimiento == DISPARO
+
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
 
