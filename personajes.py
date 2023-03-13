@@ -340,7 +340,7 @@ class Jugador(Personaje):
         elif teclasPulsadas[derecha]:
             Personaje.mover(self, DERECHA)
         elif teclasPulsadas[arriba]:
-            Personaje.mover(self, ARRIBA)
+                Personaje.mover(self, ARRIBA)
         elif teclasPulsadas[ataque]:
             if self.cooldownBaguette <= 0:
                 self.atacar()
@@ -449,15 +449,15 @@ class Tomate(NoJugador):
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
-                NoJugador.mover(self, IZQUIERDA)
-                self.mirando = IZQUIERDA
-            else:
-                NoJugador.mover(self, DERECHA)
+                Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
+            else:
+                Personaje.mover(self, DERECHA)
+                # self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
         else:
-            NoJugador.mover(self, QUIETO)
+            Personaje.mover(self, QUIETO)
 
 
 class Zanahoria(NoJugador):
@@ -474,7 +474,7 @@ class Zanahoria(NoJugador):
                 # Personaje.mover(self, IZQUIERDA)
                 self.mirando = DERECHA
             else:
-                NoJugador.mover(self, DERECHA)
+                Personaje.mover(self, DERECHA)
                 # self.mirando = IZQUIERDA
 
         # Si este personaje no esta en pantalla, no hara nada
@@ -574,8 +574,10 @@ class Proyectil(MiSprite):
 
         self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5))
 
+
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
+
         self.movimiento = movimiento
 
     def update(self, grupoPlataformas, tiempo):
@@ -598,7 +600,7 @@ class Proyectil(MiSprite):
             velocidadx = 0
 
         # Actualizamos la imagen a mostrar
-        # self.actualizarRotacion()
+        #self.actualizarRotacion()
 
         # Aplicamos la velocidad en cada eje
         self.velocidad = (velocidadx, velocidady)
@@ -621,7 +623,7 @@ class Proyectil(MiSprite):
 class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
-        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1, 1, 1, 0, 0, 0], VELOCIDAD_CROISSANT,
+        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1,1,1,0,0,0], VELOCIDAD_CROISSANT,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
