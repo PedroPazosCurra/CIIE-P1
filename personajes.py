@@ -337,12 +337,18 @@ class Jugador(Personaje):
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
 
-        if teclasPulsadas[izquierda]:
+        if teclasPulsadas[arriba]:
+                Personaje.mover(self, ARRIBA)
+
+                # Movimiento extra -> Desplazarse a la vez que se salta
+                if teclasPulsadas[izquierda]:
+                    Personaje.mover(self, IZQUIERDA)
+                elif teclasPulsadas[derecha]:
+                    Personaje.mover(self, DERECHA)
+        elif teclasPulsadas[izquierda]:
             Personaje.mover(self, IZQUIERDA)
         elif teclasPulsadas[derecha]:
             Personaje.mover(self, DERECHA)
-        elif teclasPulsadas[arriba]:
-                Personaje.mover(self, ARRIBA)
         elif teclasPulsadas[ataque]:
             if self.cooldownBaguette <= 0:
                 self.atacar()
