@@ -333,25 +333,29 @@ class Jugador(Personaje):
         self.cooldownCroissant = 0
         self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
-        self.animacionAcabada = True
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
 
-        if teclasPulsadas[izquierda]:
+        if teclasPulsadas[arriba]:
+            Personaje.mover(self, ARRIBA)
+            if teclasPulsadas[izquierda]:
+                Personaje.mover(self, IZQUIERDA)
+            elif teclasPulsadas[derecha]:
+                Personaje.mover(self, DERECHA)
+        elif teclasPulsadas[izquierda]:
             Personaje.mover(self, IZQUIERDA)
         elif teclasPulsadas[derecha]:
             Personaje.mover(self, DERECHA)
-        elif teclasPulsadas[arriba]:
-                Personaje.mover(self, ARRIBA)
         elif teclasPulsadas[ataque]:
             if self.cooldownBaguette <= 0:
                 self.atacar()
                 Personaje.mover(self, ATACAR_BAGUETTE)
         elif teclasPulsadas[disparo]:
-            if self.cooldownCroissant <= 0:
-                self.disparar()
-                Personaje.mover(self, DISPARO)
+            if not teclasPulsadas[arriba]:
+                if self.cooldownCroissant <= 0:
+                    self.disparar()
+                    Personaje.mover(self, DISPARO)
         elif not self.atacando:
             Personaje.mover(self, QUIETO)
 
@@ -381,7 +385,7 @@ class Jugador(Personaje):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
         self.atacando = True
-        self.cooldownCroissant = 30
+        self.cooldownCroissant = 100
         
         # TODO -> colision 
         
