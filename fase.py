@@ -187,7 +187,6 @@ class Fase(Escena):
             enemigos_hit_list = pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False)
             if enemigos_hit_list:
 
-
                 hit = GestorRecursos.CargarSonido("punch.mp3")
                 for enemigo in enemigos_hit_list:
 
@@ -298,8 +297,6 @@ class Fase(Escena):
 
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
         
-                
-
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
 

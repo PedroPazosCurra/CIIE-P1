@@ -120,7 +120,9 @@ class TextoControles(TextoGUI):
     def __init__(self, pantalla):
         # La fuente la debería cargar el estor de recursos
         fuente = pygame.font.SysFont('gabriola', 26)
-        TextoGUI.__init__(self, pantalla, fuente, (255, 255, 250), 'Controles:    Movimiento: Flechas    Golpe de baguette: Z    Lanzamiento de croissant: X', (60, 595))
+        TextoGUI.__init__(self, pantalla, fuente, (255, 255, 250),
+                          'Controles:    Movimiento: Flechas    Golpe de baguette: Z    Lanzamiento de croissant: X',
+                          (60, 595))
 
     def accion(self):
         self.pantalla.menu.ejecutarJuego()

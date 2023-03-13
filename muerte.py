@@ -200,7 +200,7 @@ class Muerte(Escena):
 
     def ejecutarJuego(self):
 
-        #TODO Esta es una aproximación incorrecta para hacer el workaround. La música hay que manejarla en otro lado.
+        # TODO Esta es una aproximación incorrecta para hacer el workaround. La música hay que manejarla en otro lado.
         GestorRecursos.CargarMusica("musica_menu.mp3")
         pygame.mixer.music.play(-1)
         self.director.salirEscena()
