@@ -41,6 +41,8 @@ RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
 # El Sniper camina un poco más lento que el jugador, y salta menos
 
+VELOCIDAD_CROISSANT = 0.1
+
 GRAVEDAD = 0.00055  # Píxeles / ms2
 
 
@@ -201,6 +203,9 @@ class Personaje(MiSprite):
         if self.cooldownDano > 0:
             self.cooldownDano -= 1
 
+        if self.movimiento != ATACAR_BAGUETTE or self.movimiento != DISPARO:
+            self.atacando = False
+
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
 
@@ -328,6 +333,7 @@ class Jugador(Personaje):
         self.cooldownCroissant = 0
         self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
+        self.animacionAcabada = True
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
@@ -346,7 +352,7 @@ class Jugador(Personaje):
             if self.cooldownCroissant <= 0:
                 self.disparar()
                 Personaje.mover(self, DISPARO)
-        elif self.atacando == False:
+        elif not self.atacando:
             Personaje.mover(self, QUIETO)
 
         # Reduccion en el cooldown desde el ultimo ataque        
@@ -558,7 +564,7 @@ class Proyectil(MiSprite):
         # El rectangulo del Sprite
         self.rect = pygame.Rect(100, 100, self.coordenadasHoja[0][self.numImagenPostura][2],
                                 self.coordenadasHoja[0][self.numImagenPostura][3])
-
+        
         # Las velocidades de caminar y salto
         self.velocidadCarrera = velocidadCarrera
         self.velocidadRotacion = velocidadRotacion
@@ -568,6 +574,9 @@ class Proyectil(MiSprite):
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
         self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura-1][self.numImagenPostura])
+
+        self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5))
+
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
@@ -617,11 +626,13 @@ class Proyectil(MiSprite):
 class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
-        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1,1,1,0,0,0], VELOCIDAD_ENEMIGOS,
+        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1,1,1,0,0,0], VELOCIDAD_CROISSANT,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
         
+        # self.image = pygame.transform.rotate(self.image, 3.)
+
         self.mirando = movimiento
 
         # Si vamos a la izquierda, le ponemos velocidad en esa dirección
