@@ -114,9 +114,12 @@ class Fase(Escena):
         proyectiles = []
 
         clase_proyectil = getattr(personajes, "Croissant")
-        inst_proyectil = clase_proyectil(self.jugador.mirando)
-        inst_proyectil.establecerPosicion(self.jugador.posicion)
-        proyectiles.append(inst_proyectil)
+        inst_proyectil1 = clase_proyectil(self.jugador.mirando)
+        proyectiles.append(inst_proyectil1)
+        inst_proyectil2 = clase_proyectil(self.jugador.mirando)
+        proyectiles.append(inst_proyectil2)
+        inst_proyectil3 = clase_proyectil(self.jugador.mirando)
+        proyectiles.append(inst_proyectil3)
 
         self.grupoProyectiles.add(proyectiles)
         self.grupoSpritesDinamicos.add(proyectiles)
@@ -183,6 +186,20 @@ class Fase(Escena):
 
             enemigos_hit_list = pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False)
             if enemigos_hit_list:
+
+                hit = GestorRecursos.CargarSonido("punch.mp3")
+                for enemigo in enemigos_hit_list:
+
+                    if enemigo.quitar_vida():
+                        hit.play()
+
+                    if enemigo.muerto():
+                        enemigo.kill()
+        for disparo in self.grupoProyectiles:
+            enemigos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoEnemigos, False)
+            if enemigos_hit_list:
+                
+                disparo.mover(personajes.DISPARO_CERTERO)
 
                 hit = GestorRecursos.CargarSonido("punch.mp3")
                 for enemigo in enemigos_hit_list:
@@ -270,7 +287,17 @@ class Fase(Escena):
 
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()
+
+        if teclasPulsadas[K_x] and self.jugador.cooldownCroissant <= 0:
+            for disparo in self.grupoProyectiles:
+                if disparo.movimiento == personajes.DISPARO_CERTERO:
+                    disparo.establecerPosicion(self.jugador.posicion)
+                    disparo.mover(self.jugador.mirando)
+                    break
+
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
+        
+                
 
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------

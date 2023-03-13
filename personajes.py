@@ -531,9 +531,9 @@ class Proyectil(MiSprite):
         self.hoja = GestorRecursos.CargarImagen(imagen, 0)
         self.hoja = self.hoja.convert_alpha()
         # El movimiento que esta realizando
-        self.movimiento = DERECHA
+        self.movimiento = DISPARO_CERTERO
         # Lado hacia el que esta mirando
-        self.mirando = DERECHA
+        self.mirando = direccion
 
         # Leemos las coordenadas de un archivo de texto
         datos = GestorRecursos.CargarArchivoCoordenadas(coordenadas)
@@ -571,6 +571,7 @@ class Proyectil(MiSprite):
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
     def mover(self, movimiento):
+
         self.movimiento = movimiento
 
     def update(self, grupoPlataformas, tiempo):
@@ -579,11 +580,18 @@ class Proyectil(MiSprite):
         (velocidadx, velocidady) = self.velocidad
 
         # Si vamos a la izquierda o a la derecha
+        
         if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
             velocidadx = self.desplHorizontal(self.movimiento)
 
-        if pygame.sprite.spritecollideany(self, grupoPlataformas) is not None:
-            self.kill()
+        if self.movimiento == DISPARO_CERTERO:
+            self.establecerPosicion((1000, 1000))
+
+        if self.posicion[0] > (ANCHO_PANTALLA + 20) or self.posicion[0] < (-20):
+            self.movimiento = DISPARO_CERTERO
+
+        if self.movimiento == DISPARO_CERTERO:
+            velocidadx = 0
 
         # Actualizamos la imagen a mostrar
         #self.actualizarRotacion()
@@ -613,6 +621,7 @@ class Croissant(Proyectil):
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
+        
         self.mirando = movimiento
 
         # Si vamos a la izquierda, le ponemos velocidad en esa dirección
