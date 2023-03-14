@@ -12,9 +12,8 @@
 	"TRIGGER_DER_ESCENA": "fabrica",
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
-	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [600,550]},
-		     {"CLASE":"Tomate", "POS": [450,550]},
-		     {"CLASE":"Zanahoria", "POS": [550,550]}
+	"ENEMIGOS": [
+			 {"CLASE":"Boss", "POS": [800,550]}
 		    ],
 	"NPCS": [],
 
