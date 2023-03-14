@@ -1,3 +1,4 @@
+import pygame
 from pygame.locals import *
 
 from escena import *
@@ -723,4 +724,3 @@ class Hitbox(MiSprite):
 
         MiSprite.__init__(self)
         self.rect = Rect(rectangulo)
-

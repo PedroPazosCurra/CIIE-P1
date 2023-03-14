@@ -10,7 +10,7 @@
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
 		     {"CLASE":"Tomate", "POS": [450,550]},

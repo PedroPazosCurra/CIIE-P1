@@ -52,13 +52,11 @@ class Fase(Escena):
         self.crearPlataformas()
 
         # Triggers para cambiar de escena parametrizados
-        ancho = self.datos["SIZE"][0]
-        alto = self.datos["SIZE"][1]
+        self.ancho = self.datos["SIZE"][0]
+        self.alto = self.datos["SIZE"][1]
 
-        # TODO: Parametrizar los triggers según largo de fase
-
-        self.trigger_izq = Trigger(pygame.Rect(0, alto, 1, alto), self.datos["TRIGGER_IZQ_ESCENA"])
-        self.trigger_der = Trigger(pygame.Rect(0.5*ancho, alto, 1, alto), self.datos["TRIGGER_DER_ESCENA"])
+        self.trigger_izq = Trigger(pygame.Rect(0, 0, 10, 1000), self.datos["TRIGGER_IZQ_ESCENA"])
+        self.trigger_der = Trigger(pygame.Rect(self.ancho - ANCHO_PANTALLA/2, 0, 10, 1000), self.datos["TRIGGER_DER_ESCENA"])
 
         # Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
@@ -212,26 +210,6 @@ class Fase(Escena):
                     if enemigo.muerto():
                         enemigo.kill()
 
-                # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
-        # if (pygame.sprite.spritecollide(self.jugador.hitbox_baguette, self.grupoEnemigos, False, False) != {}) and
-        # (self.jugador.atacando is True):
-        # (...)
-        # if (bicho.vida >= 1) bicho.vida.quitar_vida()
-        # else                 bicho.matar()
-
-        # TODO: Colision con croissant seguramente sea un pelin diferente por el tema de ser muchos
-        # Colision con hitbox de croissant
-        # if pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False) != {}:
-
-        # hit = GestorRecursos.CargarSonido("punch.mp3")
-        # hit.play()
-
-        # TODO: No sé cómo se cogería la referencia del enemigo en base al sprite
-        # sprite_bicho = pygame.sprite.spritecollide(self.jugador.hitbox_croissant, self.grupoEnemigos, False, False)[0]
-        # (...)
-        # if (bicho.vida >= 1) bicho.vida.quitar_vida()
-        # else                 bicho.matar()
-
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
@@ -272,6 +250,8 @@ class Fase(Escena):
         # Después el decorado
         self.decorado.dibujar(pantalla)
         self.suelo.dibujar(pantalla)
+
+        # IU
         self.vida_display.dibujar(pantalla)
 
         # Luego los Sprites
@@ -320,6 +300,10 @@ class Trigger(MiSprite):
         self.establecerPosicion((self.rect.left, self.rect.bottom))
         self.image = pygame.Surface((0, 0))
         self.escena = escena
+
+        # La subimagen que estamos viendo
+        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
 
 
 # ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------
