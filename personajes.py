@@ -326,7 +326,7 @@ class Jugador(Personaje):
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
 
         self.hitbox_croissant = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
-        self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, (self.rect.width) * 1.7, self.rect.height])
+        self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width * 1.7, self.rect.height])
         # self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
@@ -665,12 +665,11 @@ class Proyectil(MiSprite):
                               self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura][3])
         
 
-
 class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
         Proyectil.__init__(self, 'thrownCroissant.png', 'coordCroissant.txt', [8, 8, 8, 0, 0, 0], VELOCIDAD_CROISSANT,
-                        RETARDO_ANIMACION_ENEMIGOS, direccion)
+                           RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
         

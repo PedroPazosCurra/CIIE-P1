@@ -299,7 +299,6 @@ class Fase(Escena):
 
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
 
-        
 
 # ----------------------------------------------Plataforma--------------------------------------------------------------
 
