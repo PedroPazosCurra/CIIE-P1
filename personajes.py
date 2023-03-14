@@ -325,7 +325,6 @@ class Jugador(Personaje):
         Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5, 4], VELOCIDAD_JUGADOR,
                            VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
 
-        self.hitbox_croissant = Hitbox([self.rect.centerx, self.rect.y, self.rect.width, self.rect.height])
         self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width * 1.7, self.rect.height])
         # self.atacando = False
         self.cooldownBaguette = 0
