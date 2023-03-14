@@ -121,6 +121,7 @@ class Fase(Escena):
         inst_proyectil3 = clase_proyectil(self.jugador.mirando)
         proyectiles.append(inst_proyectil3)
 
+        self.jugador.establecerCroissants(proyectiles)
         self.grupoProyectiles.add(proyectiles)
         self.grupoSpritesDinamicos.add(proyectiles)
         self.grupoSprites.add(proyectiles)
@@ -289,13 +290,8 @@ class Fase(Escena):
         # Indicamos la acción a realizar segun la tecla pulsada para cada jugador
         teclasPulsadas = pygame.key.get_pressed()            
 
-        if teclasPulsadas[K_x] and self.jugador.cooldownCroissant <= 0:
-            self.jugador.disparando = False
-            for disparo in self.grupoProyectiles:
-                if disparo.movimiento == personajes.DISPARO_CERTERO:
-                    disparo.establecerPosicion(self.jugador.posicion)
-                    disparo.mover(self.jugador.mirando)
-                    break
+        if teclasPulsadas[K_x] :
+            self.jugador.usoCroissant = True
 
         self.jugador.mover(teclasPulsadas, K_UP, K_DOWN, K_LEFT, K_RIGHT, K_z, K_x)
 

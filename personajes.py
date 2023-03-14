@@ -7,6 +7,7 @@ VIDA_JUGADOR = 5
 VIDA_ZANAHORIA = 3
 VIDA_TOMATE = 1
 VIDA_NPC = 999
+VIDA_BOSS = 10
 INVENCIBILITY_FRAMES = 80
 
 # Movimientos
@@ -40,6 +41,7 @@ VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
 RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
 # El Sniper camina un poco más lento que el jugador, y salta menos
+VELOCIDAD_BOSS = 0.01
 
 VELOCIDAD_CROISSANT = 0.12
 
@@ -332,6 +334,11 @@ class Jugador(Personaje):
         self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
         self.animacionAcabada = True
+        self.croissants = None
+        self.usoCroissant = False
+
+    def establecerCroissants(self, croissants):
+        self.croissants = croissants
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
@@ -370,6 +377,8 @@ class Jugador(Personaje):
         if self.cooldownCroissant > 0:
             self.cooldownCroissant -= 1
 
+        self.usoCroissant = False
+
     def atacar(self):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
@@ -391,6 +400,11 @@ class Jugador(Personaje):
         self.atacando = True
         self.cooldownCroissant = 60
         
+        for disparo in self.croissants:
+            if disparo.movimiento == DISPARO_CERTERO:
+                disparo.establecerPosicion(self.posicion)
+                disparo.mover(self.mirando)
+                break
         # TODO -> colision 
         
         # Activa la hitbox
@@ -492,6 +506,26 @@ class Zanahoria(NoJugador):
         else:
             Personaje.mover(self, QUIETO)
 
+class Boss(NoJugador):
+
+    def __init__(self):
+        NoJugador.__init__(self, 'boss.png', 'coordBoss.txt', [4, 4, 4, 0, 0, 0], VELOCIDAD_BOSS,
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS)
+        
+
+    def mover_cpu(self, jugador):
+
+        # Movemos solo a los enemigos que esten en la pantalla
+        if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
+
+            if jugador.posicion[0] < self.posicion[0]:
+                Personaje.mover(self, IZQUIERDA)
+                self.mirando = DERECHA
+            else:
+                Personaje.mover(self, DERECHA)
+                # self.mirando = IZQUIERDA
+
+        self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 1.3, self.rect.size[1] * 1.3))
 
 class NPC(NoJugador):
     def __init__(self, sheet, coord, array_coord):
