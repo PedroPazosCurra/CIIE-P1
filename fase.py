@@ -161,6 +161,10 @@ class Fase(Escena):
             for sprite in iter(self.grupoSprites):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
 
+            # Se mueven con scroll los elementos de la fase
+            for plataforma in iter(self.grupoPlataformas):
+                plataforma.update(self.scrollx)
+
             self.decorado.update(self.scrollx)
             self.fondo.update(self.scrollx)
             self.suelo.update(self.scrollx)
@@ -287,9 +291,19 @@ class Plataforma(MiSprite):
         self.establecerPosicion((self.rect.left, self.rect.bottom))
 
         if imagen is not None:
-            self.image = imagen
+            self.imagen = imagen
         else:
-            self.image = pygame.Surface((0, 0))
+            self.imagen = pygame.Surface((0, 0))
+
+        # La subimagen que estamos viendo
+        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
+        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
+
+    def update(self, scrollx):
+        self.rectSubimagen.left = scrollx
+
+    def dibujar(self, pantalla):
+        pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
 
 
 # ------------------------------------------------Trigger--------------------------------------------------------------
