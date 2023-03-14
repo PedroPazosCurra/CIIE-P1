@@ -41,7 +41,7 @@ RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 # debería de ser un valor distinto para cada postura
 # El Sniper camina un poco más lento que el jugador, y salta menos
 
-VELOCIDAD_CROISSANT = 0.1
+VELOCIDAD_CROISSANT = 0.12
 
 GRAVEDAD = 0.00055  # Píxeles / ms2
 
@@ -390,7 +390,7 @@ class Jugador(Personaje):
         attack_sound = GestorRecursos.CargarSonido('air-whoosh.mp3')
         attack_sound.play()
         self.atacando = True
-        self.cooldownCroissant = 100
+        self.cooldownCroissant = 60
         
         # TODO -> colision 
         
@@ -537,7 +537,7 @@ class Proyectil(MiSprite):
     #  Numero de imagenes en cada postura
     #  Velocidad de caminar y de rotacion
     #  Retardo para mostrar la animacion del personaje
-    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, velocidadRotacion, retardoAnimacion, direccion):
+    def __init__(self, imagen, coordenadas, numImagenes, velocidadCarrera, retardoAnimacion, direccion):
 
         # Primero invocamos al constructor de la clase padre
         MiSprite.__init__(self)
@@ -576,7 +576,6 @@ class Proyectil(MiSprite):
         
         # Las velocidades de caminar y salto
         self.velocidadCarrera = velocidadCarrera
-        self.velocidadRotacion = velocidadRotacion
 
         # El retardo en la animacion del personaje (podria y deberia ser distinto para cada postura)
         self.retardoAnimacion = retardoAnimacion
@@ -615,8 +614,11 @@ class Proyectil(MiSprite):
         # Aplicamos la velocidad en cada eje
         self.velocidad = (velocidadx, velocidady)
 
+        self.actualizarPostura()
         # Y llamamos al método de la superclase para que, según la velocidad y el tiempo
         #  calcule la nueva posición del Sprite
+        self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5))
+
         MiSprite.update(self, tiempo)            
 
     def desplHorizontal(self, movimiento):
@@ -629,12 +631,46 @@ class Proyectil(MiSprite):
         else:
             return self.velocidadCarrera
 
+    def actualizarPostura(self):
+        cambiarImagen = False
+        self.retardoMovimiento -= 1
+        
+        # Comprobamos si hay que reiniciar self.numImagenPostura porque hemos cambiado de postura
+        
+        # Miramos si ha pasado el retardo para dibujar una nueva imagen de la postura actual
+        if self.retardoMovimiento < 0:
+            cambiarImagen = True
+            
+            # Si ha pasado, actualizamos la postura
+            self.numImagenPostura += 1
+            if self.numImagenPostura >= len(self.coordenadasHoja[self.numPostura - 1]):
+                self.numImagenPostura = 0
+            if self.numImagenPostura < 0:
+                self.numImagenPostura = len(self.coordenadasHoja[self.numPostura - 1]) - 1
+        
+        # Modificar la imagen a mostrar si el contador de retardo ha llegado a 0 o si se ha cambiado la postura
+        if cambiarImagen:
+            # El retardo se reinicia tanto si ha llegado a 0 como si se ha cambiado de postura
+            self.retardoMovimiento = self.retardoAnimacion
+
+            # Si esta mirando a la izquierda, cogemos la porcion de la hoja
+            if self.mirando == DERECHA:
+                self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura])
+            #  Si no, si mira a la derecha, invertimos esa imagen
+            elif self.mirando == IZQUIERDA:
+                self.image = pygame.transform.flip(self.hoja.subsurface(self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura]), True, False)
+        
+            # Actualizamos el tamaño del rect para que coincida con la imagen actual
+            self.rect.size = (self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura][2],
+                              self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura][3])
+        
+
 
 class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
-        Proyectil.__init__(self, 'francois_with_hit.png', 'coordCroissant.txt', [1, 1, 1, 0, 0, 0], VELOCIDAD_CROISSANT,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, direccion)
+        Proyectil.__init__(self, 'thrownCroissant.png', 'coordCroissant.txt', [8, 8, 8, 0, 0, 0], VELOCIDAD_CROISSANT,
+                        RETARDO_ANIMACION_ENEMIGOS, direccion)
 
     def desplHorizontal(self, movimiento):
         
