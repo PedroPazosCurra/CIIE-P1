@@ -1,4 +1,4 @@
-import pygame
+
 from pygame.locals import *
 
 from escena import *
@@ -507,12 +507,12 @@ class Zanahoria(NoJugador):
         else:
             Personaje.mover(self, QUIETO)
 
+
 class Boss(NoJugador):
 
     def __init__(self):
         NoJugador.__init__(self, 'boss.png', 'coordBoss.txt', [4, 4, 4, 0, 0, 0], VELOCIDAD_BOSS,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS)
-        
 
     def mover_cpu(self, jugador):
 
@@ -527,6 +527,7 @@ class Boss(NoJugador):
                 # self.mirando = IZQUIERDA
 
         self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 1.3, self.rect.size[1] * 1.3))
+
 
 class NPC(NoJugador):
     def __init__(self, sheet, coord, array_coord):
@@ -594,6 +595,7 @@ class Proyectil(MiSprite):
         self.coordenadasHoja = []
         self.coordenadasHoja.append([])
         tmp = self.coordenadasHoja[0]
+
         for postura in range(1, numImagenes[0] + 1):
             tmp.append(
                 pygame.Rect((int(datos[cont]), int(datos[cont + 1])), (int(datos[cont + 2]), int(datos[cont + 3]))))
@@ -705,22 +707,10 @@ class Croissant(Proyectil):
         Proyectil.__init__(self, 'thrownCroissant.png', 'coordCroissant.txt', [8, 8, 8, 0, 0, 0], VELOCIDAD_CROISSANT,
                            RETARDO_ANIMACION_ENEMIGOS, direccion)
 
-    def desplHorizontal(self, movimiento):
-        
-        # self.image = pygame.transform.rotate(self.image, 3.)
-
-        self.mirando = movimiento
-
-        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-        if self.movimiento == IZQUIERDA:
-            return -self.velocidadCarrera
-        # Si vamos a la derecha, le ponemos velocidad en esa dirección
-        else:
-            return self.velocidadCarrera
-
 
 class Hitbox(MiSprite):
     def __init__(self, rectangulo):
 
         MiSprite.__init__(self)
         self.rect = Rect(rectangulo)
+
