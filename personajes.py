@@ -638,7 +638,7 @@ class Proyectil(MiSprite):
         if self.movimiento == DISPARO_CERTERO:
             self.establecerPosicion((1000, 1000))
 
-        if self.posicion[0] > (ANCHO_PANTALLA + 20) or self.posicion[0] < (-20):
+        if self.rect.left > (ANCHO_PANTALLA + 20) or self.rect.right < (-20):
             self.movimiento = DISPARO_CERTERO
 
         if self.movimiento == DISPARO_CERTERO:
