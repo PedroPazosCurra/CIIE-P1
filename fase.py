@@ -46,10 +46,6 @@ class Fase(Escena):
 
         # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
 
-        # Creamos las plataformas del decorado
-        # La plataforma que conforma el suelo
-        self.grupoPlataformas = pygame.sprite.Group()
-        self.crearPlataformas()
 
         # Triggers para cambiar de escena parametrizados
         self.ancho = self.datos["SIZE"][0]
@@ -63,6 +59,11 @@ class Fase(Escena):
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Todos los sprites
         self.grupoSprites = pygame.sprite.Group(self.jugador)
+
+        # Creamos las plataformas del decorado
+        # La plataforma que conforma el suelo
+        self.grupoPlataformas = pygame.sprite.Group()
+        self.crearPlataformas()
 
         # NPC y enemigos
         self.grupoEnemigos = pygame.sprite.Group()
@@ -91,9 +92,14 @@ class Fase(Escena):
     def crearPlataformas(self):
         plataformas = []
         for reg_plataforma in self.datos["PLATAFORMAS"]:
-            plataforma = Plataforma(pygame.Rect(reg_plataforma["RECT"]), reg_plataforma["IMAGEN"])
+            if reg_plataforma["IMAGEN"] == "":
+                plataforma = Plataforma(pygame.Rect(reg_plataforma["RECT"]))
+            else:
+                plataforma = Plataforma(pygame.Rect(reg_plataforma["RECT"]), reg_plataforma["IMAGEN"])
             plataformas.append(plataforma)
+
         self.grupoPlataformas.add(plataformas)
+        self.grupoSprites.add(plataformas)
     
     def crearEnemigos(self):
         enemigos = []
@@ -161,10 +167,6 @@ class Fase(Escena):
             for sprite in iter(self.grupoSprites):
                 sprite.establecerPosicionPantalla((self.scrollx, 0))
 
-            # Se mueven con scroll los elementos de la fase
-            for plataforma in iter(self.grupoPlataformas):
-                plataforma.update(self.scrollx)
-
             self.decorado.update(self.scrollx)
             self.fondo.update(self.scrollx)
             self.suelo.update(self.scrollx)
@@ -199,6 +201,7 @@ class Fase(Escena):
 
                     if enemigo.muerto():
                         enemigo.kill()
+
         for disparo in self.grupoProyectiles:
             enemigos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoEnemigos, False)
             if enemigos_hit_list:
@@ -294,19 +297,9 @@ class Plataforma(MiSprite):
         self.establecerPosicion((self.rect.left, self.rect.bottom))
 
         if imagen is not None:
-            self.imagen = imagen
+            self.image = GestorRecursos.CargarImagen(imagen, -1).convert_alpha()
         else:
-            self.imagen = pygame.Surface((0, 0))
-
-        # La subimagen que estamos viendo
-        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
-        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
-
-    def update(self, scrollx):
-        self.rectSubimagen.left = scrollx
-
-    def dibujar(self, pantalla):
-        pantalla.blit(self.imagen, self.rect, self.rectSubimagen)
+            self.image = pygame.Surface((0, 0))
 
 
 # ------------------------------------------------Trigger--------------------------------------------------------------
