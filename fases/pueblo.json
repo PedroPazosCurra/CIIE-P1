@@ -10,7 +10,8 @@
 
 	"TRIGGER_IZQ_ESCENA": "bosque",
 	"TRIGGER_DER_ESCENA": "fabrica",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""},
+					{"RECT": [100, 500, 300, 15], "IMAGEN": "platformPack_tile047.png"}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
 		     {"CLASE":"Tomate", "POS": [450,550]},

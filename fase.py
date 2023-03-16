@@ -298,6 +298,7 @@ class Plataforma(MiSprite):
 
         if imagen is not None:
             self.image = GestorRecursos.CargarImagen(imagen, -1).convert_alpha()
+            self.image = pygame.transform.scale(self.image,(self.rect.width,self.rect.height))
         else:
             self.image = pygame.Surface((0, 0))
 

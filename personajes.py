@@ -257,7 +257,6 @@ class Personaje(MiSprite):
 
         # Además, si estamos en el aire
         if self.numPostura == SPRITE_SALTANDO_UP:
-
             # Miramos a ver si hay que parar de caer: si hemos llegado a una plataforma
             #  Para ello, miramos si hay colision con alguna plataforma del grupo
             plataforma = pygame.sprite.spritecollideany(self, grupoPlataformas)
@@ -272,7 +271,6 @@ class Personaje(MiSprite):
                 self.numPostura = SPRITE_QUIETO
                 # Y estará quieto en el eje y
                 velocidady = 0
-
             # Si no caemos en una plataforma, aplicamos el efecto de la gravedad
             else:
                 velocidady += GRAVEDAD * tiempo
