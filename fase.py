@@ -14,7 +14,7 @@ DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
 
 class Fase(Escena):
-    def __init__(self, director, nombre_fase):
+    def __init__(self, director, nombre_fase, jugador):
 
         Escena.__init__(self, director)
         self.director = director
@@ -30,22 +30,24 @@ class Fase(Escena):
 
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
+        #  Que parte del decorado estamos visualizando
+        self.scrollx = 0
 
-        # Creamos los sprites de los jugadores y el display de su vida
-        
-        self.jugador = Jugador()
+        # Asignamos los sprites de los jugadores
+        self.jugador = jugador
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
         # Ponemos a los jugadores en sus posiciones iniciales y le añadimos el display de vida
+        self.jugador.establecerPosicionPantalla((self.scrollx, 0))
         self.jugador.establecerPosicion((self.datos["POS_INICIAL_PERSONAJE"]))
-        self.vida_display = VidaDisplay(self.jugador.max_vida)
-        self.jugador.establecerVidaDisplay(self.vida_display)
 
-        # Que parte del decorado estamos visualizando
-        self.scrollx = 0
+        if self.jugador.vida_display is not None:
+            self.vida_display = self.jugador.vida_display
+        else:
+            self.vida_display = VidaDisplay(self.jugador.max_vida)
+            self.jugador.establecerVidaDisplay(self.vida_display)
 
-        # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-
+        # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma -> Solucionado
 
         # Triggers para cambiar de escena parametrizados
         self.ancho = self.datos["SIZE"][0]
@@ -220,12 +222,12 @@ class Fase(Escena):
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_izq.escena)
+            fase = Fase(self.director, self.trigger_izq.escena, self.jugador)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_der.escena)
+            fase = Fase(self.director, self.trigger_der.escena, self.jugador)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll
@@ -298,7 +300,7 @@ class Plataforma(MiSprite):
 
         if imagen is not None:
             self.image = GestorRecursos.CargarImagen(imagen, -1).convert_alpha()
-            self.image = pygame.transform.scale(self.image,(self.rect.width,self.rect.height))
+            self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
         else:
             self.image = pygame.Surface((0, 0))
 
