@@ -54,13 +54,14 @@ class Fase(Escena):
         self.alto = self.datos["SIZE"][1]
 
         self.trigger_izq = Trigger(pygame.Rect(0, 0, 10, 1000), self.datos["TRIGGER_IZQ_ESCENA"])
-        self.trigger_der = Trigger(pygame.Rect(self.ancho - ANCHO_PANTALLA/2, 0, 10, 1000), self.datos["TRIGGER_DER_ESCENA"])
+        self.trigger_der = Trigger(pygame.Rect(self.ancho - 10, 0, 10, 1000), self.datos["TRIGGER_DER_ESCENA"])
 
         # Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Todos los sprites
         self.grupoSprites = pygame.sprite.Group(self.jugador)
+        self.grupoSprites.add(self.trigger_izq, self.trigger_der)
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
@@ -171,7 +172,6 @@ class Fase(Escena):
         self.grupoObjetos.add(listaOstaculos)
         self.grupoSprites.add(listaOstaculos)
 
-    
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
         if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.fondo.rect.right:
@@ -263,10 +263,9 @@ class Fase(Escena):
         for sprite in self.grupoSprites.sprites():
             pygame.draw.rect(pantalla, (255, 255, 255), sprite.rect, 2)
 
-        for sprite in self.grupoPlataformas.sprites():
-            pygame.draw.rect(pantalla, (255, 255, 255), sprite.rect, 2)
-
         pygame.draw.rect(pantalla, (255, 0, 0), self.jugador.hitbox_baguette.rect, 2)
+        pygame.draw.rect(pantalla, (0, 0, 255), self.trigger_izq.rect, 2)
+        pygame.draw.rect(pantalla, (0, 0, 255), self.trigger_der.rect, 2)
 
     def dibujar(self, pantalla):
 
@@ -328,10 +327,6 @@ class Trigger(MiSprite):
         self.establecerPosicion((self.rect.left, self.rect.bottom))
         self.image = pygame.Surface((0, 0))
         self.escena = escena
-
-        # La subimagen que estamos viendo
-        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
-        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
 
 
 # ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------

@@ -474,7 +474,7 @@ class Obstaculo(NoJugador):
 
     def __init__(self, coordenadas, velocidad, velocidadSalto, retardoAnimacion):
 
-        Personaje.__init__(self, 'estatua.png', coordenadas, [1,0,0,0,0,0], velocidad, velocidadSalto, retardoAnimacion, 3)
+        Personaje.__init__(self, 'estatua.png', coordenadas, [1, 0, 0, 0, 0, 0], velocidad, velocidadSalto, retardoAnimacion, 3)
 
     def mover_cpu(self, jugador):
         self.mirando = IZQUIERDA
