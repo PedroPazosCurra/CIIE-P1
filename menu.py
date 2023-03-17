@@ -5,6 +5,7 @@ from pygame.locals import *
 from escena import *
 from fase import Fase
 from gestorRecursos import GestorRecursos
+from personajes import Jugador
 
 
 # -------------------------------------------------
@@ -228,7 +229,7 @@ class Menu(Escena):
         self.director.salirPrograma()
 
     def ejecutarJuego(self):
-        fase = Fase(self.director, 'pueblo')
+        fase = Fase(self.director, 'pueblo', Jugador())
         self.director.apilarEscena(fase)
 
     def mostrarPantallaInicial(self):
