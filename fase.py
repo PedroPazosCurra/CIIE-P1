@@ -6,7 +6,7 @@ import personajes
 from escena import *
 from gestorRecursos import GestorRecursos
 from muerte import Muerte
-from personajes import Jugador, MiSprite
+from personajes import MiSprite
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
