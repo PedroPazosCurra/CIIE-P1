@@ -200,7 +200,10 @@ class Personaje(MiSprite):
         
         self.prevPostura = self.numPostura
 
-    def update(self, tiempo, grupoPlataformas):
+    def update(self, tiempo, grupos):
+
+        grupoPlataformas = grupos[0]
+        grupoObstaculos = grupos[1]
 
         # Comprobamos si el coolDown para ser golpeado debe descontarse
         if self.cooldownDano > 0:
@@ -213,7 +216,7 @@ class Personaje(MiSprite):
 
         # Si vamos a la izquierda o a la derecha
         if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
-            velocidadx = self.desplHorizontal(self.movimiento)
+            velocidadx = self.desplHorizontal(self.movimiento, grupoObstaculos)
             
             # Si no estamos en el aire
             if self.numPostura != SPRITE_SALTANDO_UP:
@@ -227,7 +230,7 @@ class Personaje(MiSprite):
         elif self.movimiento == ARRIBA:
 
             if (self.movimiento_extra == IZQUIERDA) or (self.movimiento_extra == DERECHA):
-                velocidadx = self.desplHorizontal(self.movimiento_extra)
+                velocidadx = self.desplHorizontal(self.movimiento_extra, grupoObstaculos)
             
             # La postura actual sera estar saltando
             self.numPostura = SPRITE_SALTANDO_UP
@@ -285,15 +288,22 @@ class Personaje(MiSprite):
         #  calcule la nueva posición del Sprite
         MiSprite.update(self, tiempo)
 
-    def desplHorizontal(self, movimiento):
+    def desplHorizontal(self, movimiento, grupoObstaculos):
         self.mirando = movimiento
 
         # Si vamos a la izquierda, le ponemos velocidad en esa dirección
         if self.movimiento == IZQUIERDA:
-            return -self.velocidadCarrera
+            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+                return -self.velocidadCarrera
+            else:
+                return 0
+
         # Si vamos a la derecha, le ponemos velocidad en esa dirección
         else:
-            return self.velocidadCarrera
+            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+                return self.velocidadCarrera
+            else:
+                return 0
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -457,6 +467,17 @@ class NoJugador(Personaje):
             self.mirando = IZQUIERDA
         else:
             self.mirando = DERECHA
+
+
+class Obstaculo(NoJugador):
+    """Estatuas para bloquear el paso"""
+
+    def __init__(self, coordenadas, velocidad, velocidadSalto, retardoAnimacion):
+
+        Personaje.__init__(self, 'estatua.png', coordenadas, [1,0,0,0,0,0], velocidad, velocidadSalto, retardoAnimacion, 3)
+
+    def mover_cpu(self, jugador):
+        self.mirando = IZQUIERDA
 
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pygame.sprite
 from pygame.locals import *
 
 import personajes
@@ -67,13 +67,15 @@ class Fase(Escena):
         self.grupoPlataformas = pygame.sprite.Group()
         self.crearPlataformas()
 
-        # NPC y enemigos
+        # Grupos
         self.grupoEnemigos = pygame.sprite.Group()
         self.grupoNPCs = pygame.sprite.Group()
         self.grupoObjetos = pygame.sprite.Group()
+        self.grupoObstaculos = pygame.sprite.Group()
         self.crearEnemigos()
         self.crearNPCs()
         self.crearObjetos()
+        self.crearObstaculos()
 
         self.grupoProyectiles = pygame.sprite.Group()
         self.crearProyectiles()
@@ -156,6 +158,19 @@ class Fase(Escena):
 
         self.grupoObjetos.add(listaObjetos)
         self.grupoSprites.add(listaObjetos)
+
+    def crearObstaculos(self):
+        listaOstaculos = []
+
+        for reg_obs in self.datos["OBSTACULOS"]:
+            clase_obs = getattr(personajes, reg_obs["CLASE"])
+            inst_obs = clase_obs()
+            inst_obs.establecerPosicion(reg_obs["POS"])
+            listaOstaculos.append(inst_obs)
+
+        self.grupoObjetos.add(listaOstaculos)
+        self.grupoSprites.add(listaOstaculos)
+
     
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
@@ -177,7 +192,7 @@ class Fase(Escena):
     def update(self, tiempo):
 
         # Actualizamos los Sprites dinamicos
-        self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas)
+        self.grupoSpritesDinamicos.update(tiempo, (self.grupoPlataformas, self.grupoObstaculos))
 
         # Colision entre jugador y enemigo -> quita vida
         if not self.jugador.atacando:
@@ -324,10 +339,10 @@ class Trigger(MiSprite):
 class Cielo:
     def __init__(self, datos):
 
-        self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], 0)
+        self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], -1)
         self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
 
-        self.nubesdup = GestorRecursos.CargarImagen(datos['CIELO'], 0)
+        self.nubesdup = GestorRecursos.CargarImagen(datos['CIELO'], -1)
         self.nubesdup = pygame.transform.scale(self.nubesdup, (1100, 550))
 
         self.rect_nubes = self.nubes.get_rect()
@@ -359,7 +374,7 @@ class Cielo:
 
 class Fondo:
     def __init__(self, datos):
-        self.imagen = GestorRecursos.CargarImagen(datos["FONDO"], -1)
+        self.imagen = GestorRecursos.CargarImagen(datos["FONDO"], 0)
         self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
         self.rect = self.imagen.get_rect()
