@@ -13,16 +13,14 @@
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""},
 					{"RECT": [100, 500, 300, 15], "IMAGEN": "platformPack_tile047.png"}],
 	"PARED": [],
-	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
-		     {"CLASE":"Tomate", "POS": [450,550]},
-		     {"CLASE":"Zanahoria", "POS": [550,550]}
-		    ],
-	"NPCS": [{"CLASE":"Madre", "POS": [600,550]},
-			{"CLASE":"AldeanoFalda", "POS": [650,550]},
+	"ENEMIGOS": [],
+	"NPCS": [{"CLASE":"AldeanoFalda", "POS": [650,550]},
 			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
 
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
+
+	"OBSTACULOS": [],
 
 	"MUSICA": "pueblo.wav"
 }
