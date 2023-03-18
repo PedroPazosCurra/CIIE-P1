@@ -169,30 +169,30 @@ class Fase(Escena):
             inst_obs.establecerPosicion(reg_obs["POS"])
             listaOstaculos.append(inst_obs)
 
-        self.grupoObjetos.add(listaOstaculos)
+        self.grupoObstaculos.add(listaOstaculos)
         self.grupoSprites.add(listaOstaculos)
 
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
-        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.fondo.rect.right:
-            self.scrollx = self.fondo.rect.right - ANCHO_PANTALLA
+        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.ancho:
+            self.scrollx = self.ancho - ANCHO_PANTALLA
         elif jugador.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
             self.scrollx = 0
         else:
             self.scrollx = jugador.posicion[0] - ANCHO_PANTALLA / 2
 
-            for sprite in iter(self.grupoSprites):
-                sprite.establecerPosicionPantalla((self.scrollx, 0))
+        for sprite in iter(self.grupoSprites):
+            sprite.establecerPosicionPantalla((self.scrollx, 0))
 
-            self.decorado.update(self.scrollx)
-            self.fondo.update(self.scrollx)
-            self.suelo.update(self.scrollx)
+        self.decorado.update(self.scrollx)
+        self.fondo.update(self.scrollx)
+        self.suelo.update(self.scrollx)
 
     # Se actualiza el decorado
     def update(self, tiempo):
 
         # Actualizamos los Sprites dinamicos
-        self.grupoSpritesDinamicos.update(tiempo, (self.grupoPlataformas, self.grupoObstaculos))
+        self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas, self.grupoObstaculos)
 
         # Colision entre jugador y enemigo -> quita vida
         if not self.jugador.atacando:

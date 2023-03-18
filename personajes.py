@@ -200,10 +200,7 @@ class Personaje(MiSprite):
         
         self.prevPostura = self.numPostura
 
-    def update(self, tiempo, grupos):
-
-        grupoPlataformas = grupos[0]
-        grupoObstaculos = grupos[1]
+    def update(self, tiempo, grupoPlataformas, grupoObstaculos):
 
         # Comprobamos si el coolDown para ser golpeado debe descontarse
         if self.cooldownDano > 0:
@@ -291,19 +288,15 @@ class Personaje(MiSprite):
     def desplHorizontal(self, movimiento, grupoObstaculos):
         self.mirando = movimiento
 
-        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-        if self.movimiento == IZQUIERDA:
-            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+        # Al chocar con el obstáculo se va a quedar atrapado en él
+        if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+            if self.movimiento == IZQUIERDA:
                 return -self.velocidadCarrera
-            else:
-                return 0
-
-        # Si vamos a la derecha, le ponemos velocidad en esa dirección
-        else:
-            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+            else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
                 return self.velocidadCarrera
-            else:
-                return 0
+        else:
+            return 0
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -644,7 +637,7 @@ class Proyectil(MiSprite):
     def mover(self, movimiento):
         self.movimiento = movimiento
 
-    def update(self, tiempo, grupoPlataformas):
+    def update(self, tiempo, grupoPlataformas, grupoObstaculos):
 
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
