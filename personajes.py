@@ -324,16 +324,16 @@ class Tarta(MiSprite):
 class Jugador(Personaje):
     """Cualquier personaje del juego"""
 
-    def __init__(self):
+    def __init__(self, vida=VIDA_JUGADOR):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5, 4], VELOCIDAD_JUGADOR,
-                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, vida)
 
         self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width * 1.7, self.rect.height])
         # self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
-        self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
+        self.max_vida = VIDA_JUGADOR  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
         self.animacionAcabada = True
         self.croissants = None
