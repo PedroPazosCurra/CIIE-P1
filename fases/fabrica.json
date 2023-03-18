@@ -1,7 +1,7 @@
 {
 	"NOMBRE": "Fabrica",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
+	"POS_SUELO": 550,
 	"SIZE": [1200,600],
 	"SUELO": "fabrica_suelo.png",
 	"DECORADO": "fabrica_decorado.png",

@@ -1,7 +1,7 @@
 {
 	"NOMBRE": "Bosque",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
+	"POS_SUELO": 550,
 	"SIZE": [1400,600],
 	"SUELO": "bosque_suelo.png",
 	"DECORADO": "bosque_decorado.png",

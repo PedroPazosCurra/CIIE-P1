@@ -200,10 +200,7 @@ class Personaje(MiSprite):
         
         self.prevPostura = self.numPostura
 
-    def update(self, tiempo, grupos):
-
-        grupoPlataformas = grupos[0]
-        grupoObstaculos = grupos[1]
+    def update(self, tiempo, grupoPlataformas, grupoObstaculos):
 
         # Comprobamos si el coolDown para ser golpeado debe descontarse
         if self.cooldownDano > 0:
@@ -291,19 +288,15 @@ class Personaje(MiSprite):
     def desplHorizontal(self, movimiento, grupoObstaculos):
         self.mirando = movimiento
 
-        # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-        if self.movimiento == IZQUIERDA:
-            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+        # Al chocar con el obstáculo se va a quedar atrapado en él
+        if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
+            if self.movimiento == IZQUIERDA:
                 return -self.velocidadCarrera
-            else:
-                return 0
-
-        # Si vamos a la derecha, le ponemos velocidad en esa dirección
-        else:
-            if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
+            else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
                 return self.velocidadCarrera
-            else:
-                return 0
+        else:
+            return 0
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -331,16 +324,16 @@ class Tarta(MiSprite):
 class Jugador(Personaje):
     """Cualquier personaje del juego"""
 
-    def __init__(self):
+    def __init__(self, vida=VIDA_JUGADOR):
         # Invocamos al constructor de la clase padre con la configuracion de este personaje concreto
         Personaje.__init__(self, 'francois_with_hit.png', 'coordJugador.txt', [3, 6, 1, 1, 5, 4], VELOCIDAD_JUGADOR,
-                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, VIDA_JUGADOR)
+                           VELOCIDAD_SALTO_JUGADOR, RETARDO_ANIMACION_JUGADOR, vida)
 
         self.hitbox_baguette = Hitbox([self.rect.centerx, self.rect.y, self.rect.width * 1.7, self.rect.height])
         # self.atacando = False
         self.cooldownBaguette = 0
         self.cooldownCroissant = 0
-        self.max_vida = self.vida  # Jugador puede recuperar vida asi que ponemos un tope máximo
+        self.max_vida = VIDA_JUGADOR  # Jugador puede recuperar vida asi que ponemos un tope máximo
         self.vida_display = None
         self.animacionAcabada = True
         self.croissants = None
@@ -474,7 +467,7 @@ class Obstaculo(NoJugador):
 
     def __init__(self, coordenadas, velocidad, velocidadSalto, retardoAnimacion):
 
-        Personaje.__init__(self, 'estatua.png', coordenadas, [1,0,0,0,0,0], velocidad, velocidadSalto, retardoAnimacion, 3)
+        Personaje.__init__(self, 'estatua.png', coordenadas, [1, 0, 0, 0, 0, 0], velocidad, velocidadSalto, retardoAnimacion, 3)
 
     def mover_cpu(self, jugador):
         self.mirando = IZQUIERDA
@@ -644,7 +637,7 @@ class Proyectil(MiSprite):
     def mover(self, movimiento):
         self.movimiento = movimiento
 
-    def update(self, tiempo, grupoPlataformas):
+    def update(self, tiempo, grupoPlataformas, grupoObstaculos):
 
         # Las velocidades a las que iba hasta este momento
         (velocidadx, velocidady) = self.velocidad
