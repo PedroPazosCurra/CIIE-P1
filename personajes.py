@@ -40,11 +40,11 @@ RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
 VELOCIDAD_ENEMIGOS = 0.06  # Pixeles por milisegundo
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
 RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
-# debería de ser un valor distinto para cada postura
-# El Sniper camina un poco más lento que el jugador, y salta menos
+
 VELOCIDAD_BOSS = 0.01
 
-VELOCIDAD_CROISSANT = 0.12
+RETARDO_ANIMACION_CROISSANT = 3
+VELOCIDAD_CROISSANT = 0.35
 
 GRAVEDAD = 0.00055  # Píxeles / ms2
 
@@ -296,7 +296,8 @@ class Personaje(MiSprite):
             else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
                 return self.velocidadCarrera
         else:
-            return 0
+            if self.movimiento == IZQUIERDA: return 2*self.velocidadCarrera
+            else:                            return -2*self.velocidadCarrera
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -407,9 +408,6 @@ class Jugador(Personaje):
                 disparo.establecerPosicion(self.posicion)
                 disparo.mover(self.mirando)
                 break
-        # TODO -> colision 
-        
-        # Activa la hitbox
 
     # Notificar cambio en el valor de vida al display
     def notificarVidaDisplay(self):
@@ -462,15 +460,34 @@ class NoJugador(Personaje):
             self.mirando = DERECHA
 
 
-class Obstaculo(NoJugador):
+class Estatua(NoJugador):
     """Estatuas para bloquear el paso"""
 
-    def __init__(self, coordenadas, velocidad, velocidadSalto, retardoAnimacion):
-
-        Personaje.__init__(self, 'estatua.png', coordenadas, [1, 0, 0, 0, 0, 0], velocidad, velocidadSalto, retardoAnimacion, 3)
+    def __init__(self):
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen('estatua.png', 0).convert_alpha()
+        self.rect = self.image.get_rect()
 
     def mover_cpu(self, jugador):
         self.mirando = IZQUIERDA
+
+
+class ParedFabrica(NoJugador):
+    """Pared a la derecha de Fabrica"""
+
+    def __init__(self):
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen('pared.png', 0).convert_alpha()
+        self.rect = self.image.get_rect()
+
+
+class ParedHonoratia(NoJugador):
+    """Pared a la izquierda de Honoratia"""
+
+    def __init__(self):
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen('pared_honoratia.png', -1).convert_alpha()
+        self.rect = self.image.get_rect()
 
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------
@@ -717,7 +734,7 @@ class Croissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
         Proyectil.__init__(self, 'thrownCroissant.png', 'coordCroissant.txt', [8, 8, 8, 0, 0, 0], VELOCIDAD_CROISSANT,
-                           RETARDO_ANIMACION_ENEMIGOS, direccion)
+                           RETARDO_ANIMACION_CROISSANT, direccion)
 
 
 class Hitbox(MiSprite):

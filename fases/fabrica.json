@@ -19,7 +19,7 @@
 
 	"OBJETOS": [],
 
-	"OBSTACULOS": [],
+	"OBSTACULOS": [{"CLASE":"ParedFabrica", "POS": [1150,550]}],
 
 	"MUSICA": "musica_boss.mp3"
 }

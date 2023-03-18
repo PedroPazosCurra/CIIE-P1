@@ -4,8 +4,8 @@
 	"POS_SUELO": 550,
 	"SIZE": [1400,600],
 	"SUELO": "honoratia_suelo.png",
-	"DECORADO": "pueblo_decorado.png",
-	"FONDO": "pueblo_fondo.png",
+	"DECORADO": "honoratia_decorado.png",
+	"FONDO": "honoratia_fondo.png",
 	"CIELO": "Cielo_fondo1.png",
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
@@ -23,7 +23,7 @@
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
 
-	"OBSTACULOS": [],
+	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]}],
 
 	"MUSICA": "musica_honoratia.mp3"
 }

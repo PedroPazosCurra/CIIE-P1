@@ -20,7 +20,7 @@
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
 
-	"OBSTACULOS": [],
+	"OBSTACULOS": [{"CLASE":"Estatua", "POS": [1050,570]}],
 
 	"MUSICA": "pueblo.wav"
 }
