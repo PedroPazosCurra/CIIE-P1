@@ -12,15 +12,24 @@ VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
 DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
+# Flags para marcar la posición inicial
+POS_INICIAL_MEDIA = 0
+POS_INICIAL_IZQ = 1
+POS_INICIAL_DCHA = 2
+
 
 class Fase(Escena):
-    def __init__(self, director, nombre_fase, estado_jugador=None):
+    def __init__(self, director, nombre_fase, estado_jugador=None, pos_flag=POS_INICIAL_MEDIA):
 
         Escena.__init__(self, director)
         self.director = director
 
         self.nombre_fase = nombre_fase
         self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
+
+        # Cargamos el tamaño del nivel
+        self.ancho = self.datos["SIZE"][0]
+        self.alto = self.datos["SIZE"][1]
 
         # Creamos el suelo, el decorado y el fondo
         self.suelo = Suelo(self.datos)
@@ -41,18 +50,19 @@ class Fase(Escena):
 
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
-        # Ponemos a los jugadores en sus posiciones iniciales y le añadimos el display de vida
-        self.jugador.establecerPosicion((self.datos["POS_INICIAL_PERSONAJE"]))
-        self.jugador.establecerPosicionPantalla((self.scrollx, 0))
+        # Ponemos a los jugadores en sus posiciones iniciales
+        if pos_flag == POS_INICIAL_IZQ:
+            self.jugador.establecerPosicion((20, self.datos["POS_SUELO"]))
+        elif pos_flag == POS_INICIAL_DCHA:
+            self.jugador.establecerPosicion((self.ancho - 55, self.datos["POS_SUELO"]))
+        else:
+            self.jugador.establecerPosicion((self.ancho/2, self.datos["POS_SUELO"]))
+
+        # Le añadimos al jugador el display de vida
         self.vida_display = VidaDisplay(self.jugador.max_vida)
         self.jugador.establecerVidaDisplay(self.vida_display)
 
-        # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma -> Solucionado
-
         # Triggers para cambiar de escena parametrizados
-        self.ancho = self.datos["SIZE"][0]
-        self.alto = self.datos["SIZE"][1]
-
         self.trigger_izq = Trigger(pygame.Rect(0, 0, 10, self.alto), self.datos["TRIGGER_IZQ_ESCENA"])
         self.trigger_der = Trigger(pygame.Rect(self.ancho - 10, 0, 10, self.alto), self.datos["TRIGGER_DER_ESCENA"])
 
@@ -243,12 +253,12 @@ class Fase(Escena):
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_izq.escena, {"VIDA": self.jugador.vida})
+            fase = Fase(self.director, self.trigger_izq.escena, {"VIDA": self.jugador.vida}, POS_INICIAL_DCHA)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_der.escena, {"VIDA": self.jugador.vida})
+            fase = Fase(self.director, self.trigger_der.escena, {"VIDA": self.jugador.vida}, POS_INICIAL_IZQ)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll

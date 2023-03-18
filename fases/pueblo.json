@@ -1,7 +1,7 @@
 {
 	"NOMBRE": "Pueblo",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
+	"POS_SUELO": 550,
 	"SIZE": [1200,600],
 	"SUELO": "pueblo_suelo.png",
 	"DECORADO": "pueblo_decorado.png",
