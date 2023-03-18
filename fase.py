@@ -81,6 +81,9 @@ class Fase(Escena):
         self.grupoProyectiles = pygame.sprite.Group()
         self.crearProyectiles()
 
+        # Inicializamos el scroll con una primera llamada a actualizarScroll
+        self.actualizarScroll(self.jugador)
+
         # Musica
         self.cargarMusica()
         self.reproducirMusica()
