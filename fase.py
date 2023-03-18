@@ -465,4 +465,5 @@ class VidaDisplay:
         pantalla.blit(self.imagen[self.vida - 1], self.rect)
 
 
+# --------------------------------------------------Cuadro de diálogo---------------------------------------------------
 
