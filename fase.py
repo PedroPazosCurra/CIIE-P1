@@ -194,12 +194,15 @@ class Fase(Escena):
         # Actualizamos los Sprites dinamicos
         self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas, self.grupoObstaculos)
 
+        # Comprbamos si el personaje se ha caído del escenario
+        if (self.jugador.posicion[1] - self.jugador.rect.height) > self.alto:
+            self.gameOver()
+
         # Colision entre jugador y enemigo -> quita vida
         if not self.jugador.atacando:
             if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
                 if self.jugador.quitar_vida() and self.jugador.muerto():
-                    self.detenerMusica()
-                    self.director.cambiarEscena(Muerte(self.director))
+                    self.gameOver()
 
         if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
             self.jugador.curar()
@@ -257,6 +260,10 @@ class Fase(Escena):
 
         for npc in iter(self.grupoNPCs):
             npc.mover_cpu(self.jugador)
+
+    def gameOver(self):
+        self.detenerMusica()
+        self.director.cambiarEscena(Muerte(self.director))
 
     # Dibuja los rectangulos: Útil mientras que aún estemos ajustando las colisiones
     def dibujar_rects(self, pantalla):
