@@ -138,7 +138,7 @@ class PantallaGUI:
 
 class PantallaVictoriaGUI(PantallaGUI):
     def __init__(self, menu):
-        PantallaGUI.__init__(self, menu, 'victoria.png')
+        PantallaGUI.__init__(self, menu, 'pantalla_victoria.png')
         # Creamos los botones y los metemos en la lista
         botonJugar = BotonJugar(self)
         botonSalir = BotonSalir(self)
@@ -170,7 +170,7 @@ class Victoria(Escena):
         self.mostrarPantallaInicial()
 
         # Musica de victoria
-        GestorRecursos.CargarMusica("musica_victoria.mp3")
+        GestorRecursos.CargarMusica("musica_muerte.mp3")
         pygame.mixer.music.play(-1)
 
     def update(self, *args):

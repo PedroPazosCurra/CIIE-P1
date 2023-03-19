@@ -6,6 +6,7 @@ import personajes
 from escena import *
 from gestorRecursos import GestorRecursos
 from muerte import Muerte
+from victoria import Victoria
 from personajes import MiSprite, Jugador
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
@@ -255,6 +256,8 @@ class Fase(Escena):
                         hit.play()
 
                     if enemigo.muerto():
+                        if isinstance(enemigo, type(personajes.Boss())):
+                            self.director.cambiarEscena(Victoria(self.director))
                         enemigo.kill()
             obstaculos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoObstaculos, False)
             if obstaculos_hit_list:
