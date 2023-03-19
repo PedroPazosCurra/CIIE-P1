@@ -177,12 +177,15 @@ class Fase(Escena):
 
     def crearObstaculos(self):
         listaOstaculos = []
+        cond = (self.jugador.disparoHabilitado()) and (self.nombre_fase == 'pueblo')
 
         for reg_obs in self.datos["OBSTACULOS"]:
-            clase_obs = getattr(personajes, reg_obs["CLASE"])
-            inst_obs = clase_obs()
-            inst_obs.establecerPosicion(reg_obs["POS"])
-            listaOstaculos.append(inst_obs)
+            # Si la habilidad está desbloqueada, no instanciamos estatuas en el pueblo para permitir el acceso a la fábrica
+            if not (cond and (reg_obs["CLASE"] == 'Estatua')):
+                clase_obs = getattr(personajes, reg_obs["CLASE"])
+                inst_obs = clase_obs()
+                inst_obs.establecerPosicion(reg_obs["POS"])
+                listaOstaculos.append(inst_obs)
 
         self.grupoObstaculos.add(listaOstaculos)
         self.grupoSprites.add(listaOstaculos)
