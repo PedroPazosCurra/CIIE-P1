@@ -20,8 +20,9 @@
 			{"CLASE":"AldeanoFalda", "POS": [650,550]},
 			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
 
-	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
-				{"CLASE":"Tarta", "POS": [350,550]}],
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [800,550]},
+				{"CLASE":"Tarta", "POS": [350,550]},
+				{"CLASE":"ObjetoCroissant", "POS": [200,500]}],
 
 	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]}],
 

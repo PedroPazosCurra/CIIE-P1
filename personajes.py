@@ -327,7 +327,21 @@ class Tarta(Objeto):
         self.rect = self.image.get_rect()
 
     def aplicarEfecto(self, jugador):
+        # Reproducir un sonido?
         jugador.curar()
+
+
+class ObjetoCroissant(Objeto):
+    """Objeto de desbloquear los disparos con croissants"""
+    def __init__(self):
+        Objeto.__init__(self)
+        self.image = GestorRecursos.CargarImagen('Croissant.png', 0).convert_alpha()
+        self.rect = self.image.get_rect()
+
+    def aplicarEfecto(self, jugador):
+        # Reproducir un sonido?
+        jugador.habilitarDisparo()
+
 
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 
@@ -348,7 +362,7 @@ class Jugador(Personaje):
         self.animacionAcabada = True
         self.croissants = None
         self.usoCroissant = False
-        self.disparo_on = False # Indica si la habilidad de croissant está desbloqueada o no
+        self.disparo_on = False  # Indica si la habilidad de croissant está desbloqueada o no
 
     def establecerCroissants(self, croissants):
         self.croissants = croissants
@@ -664,7 +678,6 @@ class Proyectil(MiSprite):
 
         # Y actualizamos la postura del Sprite inicial, llamando al metodo correspondiente
         self.image = self.hoja.subsurface(self.coordenadasHoja[self.numPostura-1][self.numImagenPostura])
-
         self.image = pygame.transform.scale(self.image, (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5))
 
     # Metodo base para realizar el movimiento: simplemente se le indica cual va a hacer, y lo almacena
@@ -745,7 +758,7 @@ class Proyectil(MiSprite):
                               self.coordenadasHoja[self.numPostura - 1][self.numImagenPostura][3])
         
 
-class Croissant(Proyectil):
+class ProyectilCroissant(Proyectil):
     """Proyectil lanzado por el jugador el línea recta"""
     def __init__(self, direccion):
         Proyectil.__init__(self, 'thrownCroissant.png', 'coordCroissant.txt', [8, 8, 8, 0, 0, 0], VELOCIDAD_CROISSANT,

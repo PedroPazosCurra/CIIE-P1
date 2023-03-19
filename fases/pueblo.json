@@ -15,7 +15,7 @@
 	"PARED": [],
 	"ENEMIGOS": [],
 	"NPCS": [{"CLASE":"AldeanoFalda", "POS": [650,550]},
-			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
+			 {"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
 
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
 				{"CLASE":"Tarta", "POS": [350,550]}],

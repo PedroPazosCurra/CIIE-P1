@@ -137,7 +137,7 @@ class Fase(Escena):
     def crearProyectiles(self):
         proyectiles = []
 
-        clase_proyectil = getattr(personajes, "Croissant")
+        clase_proyectil = getattr(personajes, "ProyectilCroissant")
         inst_proyectil1 = clase_proyectil(self.jugador.mirando)
         proyectiles.append(inst_proyectil1)
         inst_proyectil2 = clase_proyectil(self.jugador.mirando)
