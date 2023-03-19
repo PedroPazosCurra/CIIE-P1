@@ -296,8 +296,10 @@ class Personaje(MiSprite):
             else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
                 return self.velocidadCarrera
         else:
-            if self.movimiento == IZQUIERDA: return 2*self.velocidadCarrera
-            else:                            return -2*self.velocidadCarrera
+            if self.movimiento == IZQUIERDA:
+                return 2*self.velocidadCarrera
+            else:
+                return -2*self.velocidadCarrera
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -312,13 +314,20 @@ class Personaje(MiSprite):
         return self.vida < 1
 
 
-class Tarta(MiSprite):
+class Objeto(MiSprite):
+    def aplicarEfecto(self, jugador):
+        raise NotImplemented("Tiene que implementar el metodo aplicarEfecto.")
+
+
+class Tarta(Objeto):
     """Objeto de vida"""
     def __init__(self):
-        MiSprite.__init__(self)
+        Objeto.__init__(self)
         self.image = GestorRecursos.CargarImagen('PiePumpkin.png', 0).convert_alpha()
         self.rect = self.image.get_rect()
 
+    def aplicarEfecto(self, jugador):
+        jugador.curar()
 
 # ----------------------------------------- Jugador y No Jugador -------------------------------------------------------
 

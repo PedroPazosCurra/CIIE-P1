@@ -217,8 +217,10 @@ class Fase(Escena):
                 if self.jugador.quitar_vida() and self.jugador.muerto():
                     self.gameOver()
 
-        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
-            self.jugador.curar()
+        objetos_hit_list = pygame.sprite.spritecollide(self.jugador, self.grupoObjetos, True)
+        if objetos_hit_list:
+            for objeto in objetos_hit_list:
+                objeto.aplicarEfecto(self.jugador)
 
         # Colision con hitbox de baguette
         if self.jugador.atacando:
