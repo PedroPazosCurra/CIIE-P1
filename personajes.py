@@ -37,7 +37,8 @@ RETARDO_ANIMACION_JUGADOR = 8  # updates que durará cada imagen del personaje
 
 # Movimientos Especiales Proyectiles
 
-VELOCIDAD_ENEMIGOS = 0.06  # Pixeles por milisegundo
+VELOCIDAD_TOMATE = 0.06  # Pixeles por milisegundo
+VELOCIDAD_ZANAHORIA = 0.03
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
 RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 
@@ -526,7 +527,7 @@ class ParedHonoratia(NoJugador):
 class Tomate(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_ENEMIGOS,
+        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_TOMATE,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
 
     def mover_cpu(self, jugador):
@@ -536,12 +537,10 @@ class Tomate(NoJugador):
 
             if jugador.posicion[0] < self.posicion[0]:
                 Personaje.mover(self, IZQUIERDA)
-                self.mirando = DERECHA
             else:
                 Personaje.mover(self, DERECHA)
-                # self.mirando = IZQUIERDA
 
-        # Si este personaje no esta en pantalla, no hara nada
+        # Si este personaje no esta en pantalla, no hará nada
         else:
             Personaje.mover(self, QUIETO)
 
@@ -549,7 +548,7 @@ class Tomate(NoJugador):
 class Zanahoria(NoJugador):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ENEMIGOS,
+        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ZANAHORIA,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
 
     def mover_cpu(self, jugador):
@@ -557,13 +556,11 @@ class Zanahoria(NoJugador):
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
             if jugador.posicion[0] < self.posicion[0]:
-                # Personaje.mover(self, IZQUIERDA)
-                self.mirando = DERECHA
+                Personaje.mover(self, IZQUIERDA)
             else:
                 Personaje.mover(self, DERECHA)
-                # self.mirando = IZQUIERDA
 
-        # Si este personaje no esta en pantalla, no hara nada
+        # Si este personaje no esta en pantalla, no hará nada
         else:
             Personaje.mover(self, QUIETO)
 
@@ -591,7 +588,7 @@ class Boss(NoJugador):
 
 class NPC(NoJugador):
     def __init__(self, sheet, coord, array_coord):
-        NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_ENEMIGOS,
+        NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_TOMATE,
                            VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC)
 
     def mover_cpu(self, jugador):
