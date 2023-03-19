@@ -170,7 +170,7 @@ class Victoria(Escena):
         self.mostrarPantallaInicial()
 
         # Musica de victoria
-        GestorRecursos.CargarMusica("musica_muerte.mp3")
+        GestorRecursos.CargarMusica("musica_victoria.mp3")
         pygame.mixer.music.play(-1)
 
     def update(self, *args):
