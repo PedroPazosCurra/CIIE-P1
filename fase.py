@@ -54,11 +54,11 @@ class Fase(Escena):
 
         # Ponemos a los jugadores en sus posiciones iniciales
         if pos_flag == POS_INICIAL_IZQ:
-            self.jugador.establecerPosicion((20, self.datos["POS_SUELO"]))
+            self.jugador.establecerPosicion((20, self.datos["POS_SUELO"] + 3))
         elif pos_flag == POS_INICIAL_DCHA:
-            self.jugador.establecerPosicion((self.ancho - 55, self.datos["POS_SUELO"]))
+            self.jugador.establecerPosicion((self.ancho - 55, self.datos["POS_SUELO"] + 3))
         else:
-            self.jugador.establecerPosicion((self.ancho/2, self.datos["POS_SUELO"]))
+            self.jugador.establecerPosicion((self.ancho/2, self.datos["POS_SUELO"] + 3))
 
         # Le añadimos al jugador el display de vida
         self.vida_display = VidaDisplay(self.jugador.max_vida)
@@ -253,6 +253,14 @@ class Fase(Escena):
 
                     if enemigo.muerto():
                         enemigo.kill()
+            obstaculos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoObstaculos, False)
+            if obstaculos_hit_list:
+                
+                disparo.mover(personajes.DISPARO_CERTERO)
+
+                hit = GestorRecursos.CargarSonido("punch.mp3")
+                for obstaculo in obstaculos_hit_list:
+                    obstaculo.kill()
 
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
