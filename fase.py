@@ -47,6 +47,8 @@ class Fase(Escena):
             self.jugador = Jugador()
         else:
             self.jugador = Jugador(estado_jugador["VIDA"])
+            if estado_jugador["DISPARO_HABILITADO"]:
+                self.jugador.habilitarDisparo()
 
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
@@ -255,12 +257,12 @@ class Fase(Escena):
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_izq.escena, {"VIDA": self.jugador.vida}, POS_INICIAL_DCHA)
+            fase = Fase(self.director, self.trigger_izq.escena, {"VIDA": self.jugador.vida, "DISPARO_HABILITADO": self.jugador.disparoHabilitado()}, POS_INICIAL_DCHA)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_der.escena, {"VIDA": self.jugador.vida}, POS_INICIAL_IZQ)
+            fase = Fase(self.director, self.trigger_der.escena, {"VIDA": self.jugador.vida, "DISPARO_HABILITADO": self.jugador.disparoHabilitado()}, POS_INICIAL_IZQ)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll

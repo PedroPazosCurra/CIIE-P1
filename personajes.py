@@ -348,9 +348,16 @@ class Jugador(Personaje):
         self.animacionAcabada = True
         self.croissants = None
         self.usoCroissant = False
+        self.disparo_on = False # Indica si la habilidad de croissant está desbloqueada o no
 
     def establecerCroissants(self, croissants):
         self.croissants = croissants
+
+    def habilitarDisparo(self):
+        self.disparo_on = True
+
+    def disparoHabilitado(self):
+        return self.disparo_on
 
     def mover(self, teclasPulsadas, arriba, abajo, izquierda, derecha, ataque, disparo):
         # Indicamos la acción a realizar segun la tecla pulsada para el jugador
@@ -411,12 +418,13 @@ class Jugador(Personaje):
         attack_sound.play()
         self.atacando = True
         self.cooldownCroissant = 60
-        
-        for disparo in self.croissants:
-            if disparo.movimiento == DISPARO_CERTERO:
-                disparo.establecerPosicion(self.posicion)
-                disparo.mover(self.mirando)
-                break
+
+        if self.disparoHabilitado():
+            for disparo in self.croissants:
+                if disparo.movimiento == DISPARO_CERTERO:
+                    disparo.establecerPosicion(self.posicion)
+                    disparo.mover(self.mirando)
+                    break
 
     # Notificar cambio en el valor de vida al display
     def notificarVidaDisplay(self):
@@ -673,13 +681,11 @@ class Proyectil(MiSprite):
         if (self.movimiento == IZQUIERDA) or (self.movimiento == DERECHA):
             velocidadx = self.desplHorizontal(self.movimiento)
 
-        if self.movimiento == DISPARO_CERTERO:
-            self.establecerPosicion((1000, 1000))
-
         if self.rect.left > (ANCHO_PANTALLA + 20) or self.rect.right < (-20):
             self.movimiento = DISPARO_CERTERO
 
         if self.movimiento == DISPARO_CERTERO:
+            self.establecerPosicion((1000, 1000))
             velocidadx = 0
 
         # Actualizamos la imagen a mostrar
