@@ -1,26 +1,36 @@
 # -*- coding: utf-8 -*-
-
+import pygame.sprite
 from pygame.locals import *
 
 import personajes
 from escena import *
 from gestorRecursos import GestorRecursos
 from muerte import Muerte
-from personajes import Jugador, MiSprite
+from victoria import Victoria
+from personajes import MiSprite, Jugador
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
 DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
+# Flags para marcar la posición inicial
+POS_INICIAL_MEDIA = 0
+POS_INICIAL_IZQ = 1
+POS_INICIAL_DCHA = 2
+
 
 class Fase(Escena):
-    def __init__(self, director, nombre_fase):
+    def __init__(self, director, nombre_fase, estado_jugador=None, pos_flag=POS_INICIAL_MEDIA):
 
         Escena.__init__(self, director)
         self.director = director
 
         self.nombre_fase = nombre_fase
         self.datos = GestorRecursos.CargarArchivoFaseJSON(nombre_fase)
+
+        # Cargamos el tamaño del nivel
+        self.ancho = self.datos["SIZE"][0]
+        self.alto = self.datos["SIZE"][1]
 
         # Creamos el suelo, el decorado y el fondo
         self.suelo = Suelo(self.datos)
@@ -30,51 +40,62 @@ class Fase(Escena):
 
         #  En ese caso solo hay scroll horizontal
         #  Si ademas lo hubiese vertical, seria self.scroll = (0, 0)
+        #  Que parte del decorado estamos visualizando
+        self.scrollx = 0
 
-        # Creamos los sprites de los jugadores y el display de su vida
-        
-        self.jugador = Jugador()
+        # Asignamos los sprites de los jugadores
+        if estado_jugador is None:
+            self.jugador = Jugador()
+        else:
+            self.jugador = Jugador(estado_jugador["VIDA"])
+            if estado_jugador["DISPARO_HABILITADO"]:
+                self.jugador.habilitarDisparo()
+
         self.grupoJugadores = pygame.sprite.Group(self.jugador)
 
-        # Ponemos a los jugadores en sus posiciones iniciales y le añadimos el display de vida
-        self.jugador.establecerPosicion((self.datos["POS_INICIAL_PERSONAJE"]))
+        # Ponemos a los jugadores en sus posiciones iniciales
+        if pos_flag == POS_INICIAL_IZQ:
+            self.jugador.establecerPosicion((20, self.datos["POS_SUELO"] + 3))
+        elif pos_flag == POS_INICIAL_DCHA:
+            self.jugador.establecerPosicion((self.ancho - 55, self.datos["POS_SUELO"] + 3))
+        else:
+            self.jugador.establecerPosicion((self.ancho/2, self.datos["POS_SUELO"] + 3))
+
+        # Le añadimos al jugador el display de vida
         self.vida_display = VidaDisplay(self.jugador.max_vida)
         self.jugador.establecerVidaDisplay(self.vida_display)
 
-        # Que parte del decorado estamos visualizando
-        self.scrollx = 0
-
-        # TODO: La vida ahora mismo se reinicia entre escenas. Esto tiene que cambiarse de alguna forma
-
-
         # Triggers para cambiar de escena parametrizados
-        self.ancho = self.datos["SIZE"][0]
-        self.alto = self.datos["SIZE"][1]
-
-        self.trigger_izq = Trigger(pygame.Rect(0, 0, 10, 1000), self.datos["TRIGGER_IZQ_ESCENA"])
-        self.trigger_der = Trigger(pygame.Rect(self.ancho - ANCHO_PANTALLA/2, 0, 10, 1000), self.datos["TRIGGER_DER_ESCENA"])
+        self.trigger_izq = Trigger(pygame.Rect(0, 0, 10, self.alto), self.datos["TRIGGER_IZQ_ESCENA"])
+        self.trigger_der = Trigger(pygame.Rect(self.ancho - 10, 0, 10, self.alto), self.datos["TRIGGER_DER_ESCENA"])
 
         # Sprites que se mueven
         #  En este caso, solo los personajes, pero podría haber más (proyectiles, etc.)
         self.grupoSpritesDinamicos = pygame.sprite.Group(self.jugador)
         # Todos los sprites
         self.grupoSprites = pygame.sprite.Group(self.jugador)
+        self.grupoSprites.add(self.trigger_izq, self.trigger_der)
 
         # Creamos las plataformas del decorado
         # La plataforma que conforma el suelo
         self.grupoPlataformas = pygame.sprite.Group()
         self.crearPlataformas()
 
-        # NPC y enemigos
+        # Grupos
         self.grupoEnemigos = pygame.sprite.Group()
         self.grupoNPCs = pygame.sprite.Group()
         self.grupoObjetos = pygame.sprite.Group()
+        self.grupoObstaculos = pygame.sprite.Group()
         self.crearEnemigos()
         self.crearNPCs()
         self.crearObjetos()
+        self.crearObstaculos()
 
         self.grupoProyectiles = pygame.sprite.Group()
         self.crearProyectiles()
+
+        # Inicializamos el scroll con una primera llamada a actualizarScroll
+        self.actualizarScroll(self.jugador)
 
         # Musica
         self.cargarMusica()
@@ -117,7 +138,7 @@ class Fase(Escena):
     def crearProyectiles(self):
         proyectiles = []
 
-        clase_proyectil = getattr(personajes, "Croissant")
+        clase_proyectil = getattr(personajes, "ProyectilCroissant")
         inst_proyectil1 = clase_proyectil(self.jugador.mirando)
         proyectiles.append(inst_proyectil1)
         inst_proyectil2 = clase_proyectil(self.jugador.mirando)
@@ -154,38 +175,58 @@ class Fase(Escena):
 
         self.grupoObjetos.add(listaObjetos)
         self.grupoSprites.add(listaObjetos)
-    
+
+    def crearObstaculos(self):
+        listaOstaculos = []
+        cond = (self.jugador.disparoHabilitado()) and (self.nombre_fase == 'pueblo')
+
+        for reg_obs in self.datos["OBSTACULOS"]:
+            # Si la habilidad está desbloqueada, no instanciamos estatuas en el pueblo para permitir el acceso a la fábrica
+            if not (cond and (reg_obs["CLASE"] == 'Estatua')):
+                clase_obs = getattr(personajes, reg_obs["CLASE"])
+                inst_obs = clase_obs()
+                inst_obs.establecerPosicion(reg_obs["POS"])
+                listaOstaculos.append(inst_obs)
+
+        self.grupoObstaculos.add(listaOstaculos)
+        self.grupoSprites.add(listaOstaculos)
+
     # Para evitar que el jugador se salga de pantalla podemos poner maximos/plataformas ¿?    
     def actualizarScroll(self, jugador):
-        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.fondo.rect.right:
-            self.scrollx = self.fondo.rect.right - ANCHO_PANTALLA
+        if jugador.posicion[0] + ANCHO_PANTALLA / 2 >= self.ancho:
+            self.scrollx = self.ancho - ANCHO_PANTALLA
         elif jugador.posicion[0] - ANCHO_PANTALLA / 2 <= 0:
             self.scrollx = 0
         else:
             self.scrollx = jugador.posicion[0] - ANCHO_PANTALLA / 2
 
-            for sprite in iter(self.grupoSprites):
-                sprite.establecerPosicionPantalla((self.scrollx, 0))
+        for sprite in iter(self.grupoSprites):
+            sprite.establecerPosicionPantalla((self.scrollx, 0))
 
-            self.decorado.update(self.scrollx)
-            self.fondo.update(self.scrollx)
-            self.suelo.update(self.scrollx)
+        self.decorado.update(self.scrollx)
+        self.fondo.update(self.scrollx)
+        self.suelo.update(self.scrollx)
 
     # Se actualiza el decorado
     def update(self, tiempo):
 
         # Actualizamos los Sprites dinamicos
-        self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas)
+        self.grupoSpritesDinamicos.update(tiempo, self.grupoPlataformas, self.grupoObstaculos)
+
+        # Comprbamos si el personaje se ha caído del escenario
+        if (self.jugador.posicion[1] - self.jugador.rect.height) > self.alto:
+            self.gameOver()
 
         # Colision entre jugador y enemigo -> quita vida
         if not self.jugador.atacando:
             if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoEnemigos, False, False) != {}:
                 if self.jugador.quitar_vida() and self.jugador.muerto():
-                    self.detenerMusica()
-                    self.director.cambiarEscena(Muerte(self.director))
+                    self.gameOver()
 
-        if pygame.sprite.groupcollide(self.grupoJugadores, self.grupoObjetos, False, True) != {}:
-            self.jugador.curar()
+        objetos_hit_list = pygame.sprite.spritecollide(self.jugador, self.grupoObjetos, True)
+        if objetos_hit_list:
+            for objeto in objetos_hit_list:
+                objeto.aplicarEfecto(self.jugador)
 
         # Colision con hitbox de baguette
         if self.jugador.atacando:
@@ -215,17 +256,27 @@ class Fase(Escena):
                         hit.play()
 
                     if enemigo.muerto():
+                        if isinstance(enemigo, type(personajes.Boss())):
+                            self.director.cambiarEscena(Victoria(self.director))
                         enemigo.kill()
+            obstaculos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoObstaculos, False)
+            if obstaculos_hit_list:
+                
+                disparo.mover(personajes.DISPARO_CERTERO)
+
+                hit = GestorRecursos.CargarSonido("punch.mp3")
+                for obstaculo in obstaculos_hit_list:
+                    obstaculo.kill()
 
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
         if self.trigger_izq.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_izq.escena)
+            fase = Fase(self.director, self.trigger_izq.escena, {"VIDA": self.jugador.vida, "DISPARO_HABILITADO": self.jugador.disparoHabilitado()}, POS_INICIAL_DCHA)
             self.director.cambiarEscena(fase)
 
         # Trigger derecho
         if self.trigger_der.rect.colliderect(self.jugador.rect):
-            fase = Fase(self.director, self.trigger_der.escena)
+            fase = Fase(self.director, self.trigger_der.escena, {"VIDA": self.jugador.vida, "DISPARO_HABILITADO": self.jugador.disparoHabilitado()}, POS_INICIAL_IZQ)
             self.director.cambiarEscena(fase)
 
         # Actualizamos el scroll
@@ -241,15 +292,18 @@ class Fase(Escena):
         for npc in iter(self.grupoNPCs):
             npc.mover_cpu(self.jugador)
 
+    def gameOver(self):
+        self.detenerMusica()
+        self.director.cambiarEscena(Muerte(self.director))
+
     # Dibuja los rectangulos: Útil mientras que aún estemos ajustando las colisiones
     def dibujar_rects(self, pantalla):
         for sprite in self.grupoSprites.sprites():
             pygame.draw.rect(pantalla, (255, 255, 255), sprite.rect, 2)
 
-        for sprite in self.grupoPlataformas.sprites():
-            pygame.draw.rect(pantalla, (255, 255, 255), sprite.rect, 2)
-
         pygame.draw.rect(pantalla, (255, 0, 0), self.jugador.hitbox_baguette.rect, 2)
+        pygame.draw.rect(pantalla, (0, 0, 255), self.trigger_izq.rect, 2)
+        pygame.draw.rect(pantalla, (0, 0, 255), self.trigger_der.rect, 2)
 
     def dibujar(self, pantalla):
 
@@ -298,7 +352,7 @@ class Plataforma(MiSprite):
 
         if imagen is not None:
             self.image = GestorRecursos.CargarImagen(imagen, -1).convert_alpha()
-            self.image = pygame.transform.scale(self.image,(self.rect.width,self.rect.height))
+            self.image = pygame.transform.scale(self.image, (self.rect.width, self.rect.height))
         else:
             self.image = pygame.Surface((0, 0))
 
@@ -312,20 +366,16 @@ class Trigger(MiSprite):
         self.image = pygame.Surface((0, 0))
         self.escena = escena
 
-        # La subimagen que estamos viendo
-        self.rectSubimagen = pygame.Rect(0, 0, ANCHO_PANTALLA, ALTO_PANTALLA)
-        self.rectSubimagen.left = 0  # El scroll horizontal empieza en la posicion 0 por defecto
-
 
 # ----------------------------------------Cielo, Decorado, Suelo--------------------------------------------------------
 
 class Cielo:
     def __init__(self, datos):
 
-        self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], 0)
+        self.nubes = GestorRecursos.CargarImagen(datos['CIELO'], -1)
         self.nubes = pygame.transform.scale(self.nubes, (1100, 550))
 
-        self.nubesdup = GestorRecursos.CargarImagen(datos['CIELO'], 0)
+        self.nubesdup = GestorRecursos.CargarImagen(datos['CIELO'], -1)
         self.nubesdup = pygame.transform.scale(self.nubesdup, (1100, 550))
 
         self.rect_nubes = self.nubes.get_rect()
@@ -357,7 +407,7 @@ class Cielo:
 
 class Fondo:
     def __init__(self, datos):
-        self.imagen = GestorRecursos.CargarImagen(datos["FONDO"], -1)
+        self.imagen = GestorRecursos.CargarImagen(datos["FONDO"], 0)
         self.imagen = pygame.transform.scale(self.imagen, datos["SIZE"])
 
         self.rect = self.imagen.get_rect()
@@ -433,4 +483,5 @@ class VidaDisplay:
         pantalla.blit(self.imagen[self.vida - 1], self.rect)
 
 
+# --------------------------------------------------Cuadro de diálogo---------------------------------------------------
 

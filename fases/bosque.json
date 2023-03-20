@@ -1,12 +1,12 @@
 {
 	"NOMBRE": "Bosque",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
+	"POS_SUELO": 550,
 	"SIZE": [1400,600],
 	"SUELO": "bosque_suelo.png",
 	"DECORADO": "bosque_decorado.png",
 	"FONDO": "bosque_fondo.png",
-	"CIELO": "bosque_cielo2.png",
+	"CIELO": "bosque_cielo.png",
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
@@ -26,12 +26,12 @@
 		     {"CLASE":"Tomate", "POS": [450,550]},
 		     {"CLASE":"Zanahoria", "POS": [550,550]}
 		    ],
-	"NPCS": [{"CLASE":"Madre", "POS": [600,550]},
-			{"CLASE":"AldeanoFalda", "POS": [650,550]},
-			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
+	"NPCS": [{"CLASE":"Madre", "POS": [100,550]}],
 
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
+
+	"OBSTACULOS": [],
 
 	"MUSICA": "musica_bosque.mp3"
 }

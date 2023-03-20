@@ -1,12 +1,12 @@
 {
 	"NOMBRE": "Fabrica",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
-	"SIZE": [1200,400],
-	"SUELO": "pueblo_suelo.png",
-	"DECORADO": "pueblo_decorado.png",
-	"FONDO": "pueblo_fondo.png",
-	"CIELO": "Sky.png",
+	"POS_SUELO": 550,
+	"SIZE": [1200,600],
+	"SUELO": "fabrica_suelo.png",
+	"DECORADO": "fabrica_decorado.png",
+	"FONDO": "fabrica_fondo.png",
+	"CIELO": "fabrica_cielo.jpg",
 
 	"TRIGGER_IZQ_ESCENA": "pueblo",
 	"TRIGGER_DER_ESCENA": "fabrica",
@@ -18,6 +18,8 @@
 	"NPCS": [],
 
 	"OBJETOS": [],
+
+	"OBSTACULOS": [{"CLASE":"ParedFabrica", "POS": [1150,550]}],
 
 	"MUSICA": "musica_boss.mp3"
 }

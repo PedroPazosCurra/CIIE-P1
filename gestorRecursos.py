@@ -104,6 +104,7 @@ class GestorRecursos(object):
     @classmethod
     def CargarArchivoFaseJSON(cls, nombre):
         # Si el nombre de archivo está entre los recursos ya cargados
+        nombre += '.json'
         if nombre in cls.recursos:
             # Se devuelve ese recurso
             return cls.recursos[nombre]
@@ -111,7 +112,7 @@ class GestorRecursos(object):
         # Si no ha sido cargado anteriormente
         else:
             # Se carga el recurso indicando el nombre de su carpeta
-            fullname = os.path.join('fases', nombre+'.json')
+            fullname = os.path.join('fases', nombre)
 
             f = None
             try:

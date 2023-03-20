@@ -1,16 +1,16 @@
 {
 	"NOMBRE": "Pueblo",
 
-	"POS_INICIAL_PERSONAJE": [400,550],
-	"SIZE": [1200,400],
-	"SUELO": "pueblo_suelo.png",
-	"DECORADO": "pueblo_decorado.png",
-	"FONDO": "pueblo_fondo.png",
+	"POS_SUELO": 550,
+	"SIZE": [1400,600],
+	"SUELO": "honoratia_suelo.png",
+	"DECORADO": "honoratia_decorado.png",
+	"FONDO": "honoratia_fondo.png",
 	"CIELO": "Cielo_fondo1.png",
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "bosque",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
 		     {"CLASE":"Tomate", "POS": [450,550]},
@@ -20,8 +20,11 @@
 			{"CLASE":"AldeanoFalda", "POS": [650,550]},
 			{"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
 
-	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
-				{"CLASE":"Tarta", "POS": [350,550]}],
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [800,550]},
+				{"CLASE":"Tarta", "POS": [350,550]},
+				{"CLASE":"ObjetoCroissant", "POS": [200,500]}],
+
+	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]}],
 
 	"MUSICA": "musica_honoratia.mp3"
 }
