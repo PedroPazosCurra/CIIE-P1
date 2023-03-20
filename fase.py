@@ -11,7 +11,7 @@ from personajes import MiSprite, Jugador
 
 VELOCIDAD_NUBES = 0.04  # Pixeles por milisegundo
 
-DIBUJAR_RECTS = True  # Flag para marcar si se dibujan o no rects
+DIBUJAR_RECTS = False  # Flag para marcar si se dibujan o no rects
 
 # Flags para marcar la posición inicial
 POS_INICIAL_MEDIA = 0
