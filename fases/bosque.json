@@ -10,16 +10,16 @@
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 15], "IMAGEN": ""},
-					{"RECT": [370, 300, 15, 250], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [270, 350, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [160, 400, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [50, 450, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [160, 500, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [385, 350, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [485, 400, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [585, 450, 100, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [485, 500, 100, 15], "IMAGEN": "platformPack_tile047.png"}
+	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 25], "IMAGEN": ""},
+					{"RECT": [670, 300, 15, 250], "IMAGEN": "bosque_pared_larga.png"},
+					{"RECT": [570, 350, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [460, 400, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [350, 450, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [460, 500, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [685, 350, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [785, 400, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [885, 450, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [785, 500, 50, 15], "IMAGEN": "bosque_plataforma1.png"}
 ],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
@@ -28,7 +28,7 @@
 		    ],
 	"NPCS": [{"CLASE":"Madre", "POS": [100,550]}],
 
-	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [670,285]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
 
 	"OBSTACULOS": [],
