@@ -19,10 +19,14 @@
 	"PARED": [],
 	"ENEMIGOS": [
 			 {"CLASE":"Boss", "POS": [800,550]},
-		     {"CLASE":"Tomate", "POS": [900,550]},
-			 {"CLASE":"Tomate", "POS": [910,550]},
-			 {"CLASE":"Tomate", "POS": [930,550]},
-		     {"CLASE":"Tomate", "POS": [950,550]}
+			 {"CLASE":"Tomate", "POS": [600,550]},
+			 {"CLASE":"Tomate", "POS": [620,550]},
+		     {"CLASE":"Tomate", "POS": [635,550]},
+			 {"CLASE":"Tomate", "POS": [590,550]},
+		     {"CLASE":"Tomate", "POS": [1000,550]},
+			 {"CLASE":"Tomate", "POS": [1010,550]},
+			 {"CLASE":"Tomate", "POS": [1030,550]},
+		     {"CLASE":"Tomate", "POS": [1050,550]}
 	],
 	"NPCS": [],
 
