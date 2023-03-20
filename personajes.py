@@ -494,7 +494,7 @@ class NoJugador(Personaje):
             self.mirando = DERECHA
 
 
-class Obstaculo(NoJugador):
+class Obstaculo(MiSprite):
     """Cualquier tipo de obstáculo"""
     def __init__(self, imagen, colorkey):
         MiSprite.__init__(self)
@@ -506,17 +506,14 @@ class Estatua(Obstaculo):
     """Estatuas para bloquear el paso"""
 
     def __init__(self):
-        Obstaculo.__init__(self,'estatua.png',0)
-
-    def mover_cpu(self, jugador):
-        self.mirando = IZQUIERDA
+        Obstaculo.__init__(self, 'estatua.png', 0)
 
 
 class ParedFabrica(Obstaculo):
     """Pared a la derecha de Fabrica"""
 
     def __init__(self):
-        Obstaculo.__init__(self, 'pared.png',0)
+        Obstaculo.__init__(self, 'pared.png', 0)
 
 
 class ParedHonoratia(Obstaculo):
