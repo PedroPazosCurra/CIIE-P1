@@ -23,12 +23,15 @@
 					{"RECT": [630, 250, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [520, 300, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [670, 220, 19, 15], "IMAGEN": ""}
-	],
+				   ],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
-		     {"CLASE":"Tomate", "POS": [450,550]},
-		     {"CLASE":"Zanahoria", "POS": [550,550]}
-		    ],
+				 {"CLASE":"Tomate", "POS": [450,550]},
+		     	 {"CLASE":"Zanahoria", "POS": [550,550]},
+				 {"CLASE":"Tomate", "POS": [1100,550]},
+				 {"CLASE":"Tomate", "POS": [950,550]},
+				 {"CLASE":"Zanahoria", "POS": [700,550]}
+		    	],
 	"NPCS": [{"CLASE":"Madre", "POS": [100,550]}],
 
 	"OBJETOS": [{"CLASE":"Tarta", "POS": [670,205]},
