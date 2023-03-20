@@ -10,17 +10,7 @@
 
 	"TRIGGER_IZQ_ESCENA": "bosque",
 	"TRIGGER_DER_ESCENA": "fabrica",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""},
-					{"RECT": [600, 500, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [385, 450, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [600, 400, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [385, 350, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [370, 300, 15, 250], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [220, 350, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [70, 400, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [220, 450, 150, 15], "IMAGEN": "platformPack_tile047.png"},
-					{"RECT": [0, 350, 150, 15], "IMAGEN": "platformPack_tile047.png"}
-				],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [],
 	"NPCS": [{"CLASE":"AldeanoFalda", "POS": [650,550]},

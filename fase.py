@@ -171,7 +171,10 @@ class Fase(Escena):
             clase_obj = getattr(personajes, reg_obj["CLASE"])
             inst_obj = clase_obj()
             inst_obj.establecerPosicion(reg_obj["POS"])
-            listaObjetos.append(inst_obj)
+
+            # No crear el croissant si ya se cogió
+            if not (self.jugador.disparoHabilitado() and clase_obj == personajes.ObjetoCroissant):
+                listaObjetos.append(inst_obj)
 
         self.grupoObjetos.add(listaObjetos)
         self.grupoSprites.add(listaObjetos)
