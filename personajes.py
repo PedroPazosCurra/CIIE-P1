@@ -289,18 +289,20 @@ class Personaje(MiSprite):
     def desplHorizontal(self, movimiento, grupoObstaculos):
         self.mirando = movimiento
 
-        # Al chocar con el obstáculo se va a quedar atrapado en él
-        if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
-            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-            if self.movimiento == IZQUIERDA:
-                return -self.velocidadCarrera
-            else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
-                return self.velocidadCarrera
+        obstaculo = pygame.sprite.spritecollideany(self, grupoObstaculos)
+        if obstaculo is not None:
+            choque_derecho = (movimiento == IZQUIERDA) and (self.rect.right > obstaculo.rect.right)
+            choque_izquierdo = (movimiento == DERECHA) and (self.rect.left < obstaculo.rect.left)
+
+            # Si se mueve en la dirección que provoca el choque, no habrá desplazamiento
+            if choque_derecho or choque_izquierdo:
+                return 0
+
+        # Si no hay choque o no nos movemos en la dirección que lo produce, habrá velocidad de desplazamiento
+        if movimiento == IZQUIERDA:
+            return -self.velocidadCarrera
         else:
-            if self.movimiento == IZQUIERDA:
-                return 2*self.velocidadCarrera
-            else:
-                return -2*self.velocidadCarrera
+            return self.velocidadCarrera
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
