@@ -10,11 +10,24 @@
 
 	"TRIGGER_IZQ_ESCENA": "pueblo",
 	"TRIGGER_DER_ESCENA": "fabrica",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 18], "IMAGEN": ""},
+					{"RECT": [100, 500, 75, 18], "IMAGEN": "fabrica_plataforma.png"},
+					{"RECT": [200, 450, 75, 18], "IMAGEN": "fabrica_plataforma.png"},
+					{"RECT": [990, 450, 75, 18], "IMAGEN": "fabrica_plataforma.png"},
+					{"RECT": [1090, 500, 75, 18], "IMAGEN": "fabrica_plataforma.png"}
+	],
 	"PARED": [],
 	"ENEMIGOS": [
-			 {"CLASE":"Boss", "POS": [800,550]}
-		    ],
+			 {"CLASE":"Boss", "POS": [800,550]},
+			 {"CLASE":"Tomate", "POS": [600,550]},
+			 {"CLASE":"Tomate", "POS": [620,550]},
+		     {"CLASE":"Tomate", "POS": [635,550]},
+			 {"CLASE":"Tomate", "POS": [590,550]},
+		     {"CLASE":"Tomate", "POS": [1000,550]},
+			 {"CLASE":"Tomate", "POS": [1010,550]},
+			 {"CLASE":"Tomate", "POS": [1030,550]},
+		     {"CLASE":"Tomate", "POS": [1050,550]}
+	],
 	"NPCS": [],
 
 	"OBJETOS": [],

@@ -13,11 +13,17 @@
 	"PLATAFORMAS": [{"RECT": [0, 550, 1200, 15], "IMAGEN": ""}],
 	"PARED": [],
 	"ENEMIGOS": [],
-	"NPCS": [{"CLASE":"AldeanoFalda", "POS": [650,550]},
-			 {"CLASE":"AldeanoSombrero", "POS": [700,550]} ],
+	"NPCS": [{"CLASE":"AldeanoFalda", "POS": [670,550]},
+			 {"CLASE":"AldeanoFalda", "POS": [640,550]},
+			 {"CLASE":"AldeanoSombrero", "POS": [920,550]},
+			 {"CLASE":"AldeanoFalda", "POS": [940,550]},
+			 {"CLASE":"AldeanoFalda", "POS": [320,550]},
+			 {"CLASE":"AldeanoFalda", "POS": [370,550]},
+			 {"CLASE":"AldeanoFalda", "POS": [385,550]},
+			 {"CLASE":"AldeanoSombrero", "POS": [350,550]},
+			 {"CLASE":"AldeanoSombrero", "POS": [100,550]}],
 
-	"OBJETOS": [{"CLASE":"Tarta", "POS": [200,550]},
-				{"CLASE":"Tarta", "POS": [350,550]}],
+	"OBJETOS": [],
 
 	"OBSTACULOS": [{"CLASE":"Estatua", "POS": [1050,570]}],
 

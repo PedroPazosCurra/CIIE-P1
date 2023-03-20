@@ -11,27 +11,33 @@
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
 	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 25], "IMAGEN": ""},
-					{"RECT": [670, 300, 15, 250], "IMAGEN": "bosque_pared_larga.png"},
-					{"RECT": [570, 350, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [460, 400, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [350, 450, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [460, 500, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
-					{"RECT": [685, 350, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [630, 350, 100, 35], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [785, 400, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
 					{"RECT": [885, 450, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
-					{"RECT": [785, 500, 50, 15], "IMAGEN": "bosque_plataforma1.png"}
-],
+					{"RECT": [785, 500, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [785, 300, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [680, 250, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [630, 250, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [520, 300, 50, 15], "IMAGEN": "bosque_plataforma1.png"},
+					{"RECT": [670, 220, 19, 15], "IMAGEN": ""}
+				   ],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
-		     {"CLASE":"Tomate", "POS": [450,550]},
-		     {"CLASE":"Zanahoria", "POS": [550,550]}
-		    ],
+				 {"CLASE":"Tomate", "POS": [450,550]},
+		     	 {"CLASE":"Zanahoria", "POS": [550,550]},
+				 {"CLASE":"Tomate", "POS": [1100,550]},
+				 {"CLASE":"Tomate", "POS": [950,550]},
+				 {"CLASE":"Zanahoria", "POS": [700,550]}
+		    	],
 	"NPCS": [{"CLASE":"Madre", "POS": [100,550]}],
 
-	"OBJETOS": [{"CLASE":"Tarta", "POS": [670,285]},
+	"OBJETOS": [{"CLASE":"Tarta", "POS": [670,205]},
 				{"CLASE":"Tarta", "POS": [350,550]}],
 
-	"OBSTACULOS": [],
+	"OBSTACULOS": [{"CLASE":"ParedMadera", "POS": [670,550]}],
 
 	"MUSICA": "musica_bosque.mp3"
 }

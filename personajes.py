@@ -42,7 +42,7 @@ VELOCIDAD_ZANAHORIA = 0.03
 VELOCIDAD_SALTO_ENEMIGOS = 0.27  # Pixeles por milisegundo
 RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 
-VELOCIDAD_BOSS = 0.01
+VELOCIDAD_BOSS = 0.05
 
 RETARDO_ANIMACION_CROISSANT = 3
 VELOCIDAD_CROISSANT = 0.35
@@ -289,18 +289,20 @@ class Personaje(MiSprite):
     def desplHorizontal(self, movimiento, grupoObstaculos):
         self.mirando = movimiento
 
-        # Al chocar con el obstáculo se va a quedar atrapado en él
-        if pygame.sprite.spritecollideany(self, grupoObstaculos) is None:
-            # Si vamos a la izquierda, le ponemos velocidad en esa dirección
-            if self.movimiento == IZQUIERDA:
-                return -self.velocidadCarrera
-            else:  # Si vamos a la derecha, le ponemos velocidad en esa dirección
-                return self.velocidadCarrera
+        obstaculo = pygame.sprite.spritecollideany(self, grupoObstaculos)
+        if obstaculo is not None:
+            choque_derecho = (movimiento == IZQUIERDA) and (self.rect.right > obstaculo.rect.right)
+            choque_izquierdo = (movimiento == DERECHA) and (self.rect.left < obstaculo.rect.left)
+
+            # Si se mueve en la dirección que provoca el choque, no habrá desplazamiento
+            if choque_derecho or choque_izquierdo:
+                return 0
+
+        # Si no hay choque o no nos movemos en la dirección que lo produce, habrá velocidad de desplazamiento
+        if movimiento == IZQUIERDA:
+            return -self.velocidadCarrera
         else:
-            if self.movimiento == IZQUIERDA:
-                return 2*self.velocidadCarrera
-            else:
-                return -2*self.velocidadCarrera
+            return self.velocidadCarrera
 
     # Quita vida solo si no hay frames de invencibilidad
     def quitar_vida(self):
@@ -492,34 +494,40 @@ class NoJugador(Personaje):
             self.mirando = DERECHA
 
 
-class Estatua(NoJugador):
+class Obstaculo(MiSprite):
+    """Cualquier tipo de obstáculo"""
+    def __init__(self, imagen, colorkey):
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen(imagen, colorkey).convert_alpha()
+        self.rect = self.image.get_rect()
+
+
+class Estatua(Obstaculo):
     """Estatuas para bloquear el paso"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('estatua.png', 0).convert_alpha()
-        self.rect = self.image.get_rect()
-
-    def mover_cpu(self, jugador):
-        self.mirando = IZQUIERDA
+        Obstaculo.__init__(self, 'estatua.png', 0)
 
 
-class ParedFabrica(NoJugador):
+class ParedFabrica(Obstaculo):
     """Pared a la derecha de Fabrica"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('pared.png', 0).convert_alpha()
-        self.rect = self.image.get_rect()
+        Obstaculo.__init__(self, 'pared.png', 0)
 
 
-class ParedHonoratia(NoJugador):
+class ParedHonoratia(Obstaculo):
     """Pared a la izquierda de Honoratia"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('pared_honoratia.png', -1).convert_alpha()
-        self.rect = self.image.get_rect()
+        Obstaculo.__init__(self, 'pared_honoratia.png', -1)
+
+
+class ParedMadera(Obstaculo):
+    """Poste de madera en Bosque y Honoratia"""
+
+    def __init__(self):
+        Obstaculo.__init__(self, 'bosque_pared_larga2.png', -1)
 
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------
