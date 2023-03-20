@@ -262,14 +262,6 @@ class Fase(Escena):
                         if isinstance(enemigo, type(personajes.Boss())):
                             self.director.cambiarEscena(Victoria(self.director))
                         enemigo.kill()
-            obstaculos_hit_list = pygame.sprite.spritecollide(disparo, self.grupoObstaculos, False)
-            if obstaculos_hit_list:
-                
-                disparo.mover(personajes.DISPARO_CERTERO)
-
-                hit = GestorRecursos.CargarSonido("punch.mp3")
-                for obstaculo in obstaculos_hit_list:
-                    obstaculo.kill()
 
         # Colision entre jugador y triggers -> cambia fase
         # Trigger izquierdo
