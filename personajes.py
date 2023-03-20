@@ -44,6 +44,16 @@ RETARDO_ANIMACION_ENEMIGOS = 8  # updates que durará cada imagen del personaje
 
 VELOCIDAD_BOSS = 0.05
 
+# Caracterísitcas IA enemigos
+
+TOMATE_MAX_STEPS = 100
+TOMATE_VIEW_DIST = 100
+TOMATE_SEGUIR = False
+ZANAHORIA_MAX_STEPS = 100
+ZANAHORIA_VIEW_DIST = 100
+ZANAHORIA_SEGUIR = False
+MAX_VIEW_HEIGHT = 25
+
 RETARDO_ANIMACION_CROISSANT = 3
 VELOCIDAD_CROISSANT = 0.35
 
@@ -482,10 +492,16 @@ class Jugador(Personaje):
 
 class NoJugador(Personaje):
     """Personajes que no son el jugador. CPU por defecto: miran al jugador"""
-
-    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida):
+    
+    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida, max_steps, view_dist, seguir):
 
         Personaje.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida)
+        self.max_steps = max_steps
+        self.count_steps = 0
+        self.view_dist = view_dist
+        self.direccion = DERECHA
+        self.seguir = seguir
+        
 
     def mover_cpu(self, jugador):
         if jugador.posicion[0] < self.posicion[0]:
@@ -536,17 +552,29 @@ class Tomate(NoJugador):
 
     def __init__(self):
         NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_TOMATE,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
 
     def mover_cpu(self, jugador):
 
         # Movemos solo a los enemigos que esten en la pantalla
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
-            if jugador.posicion[0] < self.posicion[0]:
-                Personaje.mover(self, IZQUIERDA)
+            if ((abs(jugador.posicion[0] - self.posicion[0]) < self.view_dist) and (abs(jugador.posicion[1] - self.posicion[1]) < MAX_VIEW_HEIGHT)) or self.seguir:
+                self.seguir = True 
+                if jugador.posicion[0] < self.posicion[0]:
+                    Personaje.mover(self, IZQUIERDA)
+                else:
+                    Personaje.mover(self, DERECHA)
             else:
-                Personaje.mover(self, DERECHA)
+                if self.count_steps <= self.max_steps:
+                    self.count_steps += 1
+                    Personaje.mover(self,self.direccion)
+                else:
+                    self.count_steps = 0
+                    if (self.direccion == DERECHA):
+                        self.direccion = IZQUIERDA
+                    else:
+                        self.direccion = DERECHA
 
         # Si este personaje no esta en pantalla, no hará nada
         else:
@@ -557,16 +585,28 @@ class Zanahoria(NoJugador):
 
     def __init__(self):
         NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ZANAHORIA,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA, ZANAHORIA_MAX_STEPS, ZANAHORIA_VIEW_DIST, ZANAHORIA_SEGUIR)
 
     def mover_cpu(self, jugador):
 
         if self.rect.left > 0 and self.rect.right < ANCHO_PANTALLA and self.rect.bottom > 0 and self.rect.top < ALTO_PANTALLA:
 
-            if jugador.posicion[0] < self.posicion[0]:
-                Personaje.mover(self, IZQUIERDA)
+            if (abs(jugador.posicion[0] - self.posicion[0]) < self.view_dist and abs(jugador.posicion[1] - self.posicion[1] < MAX_VIEW_HEIGHT)) or self.seguir:
+                self.seguir = True 
+                if jugador.posicion[0] < self.posicion[0]:
+                    Personaje.mover(self, IZQUIERDA)
+                else:
+                    Personaje.mover(self, DERECHA)
             else:
-                Personaje.mover(self, DERECHA)
+                if self.count_steps <= self.max_steps:
+                    self.count_steps += 1
+                    Personaje.mover(self,self.direccion)
+                else:
+                    self.count_steps = 0
+                    if (self.direccion == DERECHA):
+                        self.direccion = IZQUIERDA
+                    else:
+                        self.direccion = DERECHA
 
         # Si este personaje no esta en pantalla, no hará nada
         else:
@@ -577,7 +617,7 @@ class Boss(NoJugador):
 
     def __init__(self):
         NoJugador.__init__(self, 'boss.png', 'coordBoss.txt', [4, 4, 4, 0, 0, 0], VELOCIDAD_BOSS,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
 
     def mover_cpu(self, jugador):
 
@@ -597,7 +637,7 @@ class Boss(NoJugador):
 class NPC(NoJugador):
     def __init__(self, sheet, coord, array_coord):
         NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_TOMATE,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
 
     def mover_cpu(self, jugador):
         if jugador.posicion[0] < self.posicion[0]:
