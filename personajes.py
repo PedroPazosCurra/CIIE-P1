@@ -492,34 +492,43 @@ class NoJugador(Personaje):
             self.mirando = DERECHA
 
 
-class Estatua(NoJugador):
+class Obstaculo(NoJugador):
+    """Cualquier tipo de obstáculo"""
+    def __init__(self, imagen, colorkey):
+        MiSprite.__init__(self)
+        self.image = GestorRecursos.CargarImagen(imagen, colorkey).convert_alpha()
+        self.rect = self.image.get_rect()
+
+
+class Estatua(Obstaculo):
     """Estatuas para bloquear el paso"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('estatua.png', 0).convert_alpha()
-        self.rect = self.image.get_rect()
+        Obstaculo.__init__(self,'estatua.png',0)
 
     def mover_cpu(self, jugador):
         self.mirando = IZQUIERDA
 
 
-class ParedFabrica(NoJugador):
+class ParedFabrica(Obstaculo):
     """Pared a la derecha de Fabrica"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('pared.png', 0).convert_alpha()
-        self.rect = self.image.get_rect()
+        Obstaculo.__init__(self, 'pared.png',0)
 
 
-class ParedHonoratia(NoJugador):
+class ParedHonoratia(Obstaculo):
     """Pared a la izquierda de Honoratia"""
 
     def __init__(self):
-        MiSprite.__init__(self)
-        self.image = GestorRecursos.CargarImagen('pared_honoratia.png', -1).convert_alpha()
-        self.rect = self.image.get_rect()
+        Obstaculo.__init__(self, 'pared_honoratia.png', -1)
+
+
+class ParedMadera(Obstaculo):
+    """Poste de madera en Bosque y Honoratia"""
+
+    def __init__(self):
+        Obstaculo.__init__(self, 'bosque_pared_larga2.png', -1)
 
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------

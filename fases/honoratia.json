@@ -15,7 +15,7 @@
 					{"RECT": [785, 450, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
 					{"RECT": [930, 400, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
 					{"RECT": [785, 350, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
-					{"RECT": [770, 300, 15, 250], "IMAGEN": "bosque_pared_larga.png"},
+					{"RECT": [770, 300, 15, 250], "IMAGEN": ""},
 					{"RECT": [620, 350, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
 					{"RECT": [470, 400, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
 					{"RECT": [620, 450, 60, 20], "IMAGEN": "honoratia_plataforma1.png"},
@@ -39,7 +39,8 @@
 				{"CLASE":"Tarta", "POS": [350,550]},
 				{"CLASE":"ObjetoCroissant", "POS": [200,500]}],
 
-	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]}],
+	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]},
+					{"CLASE":"ParedMadera", "POS": [770,550]}],
 
 	"MUSICA": "musica_honoratia.mp3"
 }
