@@ -10,7 +10,17 @@
 
 	"TRIGGER_IZQ_ESCENA": "honoratia",
 	"TRIGGER_DER_ESCENA": "pueblo",
-	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 15], "IMAGEN": ""}],
+	"PLATAFORMAS": [{"RECT": [0, 550, 1400, 15], "IMAGEN": ""},
+					{"RECT": [370, 300, 15, 250], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [270, 350, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [160, 400, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [50, 450, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [160, 500, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [385, 350, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [485, 400, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [585, 450, 100, 15], "IMAGEN": "platformPack_tile047.png"},
+					{"RECT": [485, 500, 100, 15], "IMAGEN": "platformPack_tile047.png"}
+],
 	"PARED": [],
 	"ENEMIGOS": [{"CLASE":"Tomate", "POS": [500,550]},
 		     {"CLASE":"Tomate", "POS": [450,550]},
