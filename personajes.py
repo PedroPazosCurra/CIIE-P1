@@ -491,23 +491,10 @@ class Jugador(Personaje):
 
 
 class NoJugador(Personaje):
-    """Personajes que no son el jugador. CPU por defecto: miran al jugador"""
-    
-    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida, max_steps, view_dist, seguir):
-
-        Personaje.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida)
-        self.max_steps = max_steps
-        self.count_steps = 0
-        self.view_dist = view_dist
-        self.direccion = DERECHA
-        self.seguir = seguir
-        
+    """Personajes que no son el jugador."""
 
     def mover_cpu(self, jugador):
-        if jugador.posicion[0] < self.posicion[0]:
-            self.mirando = IZQUIERDA
-        else:
-            self.mirando = DERECHA
+        raise NotImplemented("Tiene que implementar el metodo mover_cpu.")
 
 
 class Obstaculo(MiSprite):
@@ -548,11 +535,24 @@ class ParedMadera(Obstaculo):
 
 # -------------------------------------------- Enemigos y NPCs ---------------------------------------------------------
 
-class Tomate(NoJugador):
+class Enemigo(NoJugador):
+    """Personajes enemigos"""
+
+    def __init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida, max_steps,
+                 view_dist, seguir):
+        NoJugador.__init__(self, imagen, coordenadas, numImagenes, velocidad, velocidadSalto, retardoAnimacion, vida)
+        self.max_steps = max_steps
+        self.count_steps = 0
+        self.view_dist = view_dist
+        self.direccion = DERECHA
+        self.seguir = seguir
+
+
+class Tomate(Enemigo):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_TOMATE,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
+        Enemigo.__init__(self, 'Tomato-Sheet.png', 'coordTomato.txt', [8, 8, 2, 13, 0, 0], VELOCIDAD_TOMATE,
+                         VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_TOMATE, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
 
     def mover_cpu(self, jugador):
 
@@ -568,10 +568,10 @@ class Tomate(NoJugador):
             else:
                 if self.count_steps <= self.max_steps:
                     self.count_steps += 1
-                    Personaje.mover(self,self.direccion)
+                    Personaje.mover(self, self.direccion)
                 else:
                     self.count_steps = 0
-                    if (self.direccion == DERECHA):
+                    if self.direccion == DERECHA:
                         self.direccion = IZQUIERDA
                     else:
                         self.direccion = DERECHA
@@ -581,11 +581,11 @@ class Tomate(NoJugador):
             Personaje.mover(self, QUIETO)
 
 
-class Zanahoria(NoJugador):
+class Zanahoria(Enemigo):
 
     def __init__(self):
-        NoJugador.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ZANAHORIA,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA, ZANAHORIA_MAX_STEPS, ZANAHORIA_VIEW_DIST, ZANAHORIA_SEGUIR)
+        Enemigo.__init__(self, 'Carrot-sheet.png', 'coordCarrot.txt', [6, 6, 6, 2, 7, 0], VELOCIDAD_ZANAHORIA,
+                         VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_ZANAHORIA, ZANAHORIA_MAX_STEPS, ZANAHORIA_VIEW_DIST, ZANAHORIA_SEGUIR)
 
     def mover_cpu(self, jugador):
 
@@ -600,10 +600,10 @@ class Zanahoria(NoJugador):
             else:
                 if self.count_steps <= self.max_steps:
                     self.count_steps += 1
-                    Personaje.mover(self,self.direccion)
+                    Personaje.mover(self, self.direccion)
                 else:
                     self.count_steps = 0
-                    if (self.direccion == DERECHA):
+                    if self.direccion == DERECHA:
                         self.direccion = IZQUIERDA
                     else:
                         self.direccion = DERECHA
@@ -613,11 +613,11 @@ class Zanahoria(NoJugador):
             Personaje.mover(self, QUIETO)
 
 
-class Boss(NoJugador):
+class Boss(Enemigo):
 
     def __init__(self):
-        NoJugador.__init__(self, 'boss.png', 'coordBoss.txt', [4, 4, 4, 0, 0, 0], VELOCIDAD_BOSS,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
+        Enemigo.__init__(self, 'boss.png', 'coordBoss.txt', [4, 4, 4, 0, 0, 0], VELOCIDAD_BOSS,
+                         VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_BOSS, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
 
     def mover_cpu(self, jugador):
 
@@ -637,7 +637,7 @@ class Boss(NoJugador):
 class NPC(NoJugador):
     def __init__(self, sheet, coord, array_coord):
         NoJugador.__init__(self, sheet, coord, array_coord, VELOCIDAD_TOMATE,
-                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC, TOMATE_MAX_STEPS, TOMATE_VIEW_DIST, TOMATE_SEGUIR)
+                           VELOCIDAD_SALTO_ENEMIGOS, RETARDO_ANIMACION_ENEMIGOS, VIDA_NPC)
 
     def mover_cpu(self, jugador):
         if jugador.posicion[0] < self.posicion[0]:
