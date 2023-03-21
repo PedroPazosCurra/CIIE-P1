@@ -48,7 +48,7 @@
 				{"CLASE":"Tarta", "POS": [730,440]},
 				{"CLASE":"ObjetoCroissant", "POS": [200,500]}],
 
-	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [50,570]},
+	"OBSTACULOS": [{"CLASE":"ParedHonoratia", "POS": [-220,620]},
 					{"CLASE":"ParedMadera", "POS": [770,550]}],
 
 	"MUSICA": "musica_honoratia.mp3"
