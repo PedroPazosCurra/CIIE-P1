@@ -113,7 +113,7 @@ class TextoTitulo(TextoGUI):
         TextoGUI.__init__(self, pantalla, fuente, (200, 150, 50), 'Honoratia', (210, 160))
 
     def accion(self):
-        self.pantalla.menu.salirPrograma()
+        pass
 
 
 class TextoControles(TextoGUI):
@@ -125,7 +125,7 @@ class TextoControles(TextoGUI):
                           (60, 595))
 
     def accion(self):
-        self.pantalla.menu.ejecutarJuego()
+        pass
 
 
 # -------------------------------------------------
